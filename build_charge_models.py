@@ -14,8 +14,10 @@ from rdkit.Chem import rdmolfiles
 from rdkit import Chem
 from MultipoleNet import load_model, build_graph_batched, D_Q
 
+
 import numpy as np
 import rdkit
+import pyarrow
 
 from openff.recharge.charges.resp import generate_resp_charge_parameter
 from openff.recharge.grids import GridSettingsType, GridGenerator
@@ -265,6 +267,10 @@ def calculate_dipole_magnitude(charges: np.ndarray,
 
     return dipole_magnitude
 
+def process_molecule(retrieved
+                    
+                )
+
 def main():
     
     prop_store = MoleculePropStore("./ESP_rebuilt.db")
@@ -274,74 +280,94 @@ def main():
     batch_number = 0
     test_mol_filename = 'test.mol'
     
-    for batch in batched(molecules_list, 1000):
-        batch_dict = defaultdict(list)
-        for num_mols, molecule in enumerate(molecules_list, start=batch_number):
-            #skip charged species
-            if "+" in molecule or "-" in molecule:
-                continue
-            try:
-                no_conformers = len(retrieved := prop_store.retrieve(smiles = molecule))
-            except Exception as e:
-                print(f'skipping this result due to {e}')
-                continue
-            file = 'temp1'
-            for conformer in range(no_conformers):
-                #multiprocess this bit
-                #------Charges-------#
-                coordinates = retrieved[conformer].conformer_quantity
-                mapped_smiles = retrieved[conformer].tagged_smiles
-                openff_mol: Molecule =  make_openff_molecule(mapped_smiles=mapped_smiles, coordinates=coordinates)
-                #mbis charges
-                batch_dict['mbis_charges'] = retrieved[conformer].mbis_charges
-                Chem.MolToMolFile(openff_mol.to_rdkit(),file)
-                #am1bcc charges
-                am1_bcc_charges = openff_mol.assign_partial_charges(partial_charge_method='am1bcc')
-                batch_dict['am1bcc_charges'].append(am1_bcc_charges.partial_charges)
-                #espaloma charges
-                espaloma_charges = openff_mol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
-                batch_dict['espaloma_charges'].append(espaloma_charges.partial_charges)
-                #riniker charges
-                esp, _, monopole, dipoles  =  riniker_esp()
-                batch_dict['riniker_monopole_charges'] = monopole
-                #resp charges
-                grid = retrieved[conformer].grid_coordinates_quantity
-                esp = retrieved[conformer].esp_quantity
-                esp_settings = retrieved[conformer].esp_settings
-                resp_charges = calculate_resp_charges(openff_mol, grid = grid, esp=esp,qc_data_settings=esp_settings)
-                batch_dict['resp_charges'] = resp_charges
-                
-                
-                #------Dipoles-------#
-                
-                qm_dipole = retrieved[conformer].dipole_quantity
-                batch_dict['qm_dipoles'] = qm_dipole
-                
-                #mbis dipole
-                batch_dict['mbis_dipoles'] = calculate_dipole_magnitude(
-                    charges=retrieved[conformer].mbis_charges, 
-                    conformer=retrieved[conformer].conformer
-                )
-                #am1bcc dipoles
-                batch_dict['am1bcc_dipole'] = calculate_dipole_magnitude(
-                    charges=am1_bcc_charges, 
-                    conformer=retrieved[conformer].conformer
-                )
-                #espaloma dipole
-                batch_dict['espaloma_dipole'] = calculate_dipole_magnitude(
-                    charges=espaloma_charges, 
-                    conformer=retrieved[conformer].conformer
-                )   
-                
-                #riniker dipole
-                batch_dict['riniker_dipoles'] = np.linalg.norm(np.sum(dipoles, axis=0))
-                 
-                #resp dipole
-                batch_dict['resp_dipole'] =  calculate_dipole_magnitude(
-                    charges=resp_charges, 
-                    conformer=retrieved[conformer].conformer
-                )
-                
+    schema = pyarrow.schema([
+        ('mbis_charges', pyarrow.list_(pyarrow.float64())),
+        ('am1bcc_charges', pyarrow.list_(pyarrow.float64())),
+        ('espaloma_charges', pyarrow.list_(pyarrow.float64())),
+        ('riniker_monopole_charges', pyarrow.list_(pyarrow.float64())),
+        ('resp_charges', pyarrow.list_(pyarrow.float64())),
+        ('qm_dipoles', pyarrow.float64()),
+        ('mbis_dipoles', pyarrow.float64()),
+        ('am1bcc_dipole', pyarrow.float64()),
+        ('espaloma_dipole', pyarrow.float64()),
+        ('riniker_dipoles', pyarrow.float64()),
+        ('resp_dipole', pyarrow.float64()),
+        ('molecule', pyarrow.string()),
+        ('conformer_index', pyarrow.int32()),
+    ])
+
+    with pyarrow.parquet.ParquetWriter(where=output, schema=schema) as writer:
+        with ProcessPoolExecutor(max_workers=16) as pool:
+            for batch in batched(molecules_list, 1000):
+                batch_dict = defaultdict(list)
+                for num_mols, molecule in enumerate(molecules_list, start=batch_number):
+                    #skip charged species
+                    if "+" in molecule or "-" in molecule:
+                        continue
+                    try:
+                        no_conformers = len(retrieved := prop_store.retrieve(smiles = molecule))
+                    except Exception as e:
+                        print(f'skipping this result due to {e}')
+                        continue
+                    file = 'temp1'
+                    for conformer in range(no_conformers):
+                        #multiprocess this bit
+                        #------Charges-------#
+                        coordinates = retrieved[conformer].conformer_quantity
+                        mapped_smiles = retrieved[conformer].tagged_smiles
+                        openff_mol: Molecule =  make_openff_molecule(mapped_smiles=mapped_smiles, coordinates=coordinates)
+                        batch_dict['molecule'] = openff_mol.to_smiles()
+                        batch_dict['conformer_index'] = conformer
+                        #mbis charges
+                        batch_dict['mbis_charges'] = retrieved[conformer].mbis_charges
+                        Chem.MolToMolFile(openff_mol.to_rdkit(),file)
+                        #am1bcc charges
+                        am1_bcc_charges = openff_mol.assign_partial_charges(partial_charge_method='am1bcc')
+                        batch_dict['am1bcc_charges'].append(am1_bcc_charges.partial_charges)
+                        #espaloma charges
+                        espaloma_charges = openff_mol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
+                        batch_dict['espaloma_charges'].append(espaloma_charges.partial_charges)
+                        #riniker charges
+                        esp, _, monopole, dipoles  =  riniker_esp()
+                        batch_dict['riniker_monopole_charges'] = monopole.tolist()
+                        #resp charges
+                        grid = retrieved[conformer].grid_coordinates_quantity
+                        esp = retrieved[conformer].esp_quantity
+                        esp_settings = retrieved[conformer].esp_settings
+                        resp_charges = calculate_resp_charges(openff_mol, grid = grid, esp=esp,qc_data_settings=esp_settings)
+                        batch_dict['resp_charges'] = resp_charges
+                        
+                        
+                        #------Dipoles-------#
+                        
+                        qm_dipole = retrieved[conformer].dipole
+                        batch_dict['qm_dipoles'] = qm_dipole.tolist()
+                        
+                        #mbis dipole
+                        batch_dict['mbis_dipoles'] = calculate_dipole_magnitude(
+                            charges=retrieved[conformer].mbis_charges, 
+                            conformer=retrieved[conformer].conformer
+                        ).tolist()
+                        #am1bcc dipoles
+                        batch_dict['am1bcc_dipole'] = calculate_dipole_magnitude(
+                            charges=am1_bcc_charges, 
+                            conformer=retrieved[conformer].conformer
+                        ).tolist()
+                        #espaloma dipole
+                        batch_dict['espaloma_dipole'] = calculate_dipole_magnitude(
+                            charges=espaloma_charges, 
+                            conformer=retrieved[conformer].conformer
+                        ).tolist()
+                        
+                        #riniker dipole
+                        batch_dict['riniker_dipoles'] = np.linalg.norm(np.sum(dipoles, axis=0)).tolist()
+                        
+                        #resp dipole
+                        batch_dict['resp_dipole'] =  calculate_dipole_magnitude(
+                            charges=resp_charges, 
+                            conformer=retrieved[conformer].conformer
+                        ).tolist()
+    print(batch_dict)
                 
 if __name__ == "__main__":
     main()
