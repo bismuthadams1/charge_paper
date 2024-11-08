@@ -72,7 +72,7 @@ def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
                                     atom_coordinates=coordinates_ang,
                                     quadrupoles= quadropoles_quantity)
     #NOTE: ESP units, hartree/e and grid units are angstrom
-    return (monopole_esp + dipole_esp + quadrupole_esp).m.flatten().tolist(), grid.m.tolist(), monopoles
+    return (monopole_esp + dipole_esp + quadrupole_esp).m.flatten().tolist(), grid.m.tolist(), monopoles, dipoles
 
 def convert_to_charge_format(conformer_mol: str) -> tuple[np.ndarray,list[str]]:
     """Convert openff molecule to appropriate format on which to assign charges
@@ -215,31 +215,6 @@ def calculate_esp_quadropole_au(
     esp = ke*np.sum((3*quadrupole_dot_2*(1/2 * inv_distance**5)),axis=-1)
 
     return esp.to(AU_ESP)
-
-# def build_grid(conformer_mol: str) -> np.ndarray:
-#     """Builds the grid on which to assign the esp
-
-#     Parameters
-#     ----------
-#     confermer_mol: str
-#         conformer mol object
-        
-#     Returns
-#     -------
-#     np.ndarray
-#         grid 
-    
-#     """
-
-#     rdkit_conformer = rdkit.Chem.rdmolfiles.MolFromMolBlock(conformer_mol, removeHs = False)
-#     openff_mol = Molecule.from_rdkit(rdkit_conformer, allow_undefined_stereo=True)
-
-#     grid_settings = MSKGridSettings(
-#             type="msk", density=2.0
-#         )
-#     grid = GridGenerator.generate(openff_mol, openff_mol.conformers[0], grid_settings)
-
-#     return grid
         
 def calculate_resp_charges(openff_mol: Molecule,
                            grid: unit.Quantity,
@@ -275,6 +250,21 @@ def calculate_resp_charges(openff_mol: Molecule,
     
     return np.round(resp_charges, 4).tolist()
 
+def calculate_dipole_magnitude(charges: np.ndarray,
+                               conformer: np.ndarray) -> float:
+    """Calculate dipole magnitude
+    
+    Parameters
+    ----------
+    charges: np.
+    
+    """
+    reshaped_charges = np.reshape(charges,(-1,1))
+    dipole_vector = np.sum(conformer * reshaped_charges,axis=0)
+    dipole_magnitude = np.linalg.norm(dipole_vector)
+
+    return dipole_magnitude
+
 def main():
     
     prop_store = MoleculePropStore("./ESP_rebuilt.db")
@@ -302,28 +292,56 @@ def main():
                 coordinates = retrieved[conformer].conformer_quantity
                 mapped_smiles = retrieved[conformer].tagged_smiles
                 openff_mol: Molecule =  make_openff_molecule(mapped_smiles=mapped_smiles, coordinates=coordinates)
-                #mbis
+                #mbis charges
                 batch_dict['mbis_charges'] = retrieved[conformer].mbis_charges
                 Chem.MolToMolFile(openff_mol.to_rdkit(),file)
-                #am1bcc
+                #am1bcc charges
                 am1_bcc_charges = openff_mol.assign_partial_charges(partial_charge_method='am1bcc')
                 batch_dict['am1bcc_charges'].append(am1_bcc_charges.partial_charges)
-                #espaloma
+                #espaloma charges
                 espaloma_charges = openff_mol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
                 batch_dict['espaloma_charges'].append(espaloma_charges.partial_charges)
-                #riniker
-                esp, _, monopole  =  riniker_esp()
+                #riniker charges
+                esp, _, monopole, dipoles  =  riniker_esp()
                 batch_dict['riniker_monopole_charges'] = monopole
-                
-                grid = retrieved[conformer].grid_quantity
-                
-                
-                riniker = calculate_resp_charges()
+                #resp charges
+                grid = retrieved[conformer].grid_coordinates_quantity
+                esp = retrieved[conformer].esp_quantity
+                esp_settings = retrieved[conformer].esp_settings
+                resp_charges = calculate_resp_charges(openff_mol, grid = grid, esp=esp,qc_data_settings=esp_settings)
+                batch_dict['resp_charges'] = resp_charges
                 
                 
                 #------Dipoles-------#
-
+                
+                qm_dipole = retrieved[conformer].dipole_quantity
+                batch_dict['qm_dipoles'] = qm_dipole
+                
+                #mbis dipole
+                batch_dict['mbis_dipoles'] = calculate_dipole_magnitude(
+                    charges=retrieved[conformer].mbis_charges, 
+                    conformer=retrieved[conformer].conformer
+                )
+                #am1bcc dipoles
+                batch_dict['am1bcc_dipole'] = calculate_dipole_magnitude(
+                    charges=am1_bcc_charges, 
+                    conformer=retrieved[conformer].conformer
+                )
+                #espaloma dipole
+                batch_dict['espaloma_dipole'] = calculate_dipole_magnitude(
+                    charges=espaloma_charges, 
+                    conformer=retrieved[conformer].conformer
+                )   
+                
+                #riniker dipole
+                batch_dict['riniker_dipoles'] = np.linalg.norm(np.sum(dipoles, axis=0))
                  
+                #resp dipole
+                batch_dict['resp_dipole'] =  calculate_dipole_magnitude(
+                    charges=resp_charges, 
+                    conformer=retrieved[conformer].conformer
+                )
+                
                 
 if __name__ == "__main__":
     main()
