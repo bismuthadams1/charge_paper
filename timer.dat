@@ -1,0 +1,842 @@
+
+Host: sb110.cluster
+
+Timers On : Thu Aug 22 14:07:19 2024
+Timers Off: Thu Aug 22 14:44:29 2024
+
+Wall Time:     2230.07 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
+
+Host: sb110.cluster
+
+Timers On : Thu Aug 22 13:59:01 2024
+Timers Off: Thu Aug 22 14:44:30 2024
+
+Wall Time:     2729.12 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+MBIS                                :   3806.200u      1.833s   2284.045w     10 calls
+build grid                          :     29.333u      0.017s     17.591w     10 calls
+post-process grid                   :      3.150u      0.000s      1.894w     10 calls
+
+--------------------------------------------------------------------------------------
+MBIS                                :   3806.200u      1.833s   2284.045w     10 calls
+| build grid                        :     29.333u      0.017s     17.591w     10 calls
+| post-process grid                 :      3.150u      0.000s      1.894w     10 calls
+
+**************************************************************************************
+
+
+
+
+
+
+
+
+Host: sb069.cluster
+Host: sb069.cluster
+Host: sb069.cluster
+Host: sb069.cluster
+Host: sb069.cluster
+Host: sb069.cluster
+Host: sb069.cluster
+Host: sb069.cluster
+
+
+
+
+
+
+
+
+Timers On : Thu Aug 22 19:54:36 2024
+Timers On : Thu Aug 22 19:54:36 2024
+Timers On : Thu Aug 22 19:54:36 2024
+Timers On : Thu Aug 22 19:54:36 2024
+Timers On : Thu Aug 22 19:54:36 2024
+Timers On : Thu Aug 22 19:54:36 2024
+Timers On : Thu Aug 22 19:54:36 2024
+Timers On : Thu Aug 22 19:54:36 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+Timers Off: Thu Aug 22 19:55:20 2024
+
+Wall Time:       44.13 seconds
+
+
+Wall Time:       44.14 seconds
+
+
+Wall Time:       44.15 seconds
+
+
+Wall Time:       44.13 seconds
+
+
+Wall Time:       44.12 seconds
+
+
+Wall Time:       44.13 seconds
+
+
+Wall Time:       44.15 seconds
+
+
+Wall Time:       44.15 seconds
+
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+Host: sb069.cluster
+
+Timers On : Thu Aug 22 19:49:27 2024
+Timers Off: Thu Aug 22 19:55:21 2024
+
+Wall Time:      353.41 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
+
+Host: sb003.cluster
+
+Timers On : Sat Aug 24 09:13:16 2024
+Timers Off: Tue Aug 27 21:42:04 2024
+
+Wall Time:   304128.17 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
+
+Host: sb003.cluster
+
+Timers On : Fri Oct 25 14:37:22 2024
+Timers Off: Tue Oct 29 00:02:09 2024
+
+Wall Time:   296687.55 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+Host: sb083.cluster
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Timers On : Tue Oct 29 09:43:44 2024
+
+
+
+
+Timers On : Tue Oct 29 09:43:44 2024
+
+
+
+
+
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers On : Tue Oct 29 09:43:44 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+
+Wall Time:   231376.11 seconds
+
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+
+Wall Time:   231376.11 seconds
+
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+Timers Off: Fri Nov  1 02:00:00 2024
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.11 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.13 seconds
+
+                                                       Time (seconds)
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.11 seconds
+
+                                                       Time (seconds)
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.12 seconds
+
+
+Wall Time:   231376.13 seconds
+
+
+Wall Time:   231376.13 seconds
+
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+MBIS                                : 234977.683u    117.517s 141227.107w    626 calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+MBIS                                : 228581.500u    128.733s 140975.144w    587 calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+MBIS                                : 234012.517u    114.883s 141125.697w    608 calls
+MBIS                                : 234430.017u    116.333s 140930.540w    614 calls
+MBIS                                : 232778.167u    116.067s 140955.902w    615 calls
+MBIS                                : 230884.650u    128.783s 140716.676w    601 calls
+MBIS                                : 233323.617u    120.350s 141262.568w    619 calls
+MBIS                                : 225065.683u    123.367s 140658.310w    593 calls
+MBIS                                : 232846.050u    123.967s 141384.657w    605 calls
+MBIS                                : 230909.983u    119.250s 140669.587w    597 calls
+MBIS                                : 234788.600u    117.317s 141182.438w    596 calls
+MBIS                                : 226439.050u    122.133s 140298.753w    577 calls
+MBIS                                : 232484.767u    126.217s 140973.015w    615 calls
+MBIS                                : 229303.950u    128.267s 140459.412w    595 calls
+MBIS                                : 231042.350u    128.867s 140996.459w    608 calls
+MBIS                                : 223869.267u    124.483s 140481.659w    580 calls
+MBIS                                : 227629.567u    119.250s 140529.829w    585 calls
+MBIS                                : 230699.983u    124.483s 141128.453w    599 calls
+MBIS                                : 231230.850u    125.983s 141019.148w    608 calls
+MBIS                                : 234836.733u    118.767s 141156.818w    606 calls
+MBIS                                : 233937.150u    125.017s 141284.902w    602 calls
+MBIS                                : 232389.383u    120.583s 140966.991w    607 calls
+MBIS                                : 232578.267u    117.517s 140935.155w    612 calls
+build grid                          :   1857.250u      0.633s   1130.996w    626 calls
+MBIS                                : 224222.950u    126.033s 140124.508w    584 calls
+MBIS                                : 227734.233u    131.767s 140405.195w    599 calls
+MBIS                                : 229502.217u    122.800s 140558.087w    597 calls
+MBIS                                : 229105.400u    123.433s 140914.979w    604 calls
+build grid                          :   1726.217u      0.533s   1269.157w    587 calls
+MBIS                                : 228065.667u    123.767s 140485.191w    583 calls
+MBIS                                : 228937.933u    115.700s 140977.614w    598 calls
+MBIS                                : 234700.567u    120.250s 141236.238w    627 calls
+MBIS                                : 230853.617u    123.467s 141151.265w    601 calls
+MBIS                                : 224878.867u    122.250s 140767.036w    579 calls
+build grid                          :   1773.867u      0.550s   1080.811w    608 calls
+build grid                          :   1772.483u      0.583s   1084.062w    614 calls
+build grid                          :   1767.983u      0.583s   1138.910w    615 calls
+build grid                          :   1737.867u      0.733s   1253.511w    601 calls
+build grid                          :   1740.000u      0.583s   1069.211w    619 calls
+build grid                          :   1689.683u      0.633s   1468.886w    593 calls
+build grid                          :   1741.050u      0.683s   1069.091w    605 calls
+build grid                          :   1752.100u      0.583s   1259.639w    597 calls
+build grid                          :   1788.717u      0.417s   1105.456w    596 calls
+build grid                          :   1711.800u      0.633s   1490.424w    577 calls
+build grid                          :   1754.750u      0.550s   1198.702w    615 calls
+build grid                          :   1744.000u      0.950s   1394.898w    595 calls
+build grid                          :   1747.967u      0.617s   1101.051w    608 calls
+build grid                          :   1691.500u      0.800s   1499.350w    580 calls
+build grid                          :   1728.117u      0.717s   1465.633w    585 calls
+build grid                          :   1727.533u      0.900s   1183.956w    599 calls
+build grid                          :   1731.617u      0.533s   1145.559w    608 calls
+build grid                          :   1769.350u      0.717s   1075.447w    606 calls
+build grid                          :   1769.650u      0.933s   1083.663w    602 calls
+build grid                          :   1756.767u      0.417s   1080.498w    607 calls
+build grid                          :   1765.250u      0.600s   1194.260w    612 calls
+post-process grid                   :    212.167u      0.717s    128.971w    626 calls
+build grid                          :   1690.817u      0.400s   1470.093w    584 calls
+build grid                          :   1731.583u      0.933s   1398.548w    599 calls
+build grid                          :   1735.167u      0.533s   1323.561w    597 calls
+build grid                          :   1718.717u      0.717s   1237.054w    604 calls
+post-process grid                   :    211.450u      0.633s    151.179w    587 calls
+build grid                          :   1758.983u      0.667s   1451.287w    583 calls
+build grid                          :   1730.667u      0.583s   1413.444w    598 calls
+build grid                          :   1759.317u      0.617s   1084.091w    627 calls
+build grid                          :   1746.833u      0.700s   1223.201w    601 calls
+build grid                          :   1697.983u      0.600s   1492.235w    579 calls
+post-process grid                   :    211.117u      0.433s    128.901w    608 calls
+post-process grid                   :    211.183u      0.233s    128.712w    614 calls
+post-process grid                   :    212.417u      0.350s    134.732w    615 calls
+post-process grid                   :    211.050u      0.533s    145.985w    601 calls
+post-process grid                   :    213.733u      0.317s    130.270w    619 calls
+post-process grid                   :    204.417u      0.383s    169.214w    593 calls
+post-process grid                   :    213.950u      0.500s    131.630w    605 calls
+post-process grid                   :    208.450u      0.550s    147.562w    597 calls
+post-process grid                   :    211.233u      0.483s    129.662w    596 calls
+post-process grid                   :    205.467u      0.517s    164.433w    577 calls
+post-process grid                   :    213.317u      0.367s    140.585w    615 calls
+post-process grid                   :    206.467u      0.567s    158.499w    595 calls
+post-process grid                   :    212.483u      0.383s    131.732w    608 calls
+post-process grid                   :    207.367u      0.433s    172.244w    580 calls
+post-process grid                   :    205.983u      0.267s    164.569w    585 calls
+post-process grid                   :    212.117u      0.367s    141.071w    599 calls
+post-process grid                   :    213.200u      0.417s    137.355w    608 calls
+post-process grid                   :    211.667u      0.433s    128.732w    606 calls
+post-process grid                   :    214.950u      0.817s    131.062w    602 calls
+post-process grid                   :    212.883u      0.500s    130.494w    607 calls
+post-process grid                   :    211.200u      0.433s    140.874w    612 calls
+
+--------------------------------------------------------------------------------------
+post-process grid                   :    206.167u      0.350s    166.360w    584 calls
+post-process grid                   :    209.883u      0.650s    163.282w    599 calls
+post-process grid                   :    209.833u      0.400s    152.727w    597 calls
+post-process grid                   :    210.167u      0.550s    146.200w    604 calls
+
+--------------------------------------------------------------------------------------
+post-process grid                   :    206.183u      0.633s    162.831w    583 calls
+post-process grid                   :    205.617u      0.183s    158.839w    598 calls
+post-process grid                   :    212.383u      0.400s    130.872w    627 calls
+post-process grid                   :    209.817u      0.333s    141.635w    601 calls
+post-process grid                   :    204.233u      0.400s    166.891w    579 calls
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+MBIS                                : 234977.683u    117.517s 141227.107w    626 calls
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+MBIS                                : 228581.500u    128.733s 140975.144w    587 calls
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+MBIS                                : 234012.517u    114.883s 141125.697w    608 calls
+MBIS                                : 234430.017u    116.333s 140930.540w    614 calls
+MBIS                                : 232778.167u    116.067s 140955.902w    615 calls
+MBIS                                : 230884.650u    128.783s 140716.676w    601 calls
+MBIS                                : 233323.617u    120.350s 141262.568w    619 calls
+MBIS                                : 225065.683u    123.367s 140658.310w    593 calls
+MBIS                                : 232846.050u    123.967s 141384.657w    605 calls
+MBIS                                : 230909.983u    119.250s 140669.587w    597 calls
+MBIS                                : 234788.600u    117.317s 141182.438w    596 calls
+MBIS                                : 226439.050u    122.133s 140298.753w    577 calls
+MBIS                                : 232484.767u    126.217s 140973.015w    615 calls
+MBIS                                : 229303.950u    128.267s 140459.412w    595 calls
+MBIS                                : 231042.350u    128.867s 140996.459w    608 calls
+MBIS                                : 223869.267u    124.483s 140481.659w    580 calls
+MBIS                                : 227629.567u    119.250s 140529.829w    585 calls
+MBIS                                : 230699.983u    124.483s 141128.453w    599 calls
+MBIS                                : 231230.850u    125.983s 141019.148w    608 calls
+MBIS                                : 234836.733u    118.767s 141156.818w    606 calls
+MBIS                                : 233937.150u    125.017s 141284.902w    602 calls
+MBIS                                : 232389.383u    120.583s 140966.991w    607 calls
+MBIS                                : 232578.267u    117.517s 140935.155w    612 calls
+| MBIS                                : 224222.950u    126.033s 140124.508w    584 calls
+MBIS                                : 227734.233u    131.767s 140405.195w    599 calls
+MBIS                                : 229502.217u    122.800s 140558.087w    597 calls
+MBIS                                : 229105.400u    123.433s 140914.979w    604 calls
+| MBIS                                : 228065.667u    123.767s 140485.191w    583 calls
+MBIS                                : 228937.933u    115.700s 140977.614w    598 calls
+MBIS                                : 234700.567u    120.250s 141236.238w    627 calls
+MBIS                                : 230853.617u    123.467s 141151.265w    601 calls
+MBIS                                : 224878.867u    122.250s 140767.036w    579 calls
+| | | | | | | | | | | | | | | | | | | | | build grid                        :   1857.250u      0.633s   1130.996w    626 calls
+| | | | build grid                        :   1726.217u      0.533s   1269.157w    587 calls
+| | | | | build grid                        :   1773.867u      0.550s   1080.811w    608 calls
+build grid                        :   1772.483u      0.583s   1084.062w    614 calls
+build grid                        :   1767.983u      0.583s   1138.910w    615 calls
+build grid                        :   1737.867u      0.733s   1253.511w    601 calls
+build grid                        :   1740.000u      0.583s   1069.211w    619 calls
+build grid                        :   1689.683u      0.633s   1468.886w    593 calls
+build grid                        :   1741.050u      0.683s   1069.091w    605 calls
+build grid                        :   1752.100u      0.583s   1259.639w    597 calls
+build grid                        :   1788.717u      0.417s   1105.456w    596 calls
+build grid                        :   1711.800u      0.633s   1490.424w    577 calls
+build grid                        :   1754.750u      0.550s   1198.702w    615 calls
+build grid                        :   1744.000u      0.950s   1394.898w    595 calls
+build grid                        :   1747.967u      0.617s   1101.051w    608 calls
+build grid                        :   1691.500u      0.800s   1499.350w    580 calls
+build grid                        :   1728.117u      0.717s   1465.633w    585 calls
+build grid                        :   1727.533u      0.900s   1183.956w    599 calls
+build grid                        :   1731.617u      0.533s   1145.559w    608 calls
+build grid                        :   1769.350u      0.717s   1075.447w    606 calls
+build grid                        :   1769.650u      0.933s   1083.663w    602 calls
+build grid                        :   1756.767u      0.417s   1080.498w    607 calls
+build grid                        :   1765.250u      0.600s   1194.260w    612 calls
+| build grid                        :   1690.817u      0.400s   1470.093w    584 calls
+build grid                        :   1731.583u      0.933s   1398.548w    599 calls
+build grid                        :   1735.167u      0.533s   1323.561w    597 calls
+build grid                        :   1718.717u      0.717s   1237.054w    604 calls
+| build grid                        :   1758.983u      0.667s   1451.287w    583 calls
+build grid                        :   1730.667u      0.583s   1413.444w    598 calls
+build grid                        :   1759.317u      0.617s   1084.091w    627 calls
+build grid                        :   1746.833u      0.700s   1223.201w    601 calls
+build grid                        :   1697.983u      0.600s   1492.235w    579 calls
+| | | | | | | | | | | | | | | | | | | | | post-process grid                 :    212.167u      0.717s    128.971w    626 calls
+| | | | post-process grid                 :    211.450u      0.633s    151.179w    587 calls
+| | | | | post-process grid                 :    211.117u      0.433s    128.901w    608 calls
+post-process grid                 :    211.183u      0.233s    128.712w    614 calls
+post-process grid                 :    212.417u      0.350s    134.732w    615 calls
+post-process grid                 :    211.050u      0.533s    145.985w    601 calls
+post-process grid                 :    213.733u      0.317s    130.270w    619 calls
+post-process grid                 :    204.417u      0.383s    169.214w    593 calls
+post-process grid                 :    213.950u      0.500s    131.630w    605 calls
+post-process grid                 :    208.450u      0.550s    147.562w    597 calls
+post-process grid                 :    211.233u      0.483s    129.662w    596 calls
+post-process grid                 :    205.467u      0.517s    164.433w    577 calls
+post-process grid                 :    213.317u      0.367s    140.585w    615 calls
+post-process grid                 :    206.467u      0.567s    158.499w    595 calls
+post-process grid                 :    212.483u      0.383s    131.732w    608 calls
+post-process grid                 :    207.367u      0.433s    172.244w    580 calls
+post-process grid                 :    205.983u      0.267s    164.569w    585 calls
+post-process grid                 :    212.117u      0.367s    141.071w    599 calls
+post-process grid                 :    213.200u      0.417s    137.355w    608 calls
+post-process grid                 :    211.667u      0.433s    128.732w    606 calls
+post-process grid                 :    214.950u      0.817s    131.062w    602 calls
+post-process grid                 :    212.883u      0.500s    130.494w    607 calls
+post-process grid                 :    211.200u      0.433s    140.874w    612 calls
+
+**************************************************************************************
+post-process grid                 :    206.167u      0.350s    166.360w    584 calls
+post-process grid                 :    209.883u      0.650s    163.282w    599 calls
+post-process grid                 :    209.833u      0.400s    152.727w    597 calls
+post-process grid                 :    210.167u      0.550s    146.200w    604 calls
+
+**************************************************************************************
+post-process grid                 :    206.183u      0.633s    162.831w    583 calls
+post-process grid                 :    205.617u      0.183s    158.839w    598 calls
+post-process grid                 :    212.383u      0.400s    130.872w    627 calls
+post-process grid                 :    209.817u      0.333s    141.635w    601 calls
+post-process grid                 :    204.233u      0.400s    166.891w    579 calls
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+Host: sb083.cluster
+
+Timers On : Tue Oct 29 09:39:36 2024
+Timers Off: Fri Nov  1 02:00:01 2024
+
+Wall Time:   231625.03 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
