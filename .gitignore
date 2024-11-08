@@ -1,3 +1,5 @@
 *.db
 *.out
 *.txt
+*.db-shm
+*.db-wal

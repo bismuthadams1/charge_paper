@@ -1,3 +1,9 @@
+"""Script used to generate the large scale comparisons between the charge models
+
+
+"""
+
+
 from chargecraft.storage.storage import MoleculePropRecord, MoleculePropStore
 from openff.toolkit.topology import Molecule
 from openff.units import unit
@@ -6,40 +12,35 @@ from espaloma_charge.openff_wrapper import EspalomaChargeToolkitWrapper
 from more_itertools import batched
 from rdkit.Chem import rdmolfiles
 from rdkit import Chem
+from MultipoleNet import load_model, build_graph_batched, D_Q
+
 import numpy as np
 import rdkit
+
+from openff.recharge.charges.resp import generate_resp_charge_parameter
 from openff.recharge.grids import GridSettingsType, GridGenerator
 from openff.recharge.grids import LatticeGridSettings, MSKGridSettings
-from MultipoleNet import load_model, build_graph_batched, D_Q
+from openff.recharge.esp.storage import MoleculeESPRecord
+from openff.recharge.charges.library import (
+    LibraryChargeCollection,
+    LibraryChargeGenerator,
+)
+from openff.recharge.esp import ESPSettings
+from openff.recharge.charges.resp.solvers import IterativeSolver
+
 
 toolkit_registry = EspalomaChargeToolkitWrapper()
 riniker_model = load_model()
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
+resp_solver = IterativeSolver()
+
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
-    return Molecule.from_mapped_smiles(mapped_smiles=mapped_smiles).add_conformer(coordinates=coordinates)
+    return Molecule.from_mapped_smiles(mapped_smiles=mapped_smiles, allow_undefined_stereo=True).add_conformer(coordinates=coordinates)
 
 
 def build_mol(openff_molecule: Molecule) -> str:
     return rdmolfiles.MolToMolBlock(openff_molecule.to_rdkit())
-
-# def riniker_charges(openff_molecule: Molecule) -> list[int]:
-#     """Assign riniker charges based on an input molecule
-    
-#     Parameters
-#     ----------
-#     openff_molecule: Molecule
-
-    
-#     Returns
-#     -------
-#     list
-#         list of charges 
-    
-#     """
-#     (coordinates, elements) = convert_to_charge_format(openff_molecule)
-#     monopoles, _, _ = riniker_model.predict(coordinates, elements)
-#     return monopoles
 
 
 def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
@@ -215,31 +216,64 @@ def calculate_esp_quadropole_au(
 
     return esp.to(AU_ESP)
 
-def build_grid(conformer_mol: str) -> np.ndarray:
-    """Builds the grid on which to assign the esp
+# def build_grid(conformer_mol: str) -> np.ndarray:
+#     """Builds the grid on which to assign the esp
 
+#     Parameters
+#     ----------
+#     confermer_mol: str
+#         conformer mol object
+        
+#     Returns
+#     -------
+#     np.ndarray
+#         grid 
+    
+#     """
+
+#     rdkit_conformer = rdkit.Chem.rdmolfiles.MolFromMolBlock(conformer_mol, removeHs = False)
+#     openff_mol = Molecule.from_rdkit(rdkit_conformer, allow_undefined_stereo=True)
+
+#     grid_settings = MSKGridSettings(
+#             type="msk", density=2.0
+#         )
+#     grid = GridGenerator.generate(openff_mol, openff_mol.conformers[0], grid_settings)
+
+#     return grid
+        
+def calculate_resp_charges(openff_mol: Molecule,
+                           grid: unit.Quantity,
+                           esp: unit.Quantity,
+                           qc_data_settings: ESPSettings) -> list[float]:
+    """Calculate resp charges given a set of input data
+    
     Parameters
     ----------
-    confermer_mol: str
-        conformer mol object
+    grid: unit.Quantity
+        grid in which the ESP was calculate don
+    esp: unit.Quantity
+        esp calculated from the qm calculation
+    qc_data_settings: ESPSettings
+        esp settings the esp was calculated at
         
     Returns
     -------
-    np.ndarray
-        grid 
+    list[float]
+        list of resp charges
+    
     
     """
-
-    rdkit_conformer = rdkit.Chem.rdmolfiles.MolFromMolBlock(conformer_mol, removeHs = False)
-    openff_mol = Molecule.from_rdkit(rdkit_conformer, allow_undefined_stereo=True)
-
-    grid_settings = MSKGridSettings(
-            type="msk", density=2.0
-        )
-    grid = GridGenerator.generate(openff_mol, openff_mol.conformers[0], grid_settings)
-
-    return grid
-        
+    qc_data_record = MoleculeESPRecord.from_molecule(
+        openff_mol, openff_mol.conformer_quantity, grid, esp, None, qc_data_settings
+    )
+    resp_charge_parameter = generate_resp_charge_parameter(
+        [qc_data_record], resp_solver
+    )
+    resp_charges = LibraryChargeGenerator.generate(
+        openff_mol, LibraryChargeCollection(parameters=[resp_charge_parameter])
+    )
+    
+    return np.round(resp_charges, 4).tolist()
 
 def main():
     
@@ -264,16 +298,32 @@ def main():
             file = 'temp1'
             for conformer in range(no_conformers):
                 #multiprocess this bit
+                #------Charges-------#
                 coordinates = retrieved[conformer].conformer_quantity
                 mapped_smiles = retrieved[conformer].tagged_smiles
                 openff_mol: Molecule =  make_openff_molecule(mapped_smiles=mapped_smiles, coordinates=coordinates)
+                #mbis
                 batch_dict['mbis_charges'] = retrieved[conformer].mbis_charges
                 Chem.MolToMolFile(openff_mol.to_rdkit(),file)
+                #am1bcc
                 am1_bcc_charges = openff_mol.assign_partial_charges(partial_charge_method='am1bcc')
                 batch_dict['am1bcc_charges'].append(am1_bcc_charges.partial_charges)
+                #espaloma
                 espaloma_charges = openff_mol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
                 batch_dict['espaloma_charges'].append(espaloma_charges.partial_charges)
-                riniker_monopoles = 
+                #riniker
+                esp, _, monopole  =  riniker_esp()
+                batch_dict['riniker_monopole_charges'] = monopole
+                
+                grid = retrieved[conformer].grid_quantity
+                
+                
+                riniker = calculate_resp_charges()
+                
+                
+                #------Dipoles-------#
+
+                 
                 
 if __name__ == "__main__":
     main()
