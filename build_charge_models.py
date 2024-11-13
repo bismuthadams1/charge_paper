@@ -466,35 +466,39 @@ def main(output: str):
             #add results back to total_batch dictionary 
             #results will be ['riniker_monopoles'], ['riniker_dipoles']
             #create tmp file
-            with tempfile.TemporaryDirectory() as temp_dir:
-                    # Create temporary molblock file in the temp directory
-                    tmp_input_file = create_mol_block_tmp_file(pylist=total_batch, temp_dir=temp_dir)
+            total_batches_riniker = []
+            for batch in batched(total_batch, 20):
+                with tempfile.TemporaryDirectory() as temp_dir:
+                        # Create temporary molblock file in the temp directory
+                        tmp_input_file = create_mol_block_tmp_file(pylist=batch, temp_dir=temp_dir)
 
-                    # tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
+                        # tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
 
-                    # Run the ESP computation in batched mode
-                    ouput_file = handle_esp_request(
-                        charge_model='RIN',
-                        conformer_mol=tmp_input_file,
-                        broken_up=True,
-                        batched=True,
-                        batched_grid=True,
-                    )
+                        # Run the ESP computation in batched mode
+                        output_file = handle_esp_request(
+                            charge_model='RIN',
+                            conformer_mol=tmp_input_file,
+                            broken_up=True,
+                            batched=True,
+                            batched_grid=True,
+                        )
+                        print('riniker model errors:')
+                        print(output_file['error'])
+                        with open(output_file['file_path'], 'r') as f:
+                            esps_dict = json.load(f)
 
-                    with open(ouput_file, 'r') as f:
-                        esps_dict = json.load(f)
-
-                    for item in total_batch:
-                        mol_id = item['mol_id']
-                        esp_result = esps_dict.get(mol_id)
-                        if esp_result:
-                            item['riniker_monopoles'] = np.array(esp_result[0])
-                            item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result[1], axis=0)).tolist()
-                        else:
-                            print(f'No ESP result found for molecule ID {mol_id}')
+                        for item in batch:
+                            mol_id = item['mol_id']
+                            esp_result = esps_dict.get(mol_id)
+                            if esp_result:
+                                item['riniker_monopoles'] = np.array(esp_result[0])
+                                item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result[1], axis=0)).tolist()
+                            else:
+                                print(f'No ESP result found for molecule ID {mol_id}')
+                        total_batches_riniker.append(batch)
                             
                 
-            rec_batch = pyarrow.RecordBatch.from_pylist([total_batch], schema=schema)
+            rec_batch = pyarrow.RecordBatch.from_pylist([total_batches_riniker], schema=schema)
             writer.write_batch(rec_batch)
                 
 if __name__ == "__main__":
