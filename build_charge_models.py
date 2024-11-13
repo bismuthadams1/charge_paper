@@ -294,7 +294,7 @@ def make_hash(openff_mol: Molecule) -> str:
     
     """
 
-    conformer =  openff_mol.conformers[0].m
+    conformer =  openff_mol.conformers[0].m.tolist()
     hash_input = openff_mol.to_smiles() + ''.join(f"{c:.6f}" for c in conformer)
     
     return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
@@ -401,12 +401,10 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
 
 def main(output: str):
     
-    prop_store = MoleculePropStore("./ESP_rebuilt.db")
+    prop_store = MoleculePropStore("./ESP_rebuilt.db", cache_size=100)
     molecules_list = prop_store.list()
     # print(molecules_list)
-    batch_size = 1000
-    batch_number = 0
-    
+
     schema = pyarrow.schema([
         ('mbis_charges', pyarrow.list_(pyarrow.float64())),
         ('am1bcc_charges', pyarrow.list_(pyarrow.float64())),
@@ -420,7 +418,7 @@ def main(output: str):
         ('riniker_dipoles', pyarrow.float64()),
         ('resp_dipole', pyarrow.float64()),
         ('molecule', pyarrow.string()),
-        ('geometry', pyarrow.list_(pyarrow.float64())),
+        ('grid', pyarrow.list_(pyarrow.float64())),
     ])    
     limit = 40
     limited_molecules_list = molecules_list[:limit]  
@@ -464,45 +462,40 @@ def main(output: str):
                             print(rec_data)
                             total_batch.append(rec_data)
                 
-                #collect molblocks from total_batch and send to charge model
-                #add results back to total_batch dictionary 
-                #results will be ['riniker_monopoles'], ['riniker_dipoles']
-                
-                #create tmp file
+            #collect molblocks from total_batch and send to charge model
+            #add results back to total_batch dictionary 
+            #results will be ['riniker_monopoles'], ['riniker_dipoles']
+            #create tmp file
             with tempfile.TemporaryDirectory() as temp_dir:
                     # Create temporary molblock file in the temp directory
                     tmp_input_file = create_mol_block_tmp_file(pylist=total_batch, temp_dir=temp_dir)
 
-                    # Path for the output ESP results file
-                    tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
+                    # tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
 
                     # Run the ESP computation in batched mode
-                    handle_esp_request(
+                    ouput_file = handle_esp_request(
                         charge_model='RIN',
                         conformer_mol=tmp_input_file,
                         broken_up=True,
                         batched=True,
                         batched_grid=True,
-                        output_file=tmp_output_file
                     )
 
-                    # Load ESP results from the temporary output file
-                    with open(tmp_output_file, 'r') as f:
+                    with open(ouput_file, 'r') as f:
                         esps_dict = json.load(f)
 
-                    # Update total_batch with ESP results
                     for item in total_batch:
                         mol_id = item['mol_id']
                         esp_result = esps_dict.get(mol_id)
                         if esp_result:
-                            item['riniker_monopoles'] = esp_result.get('monopole')
-                            item['riniker_dipoles'] = esp_result.get('dipole')
+                            item['riniker_monopoles'] = np.array(esp_result[0])
+                            item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result[1], axis=0)).tolist()
                         else:
                             print(f'No ESP result found for molecule ID {mol_id}')
                             
                 
-                rec_batch = pyarrow.RecordBatch.from_pylist([total_batch], schema=schema)
-                writer.write_batch(rec_batch)
+            rec_batch = pyarrow.RecordBatch.from_pylist([total_batch], schema=schema)
+            writer.write_batch(rec_batch)
                 
 if __name__ == "__main__":
     main(output='./charge_models.parquet')
