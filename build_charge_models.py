@@ -14,13 +14,17 @@ from rdkit.Chem import rdmolfiles
 from rdkit import Chem
 from MultipoleNet import load_model, build_graph_batched, D_Q
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
 from tqdm import tqdm
 import traceback
 import json
+import tempfile
 
 import numpy as np
 import rdkit
 import pyarrow
+import hashlib
+import os
 
 from openff.recharge.charges.resp import generate_resp_charge_parameter
 from openff.recharge.grids import GridSettingsType, GridGenerator
@@ -274,10 +278,26 @@ def calculate_dipole_magnitude(charges: np.ndarray,
 
     return dipole_magnitude
 
-def make_mol_bloc(openff_mol: Molecule) -> str:
+def make_hash(openff_mol: Molecule) -> str:
     """Make a molblock for the purposes of batching
     
+    Parameters
+    ----------
+    
+    openff_mol: Molecule
+        open force field molecule with conformers embedded
+    
+    Returns
+    -------
+    str 
+        hash output unique to each conformer
+    
     """
+
+    conformer =  openff_mol.conformers[0].m
+    hash_input = openff_mol.to_smiles() + ''.join(f"{c:.6f}" for c in conformer)
+    
+    return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
     
 def process_molecule(retrieved: MoleculePropRecord):
     """Process molecules to their charge model envs
@@ -299,12 +319,14 @@ def process_molecule(retrieved: MoleculePropRecord):
     coordinates = retrieved.conformer_quantity
     mapped_smiles = retrieved.tagged_smiles
     openff_mol: Molecule =  make_openff_molecule(mapped_smiles=mapped_smiles, coordinates=coordinates)
+    rdkit_mol = openff_mol.to_rdkit()
     print('off mol')
     print(openff_mol)
     batch_dict['molecule'] = openff_mol.to_smiles()
     batch_dict['geometry'] = coordinates
-    batch_dict['molblock'] = ...
-    batch_dict['mol_id'] = ...
+    batch_dict['molblock'] = rdkit.Chem.rdmolfiles.MolToMolBlock(rdkit_mol)
+    batch_dict['grid'] = retrieved.grid_coordinates
+    batch_dict['mol_id'] = make_hash(openff_mol)
     #mbis charges
     batch_dict['mbis_charges'] = retrieved.mbis_charges
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
@@ -317,8 +339,8 @@ def process_molecule(retrieved: MoleculePropRecord):
     espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
     batch_dict['espaloma_charges'].append(espaloma_charges := espalomamol.partial_charges.magnitude)
     #riniker charges
-    esp, _, monopole, dipoles  =  riniker_esp(openff_molecule=openff_mol,
-                                              grid =retrieved.grid_coordinates )
+    # esp, _, monopole, dipoles  =  riniker_esp(openff_molecule=openff_mol,
+    #                                           grid =retrieved.grid_coordinates )
     # batch_dict['riniker_monopole_charges'] = monopole.tolist()
     #resp charges
     grid = retrieved.grid_coordinates_quantity
@@ -360,7 +382,7 @@ def process_molecule(retrieved: MoleculePropRecord):
     
     return batch_dict
 
-def create_mol_block_tmp_file(pylist: list[dict]) -> None:
+def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """Create a tmp file with all the molblocks
     
     Parameters
@@ -371,8 +393,8 @@ def create_mol_block_tmp_file(pylist: list[dict]) -> None:
     """
     json_dict = {}
     for item in pylist:
-        json_dict[item['mol_id']] = item['molblock']
-         
+        json_dict[item['mol_id']] = [item['molblock'],item['grid']]
+    json_file = os.path.join(temp_dir, 'molblocks.json')
     json.dump(json_dict, open(json_file, "w"))
     
     return json_file
@@ -445,6 +467,40 @@ def main(output: str):
                 #collect molblocks from total_batch and send to charge model
                 #add results back to total_batch dictionary 
                 #results will be ['riniker_monopoles'], ['riniker_dipoles']
+                
+                #create tmp file
+            with tempfile.TemporaryDirectory() as temp_dir:
+                    # Create temporary molblock file in the temp directory
+                    tmp_input_file = create_mol_block_tmp_file(pylist=total_batch, temp_dir=temp_dir)
+
+                    # Path for the output ESP results file
+                    tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
+
+                    # Run the ESP computation in batched mode
+                    handle_esp_request(
+                        charge_model='RIN',
+                        conformer_mol=tmp_input_file,
+                        broken_up=True,
+                        batched=True,
+                        batched_grid=True,
+                        output_file=tmp_output_file
+                    )
+
+                    # Load ESP results from the temporary output file
+                    with open(tmp_output_file, 'r') as f:
+                        esps_dict = json.load(f)
+
+                    # Update total_batch with ESP results
+                    for item in total_batch:
+                        mol_id = item['mol_id']
+                        esp_result = esps_dict.get(mol_id)
+                        if esp_result:
+                            item['riniker_monopoles'] = esp_result.get('monopole')
+                            item['riniker_dipoles'] = esp_result.get('dipole')
+                        else:
+                            print(f'No ESP result found for molecule ID {mol_id}')
+                            
+                
                 rec_batch = pyarrow.RecordBatch.from_pylist([total_batch], schema=schema)
                 writer.write_batch(rec_batch)
                 
