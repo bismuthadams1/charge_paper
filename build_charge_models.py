@@ -15,7 +15,8 @@ from rdkit import Chem
 from MultipoleNet import load_model, build_graph_batched, D_Q
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
-
+import traceback
+import json
 
 import numpy as np
 import rdkit
@@ -40,7 +41,10 @@ resp_solver = IterativeSolver()
 
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
-    return Molecule.from_mapped_smiles(mapped_smiles=mapped_smiles, allow_undefined_stereo=True).add_conformer(coordinates=coordinates)
+    
+    molecule = Molecule.from_mapped_smiles(mapped_smiles=mapped_smiles, allow_undefined_stereo=True)
+    molecule.add_conformer(coordinates=coordinates)
+    return molecule
 
 
 def build_mol(openff_molecule: Molecule) -> str:
@@ -60,6 +64,7 @@ def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
     partial_charges: list of partial charges 
     """
     (coordinates, elements) = convert_to_charge_format(openff_molecule)
+    print(f'rdkit to openff yields {(coordinates, elements)}')
     monopoles, dipoles, quadrupoles = riniker_model.predict(coordinates, elements)
     #multipoles with correct units
     monopoles_quantity = monopoles.numpy()*unit.e
@@ -78,7 +83,7 @@ def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
     #NOTE: ESP units, hartree/e and grid units are angstrom
     return (monopole_esp + dipole_esp + quadrupole_esp).m.flatten().tolist(), grid.m.tolist(), monopoles, dipoles
 
-def convert_to_charge_format(conformer_mol: str) -> tuple[np.ndarray,list[str]]:
+def convert_to_charge_format(openff_mol: Molecule) -> tuple[np.ndarray,list[str]]:
     """Convert openff molecule to appropriate format on which to assign charges
 
     Parameters
@@ -93,7 +98,7 @@ def convert_to_charge_format(conformer_mol: str) -> tuple[np.ndarray,list[str]]:
     
     """
     #read file is an iterator so can read multiple eventually
-    rdkit_conformer = rdkit.Chem.rdmolfiles.MolFromMolBlock(conformer_mol, removeHs = False)
+    rdkit_conformer = openff_mol.to_rdkit()
     elements = [a.GetSymbol() for a in rdkit_conformer.GetAtoms()]
     coordinates = rdkit_conformer.GetConformer(0).GetPositions().astype(np.float32)
     return coordinates, elements  
@@ -269,6 +274,11 @@ def calculate_dipole_magnitude(charges: np.ndarray,
 
     return dipole_magnitude
 
+def make_mol_bloc(openff_mol: Molecule) -> str:
+    """Make a molblock for the purposes of batching
+    
+    """
+    
 def process_molecule(retrieved: MoleculePropRecord):
     """Process molecules to their charge model envs
     
@@ -293,18 +303,23 @@ def process_molecule(retrieved: MoleculePropRecord):
     print(openff_mol)
     batch_dict['molecule'] = openff_mol.to_smiles()
     batch_dict['geometry'] = coordinates
+    batch_dict['molblock'] = ...
+    batch_dict['mol_id'] = ...
     #mbis charges
     batch_dict['mbis_charges'] = retrieved.mbis_charges
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
-    #am1bcc charges
-    am1_bcc_charges = openff_mol.assign_partial_charges(partial_charge_method='am1bcc')
-    batch_dict['am1bcc_charges'].append(am1_bcc_charges.partial_charges)
+    #am1bcc chargeso
+    am1bccmol = openff_mol
+    am1bccmol.assign_partial_charges(partial_charge_method='am1bcc')
+    batch_dict['am1bcc_charges'].append(am1_bcc_charges := am1bccmol.partial_charges.magnitude)
     #espaloma charges
-    espaloma_charges = openff_mol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
-    batch_dict['espaloma_charges'].append(espaloma_charges.partial_charges)
+    espalomamol = openff_mol
+    espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
+    batch_dict['espaloma_charges'].append(espaloma_charges := espalomamol.partial_charges.magnitude)
     #riniker charges
-    esp, _, monopole, dipoles  =  riniker_esp()
-    batch_dict['riniker_monopole_charges'] = monopole.tolist()
+    esp, _, monopole, dipoles  =  riniker_esp(openff_molecule=openff_mol,
+                                              grid =retrieved.grid_coordinates )
+    # batch_dict['riniker_monopole_charges'] = monopole.tolist()
     #resp charges
     grid = retrieved.grid_coordinates_quantity
     esp = retrieved.esp_quantity
@@ -335,7 +350,7 @@ def process_molecule(retrieved: MoleculePropRecord):
     ).tolist()
     
     #riniker dipole
-    batch_dict['riniker_dipoles'] = np.linalg.norm(np.sum(dipoles, axis=0)).tolist()
+    # batch_dict['riniker_dipoles'] = np.linalg.norm(np.sum(dipoles, axis=0)).tolist()
     
     #resp dipole
     batch_dict['resp_dipole'] =  calculate_dipole_magnitude(
@@ -344,6 +359,23 @@ def process_molecule(retrieved: MoleculePropRecord):
     ).tolist()
     
     return batch_dict
+
+def create_mol_block_tmp_file(pylist: list[dict]) -> None:
+    """Create a tmp file with all the molblocks
+    
+    Parameters
+    ----------
+    pylist: list[dict]
+        dictionary of the pylist results
+    
+    """
+    json_dict = {}
+    for item in pylist:
+        json_dict[item['mol_id']] = item['molblock']
+         
+    json.dump(json_dict, open(json_file, "w"))
+    
+    return json_file
 
 def main(output: str):
     
@@ -366,12 +398,14 @@ def main(output: str):
         ('riniker_dipoles', pyarrow.float64()),
         ('resp_dipole', pyarrow.float64()),
         ('molecule', pyarrow.string()),
-        ('conformer_index', pyarrow.int32()),
+        ('geometry', pyarrow.list_(pyarrow.float64())),
     ])    
-    limit = 3000
+    limit = 40
     limited_molecules_list = molecules_list[:limit]  
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema) as writer:
-            for batch in batched(limited_molecules_list, 1000):
+            batches = []
+            print('building batches')
+            for batch in batched(limited_molecules_list, 20):
                 batched_conformers = []
                 for molecule in batch:
                     #skip charged species
@@ -381,24 +415,38 @@ def main(output: str):
                         no_conformers = len(retrieved := prop_store.retrieve(smiles = molecule))
                     except Exception as e:
                         print(f'skipping this result due to {e}')
+                        print(traceback.format_exc())
                         continue
-                    file = 'temp1'
                     for conformer_no in range(no_conformers):
                         conformer = retrieved[conformer_no]
                         batched_conformers.append(conformer)
-                with ProcessPoolExecutor(max_workers=4) as pool:
+                # print('running batched_conformers:')
+                # print(batched_conformers)
+                batches.append(batched_conformers)
+            with ProcessPoolExecutor(max_workers=8) as pool:
+                total_batch = []
+                for batch in batches:
+                    jobs = [pool.submit(process_molecule, conformer) for conformer in batch]
 
-                    jobs = [pool.submit(process_molecule, conformer) for conformer in batched_conformers]
+                    for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
+                        try:
+                            result = future.result()
+                        except Exception as e:
+                            print(f'failure of job due to {e}')
+                            print(traceback.format_exc())
+                            continue  # Skip if the molecule was skipped or had no results
 
-                for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
-                    result = future.result()
-                    if not result:
-                        continue  # Skip if the molecule was skipped or had no results
-
-                    for rec_data in result:
-                        # Convert rec_data to a format suitable for pyarrow
-                        rec_batch = pyarrow.RecordBatch.from_pylist([rec_data], schema=schema)
-                        writer.write_batch(rec_batch)
+                        for rec_data in result:
+                            # Convert rec_data to a format suitable for pyarrow
+                            print('dict')
+                            print(rec_data)
+                            total_batch.append(rec_data)
+                
+                #collect molblocks from total_batch and send to charge model
+                #add results back to total_batch dictionary 
+                #results will be ['riniker_monopoles'], ['riniker_dipoles']
+                rec_batch = pyarrow.RecordBatch.from_pylist([total_batch], schema=schema)
+                writer.write_batch(rec_batch)
                 
 if __name__ == "__main__":
     main(output='./charge_models.parquet')

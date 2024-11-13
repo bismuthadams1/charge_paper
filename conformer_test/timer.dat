@@ -1,0 +1,122 @@
+
+Host: sb039.cluster
+
+Timers On : Mon Nov 11 10:03:31 2024
+Timers Off: Mon Nov 11 10:03:33 2024
+
+Wall Time:        2.77 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
+
+Host: sb039.cluster
+
+Timers On : Mon Nov 11 10:08:17 2024
+Timers Off: Mon Nov 11 10:08:18 2024
+
+Wall Time:        0.65 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
+
+
+
+
+Host: sb039.cluster
+Host: sb039.cluster
+Host: sb039.cluster
+Host: sb039.cluster
+
+
+
+
+Timers On : Mon Nov 11 10:09:31 2024
+Timers On : Mon Nov 11 10:09:31 2024
+Timers On : Mon Nov 11 10:09:31 2024
+Timers On : Mon Nov 11 10:09:31 2024
+Timers Off: Tue Nov 12 22:23:29 2024
+Timers Off: Tue Nov 12 22:23:29 2024
+Timers Off: Tue Nov 12 22:23:29 2024
+Timers Off: Tue Nov 12 22:23:29 2024
+
+Wall Time:   130438.41 seconds
+
+
+Wall Time:   130438.41 seconds
+
+
+Wall Time:   130438.39 seconds
+
+
+Wall Time:   130438.38 seconds
+
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+Module                                       User      System        Wall        Calls
+MBIS                                : 184891.700u    106.917s 111011.950w    106 calls
+MBIS                                : 184731.383u     95.233s 110908.502w    109 calls
+MBIS                                : 185171.967u    144.167s 111201.411w     99 calls
+MBIS                                : 185790.033u    130.650s 111570.915w    102 calls
+build grid                          :   2228.783u      1.167s   1338.059w    106 calls
+build grid                          :   2205.467u      0.367s   1323.715w    109 calls
+build grid                          :   2331.367u      2.000s   1400.091w     99 calls
+build grid                          :   2217.217u      3.050s   1332.410w    102 calls
+post-process grid                   :    120.150u      1.917s     73.271w    106 calls
+post-process grid                   :    121.433u      0.567s     73.116w    109 calls
+post-process grid                   :    121.050u      1.333s     73.540w     99 calls
+post-process grid                   :    118.700u      2.117s     72.481w    102 calls
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+MBIS                                : 184891.700u    106.917s 111011.950w    106 calls
+MBIS                                : 184731.383u     95.233s 110908.502w    109 calls
+MBIS                                : 185171.967u    144.167s 111201.411w     99 calls
+MBIS                                : 185790.033u    130.650s 111570.915w    102 calls
+| | | | build grid                        :   2228.783u      1.167s   1338.059w    106 calls
+build grid                        :   2205.467u      0.367s   1323.715w    109 calls
+build grid                        :   2331.367u      2.000s   1400.091w     99 calls
+build grid                        :   2217.217u      3.050s   1332.410w    102 calls
+| | | | post-process grid                 :    120.150u      1.917s     73.271w    106 calls
+post-process grid                 :    121.433u      0.567s     73.116w    109 calls
+post-process grid                 :    121.050u      1.333s     73.540w     99 calls
+post-process grid                 :    118.700u      2.117s     72.481w    102 calls
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+**************************************************************************************
+
+Host: sb039.cluster
+
+Timers On : Mon Nov 11 10:09:17 2024
+Timers Off: Tue Nov 12 22:23:34 2024
+
+Wall Time:   130457.33 seconds
+
+                                                       Time (seconds)
+Module                                       User      System        Wall        Calls
+
+--------------------------------------------------------------------------------------
+
+**************************************************************************************
