@@ -327,19 +327,19 @@ def process_molecule(retrieved: MoleculePropRecord):
     batch_dict['molecule'] = openff_mol.to_smiles()
     batch_dict['geometry'] = coordinates
     batch_dict['molblock'] = rdkit.Chem.rdmolfiles.MolToMolBlock(rdkit_mol)
-    batch_dict['grid'] = retrieved.grid_coordinates
+    batch_dict['grid'] = retrieved.grid_coordinates.tolist()
     batch_dict['mol_id'] = make_hash(openff_mol)
     #mbis charges
-    batch_dict['mbis_charges'] = retrieved.mbis_charges
+    batch_dict['mbis_charges'] = retrieved.mbis_charges.magnitude.tolist()
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = openff_mol
     am1bccmol.assign_partial_charges(partial_charge_method='am1bcc')
-    batch_dict['am1bcc_charges'].append(am1_bcc_charges := am1bccmol.partial_charges.magnitude)
+    batch_dict['am1bcc_charges'].append(am1_bcc_charges := am1bccmol.partial_charges.magnitude.tolist())
     #espaloma charges
     espalomamol = openff_mol
     espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
-    batch_dict['espaloma_charges'].append(espaloma_charges := espalomamol.partial_charges.magnitude)
+    batch_dict['espaloma_charges'].append(espaloma_charges := espalomamol.partial_charges.magnitude.tolist())
     #riniker charges
     # esp, _, monopole, dipoles  =  riniker_esp(openff_molecule=openff_mol,
     #                                           grid =retrieved.grid_coordinates )
@@ -381,7 +381,7 @@ def process_molecule(retrieved: MoleculePropRecord):
         conformer=retrieved.conformer
     ).tolist()
     
-    return batch_dict
+    return dict(batch_dict)
 
 def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """Create a tmp file with all the molblocks
@@ -498,7 +498,7 @@ def main(output: str):
                         # total_batches_riniker.append(batch)
                     print('total results batch:')
                     print(results_batch)
-                    rec_batch = pyarrow.RecordBatch.from_pylist([results_batch], schema=schema)
+                    rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
                     writer.write_batch(rec_batch)
                 
 if __name__ == "__main__":
