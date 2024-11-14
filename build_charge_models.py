@@ -469,7 +469,6 @@ def main(output: str):
                     # total_batches_riniker = []
                     # print('processing molecules for riniker model')
                     # for batch in tqdm(batched(total_batch, 20), total = len(total_batches_riniker)):
-                    riniker_batch = []
                     with tempfile.TemporaryDirectory() as temp_dir:
                         # Create temporary molblock file in the temp directory
                         tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
@@ -484,8 +483,7 @@ def main(output: str):
                             batched=True,
                             batched_grid=True,
                         )
-                        print('riniker model errors:')
-                        print(output_file['error'])
+
                         with open(output_file['file_path'], 'r') as f:
                             esps_dict = json.load(f)
 
@@ -493,13 +491,13 @@ def main(output: str):
                             mol_id = item['mol_id']
                             esp_result = esps_dict.get(mol_id)
                             if esp_result:
-                                item['riniker_monopoles'] = np.array(esp_result[0])
-                                item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result[1], axis=0)).tolist()
+                                item['riniker_monopoles'] = np.array(esp_result['esp_values'][0])
+                                item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result['esp_values'][1], axis=0)).tolist()
                             else:
                                 print(f'No ESP result found for molecule ID {mol_id}')
                         # total_batches_riniker.append(batch)
-                            
-                    
+                    print('total results batch:')
+                    print(results_batch)
                     rec_batch = pyarrow.RecordBatch.from_pylist([results_batch], schema=schema)
                     writer.write_batch(rec_batch)
                 
