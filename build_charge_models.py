@@ -325,12 +325,12 @@ def process_molecule(retrieved: MoleculePropRecord):
     print('off mol')
     print(openff_mol)
     batch_dict['molecule'] = openff_mol.to_smiles()
-    batch_dict['geometry'] = coordinates
+    batch_dict['geometry'] = coordinates.m.flatten().tolist()
     batch_dict['molblock'] = rdkit.Chem.rdmolfiles.MolToMolBlock(rdkit_mol)
     batch_dict['grid'] = retrieved.grid_coordinates.tolist()
     batch_dict['mol_id'] = make_hash(openff_mol)
     #mbis charges
-    batch_dict['mbis_charges'] = retrieved.mbis_charges.magnitude.tolist()
+    batch_dict['mbis_charges'] = retrieved.mbis_charges.tolist()
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = openff_mol
@@ -349,7 +349,7 @@ def process_molecule(retrieved: MoleculePropRecord):
     esp = retrieved.esp_quantity
     esp_settings = retrieved.esp_settings
     resp_charges = calculate_resp_charges(openff_mol, grid = grid, esp=esp,qc_data_settings=esp_settings)
-    batch_dict['resp_charges'] = resp_charges
+    batch_dict['resp_charges'] = np.array(resp_charges).flatten().tolist()
     
     #------Dipoles-------#
     
