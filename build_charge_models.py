@@ -252,7 +252,7 @@ def calculate_resp_charges(openff_mol: Molecule,
     
     """
     qc_data_record = MoleculeESPRecord.from_molecule(
-        openff_mol, openff_mol.conformer_quantity, grid, esp, None, qc_data_settings
+        openff_mol, openff_mol.conformers[0], grid, esp, None, qc_data_settings
     )
     resp_charge_parameter = generate_resp_charge_parameter(
         [qc_data_record], resp_solver
@@ -294,7 +294,7 @@ def make_hash(openff_mol: Molecule) -> str:
     
     """
 
-    conformer =  openff_mol.conformers[0].m.tolist()
+    conformer =  openff_mol.conformers[0].m.flatten().tolist()
     hash_input = openff_mol.to_smiles() + ''.join(f"{c:.6f}" for c in conformer)
     
     return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
@@ -314,11 +314,13 @@ def process_molecule(retrieved: MoleculePropRecord):
     
     """
     batch_dict = defaultdict(list)
-    #multiprocess this bit
     #------Charges-------#
     coordinates = retrieved.conformer_quantity
     mapped_smiles = retrieved.tagged_smiles
-    openff_mol: Molecule =  make_openff_molecule(mapped_smiles=mapped_smiles, coordinates=coordinates)
+    openff_mol: Molecule =  make_openff_molecule(
+        mapped_smiles=mapped_smiles,
+        coordinates=coordinates
+    )
     rdkit_mol = openff_mol.to_rdkit()
     print('off mol')
     print(openff_mol)
@@ -348,7 +350,6 @@ def process_molecule(retrieved: MoleculePropRecord):
     esp_settings = retrieved.esp_settings
     resp_charges = calculate_resp_charges(openff_mol, grid = grid, esp=esp,qc_data_settings=esp_settings)
     batch_dict['resp_charges'] = resp_charges
-    
     
     #------Dipoles-------#
     
@@ -393,7 +394,8 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """
     json_dict = {}
     for item in pylist:
-        json_dict[item['mol_id']] = [item['molblock'],item['grid']]
+        print(item)
+        json_dict[item['mol_id']] = (item['molblock'],item['grid'].tolist())
     json_file = os.path.join(temp_dir, 'molblocks.json')
     json.dump(json_dict, open(json_file, "w"))
     
@@ -425,10 +427,10 @@ def main(output: str):
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema) as writer:
             batches = []
             print('building batches')
-            for batch in batched(limited_molecules_list, 20):
+            for batch in tqdm(batched(limited_molecules_list, 20), total=len(limited_molecules_list)):
                 batched_conformers = []
                 for molecule in batch:
-                    #skip charged species
+                    #skip charged species 
                     if "+" in molecule or "-" in molecule:
                         continue
                     try:
@@ -440,12 +442,11 @@ def main(output: str):
                     for conformer_no in range(no_conformers):
                         conformer = retrieved[conformer_no]
                         batched_conformers.append(conformer)
-                # print('running batched_conformers:')
-                # print(batched_conformers)
                 batches.append(batched_conformers)
             with ProcessPoolExecutor(max_workers=8) as pool:
                 total_batch = []
                 for batch in batches:
+                    results_batch = []
                     jobs = [pool.submit(process_molecule, conformer) for conformer in batch]
 
                     for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
@@ -456,21 +457,23 @@ def main(output: str):
                             print(traceback.format_exc())
                             continue  # Skip if the molecule was skipped or had no results
 
-                        for rec_data in result:
-                            # Convert rec_data to a format suitable for pyarrow
-                            print('dict')
-                            print(rec_data)
-                            total_batch.append(rec_data)
+                        # for rec_data in result:
+                        # Convert rec_data to a format suitable for pyarrow
+                        print('dict')
+                        print(result)
+                        results_batch.append(result)
                 
-            #collect molblocks from total_batch and send to charge model
-            #add results back to total_batch dictionary 
-            #results will be ['riniker_monopoles'], ['riniker_dipoles']
-            #create tmp file
-            total_batches_riniker = []
-            for batch in batched(total_batch, 20):
-                with tempfile.TemporaryDirectory() as temp_dir:
+                    #collect molblocks from total_batch and send to charge model
+                    #add results back to total_batch dictionary 
+                    #results will be ['riniker_monopoles'], ['riniker_dipoles']
+                    #create tmp file
+                    # total_batches_riniker = []
+                    # print('processing molecules for riniker model')
+                    # for batch in tqdm(batched(total_batch, 20), total = len(total_batches_riniker)):
+                    riniker_batch = []
+                    with tempfile.TemporaryDirectory() as temp_dir:
                         # Create temporary molblock file in the temp directory
-                        tmp_input_file = create_mol_block_tmp_file(pylist=batch, temp_dir=temp_dir)
+                        tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
 
                         # tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
 
@@ -487,7 +490,7 @@ def main(output: str):
                         with open(output_file['file_path'], 'r') as f:
                             esps_dict = json.load(f)
 
-                        for item in batch:
+                        for item in results_batch:
                             mol_id = item['mol_id']
                             esp_result = esps_dict.get(mol_id)
                             if esp_result:
@@ -495,11 +498,11 @@ def main(output: str):
                                 item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result[1], axis=0)).tolist()
                             else:
                                 print(f'No ESP result found for molecule ID {mol_id}')
-                        total_batches_riniker.append(batch)
+                        # total_batches_riniker.append(batch)
                             
-                
-            rec_batch = pyarrow.RecordBatch.from_pylist([total_batches_riniker], schema=schema)
-            writer.write_batch(rec_batch)
+                    
+                    rec_batch = pyarrow.RecordBatch.from_pylist([results_batch], schema=schema)
+                    writer.write_batch(rec_batch)
                 
 if __name__ == "__main__":
     main(output='./charge_models.parquet')
