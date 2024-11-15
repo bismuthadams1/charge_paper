@@ -216,7 +216,7 @@ def main():
 
     print(len(molecules))
     
-    molecules = molecules[39136:]
+    # molecules = molecules[39136:]
 
     with ProcessPoolExecutor(
         max_workers=32, mp_context=get_context("spawn")

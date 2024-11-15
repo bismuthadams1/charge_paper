@@ -46,7 +46,10 @@ resp_solver = IterativeSolver()
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
     
-    molecule = Molecule.from_mapped_smiles(mapped_smiles=mapped_smiles, allow_undefined_stereo=True)
+    molecule = Molecule.from_mapped_smiles(
+        mapped_smiles=mapped_smiles,
+        allow_undefined_stereo=True
+    )
     molecule.add_conformer(coordinates=coordinates)
     return molecule
 
@@ -68,7 +71,7 @@ def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
     partial_charges: list of partial charges 
     """
     (coordinates, elements) = convert_to_charge_format(openff_molecule)
-    print(f'rdkit to openff yields {(coordinates, elements)}')
+    # print(f'rdkit to openff yields {(coordinates, elements)}')
     monopoles, dipoles, quadrupoles = riniker_model.predict(coordinates, elements)
     #multipoles with correct units
     monopoles_quantity = monopoles.numpy()*unit.e
@@ -309,11 +312,11 @@ def process_molecule(retrieved: MoleculePropRecord):
     
     Returns
     -------
-    batch_dict: defaultdict(list)
+    batch_dict: dict
         dictionary containing all the charge info
     
     """
-    batch_dict = defaultdict(list)
+    batch_dict = {}
     #------Charges-------#
     coordinates = retrieved.conformer_quantity
     mapped_smiles = retrieved.tagged_smiles
@@ -322,24 +325,22 @@ def process_molecule(retrieved: MoleculePropRecord):
         coordinates=coordinates
     )
     rdkit_mol = openff_mol.to_rdkit()
-    print('off mol')
-    print(openff_mol)
     batch_dict['molecule'] = openff_mol.to_smiles()
     batch_dict['geometry'] = coordinates.m.flatten().tolist()
     batch_dict['molblock'] = rdkit.Chem.rdmolfiles.MolToMolBlock(rdkit_mol)
     batch_dict['grid'] = retrieved.grid_coordinates.tolist()
     batch_dict['mol_id'] = make_hash(openff_mol)
     #mbis charges
-    batch_dict['mbis_charges'] = retrieved.mbis_charges.tolist()
+    batch_dict['mbis_charges'] = retrieved.mbis_charges.flatten().tolist()
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = openff_mol
     am1bccmol.assign_partial_charges(partial_charge_method='am1bcc')
-    batch_dict['am1bcc_charges'].append(am1_bcc_charges := am1bccmol.partial_charges.magnitude.tolist())
+    batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges
     espalomamol = openff_mol
     espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
-    batch_dict['espaloma_charges'].append(espaloma_charges := espalomamol.partial_charges.magnitude.tolist())
+    batch_dict['espaloma_charges']= (espaloma_charges := espalomamol.partial_charges.magnitude.flatten().tolist())
     #riniker charges
     # esp, _, monopole, dipoles  =  riniker_esp(openff_molecule=openff_mol,
     #                                           grid =retrieved.grid_coordinates )
@@ -354,7 +355,7 @@ def process_molecule(retrieved: MoleculePropRecord):
     #------Dipoles-------#
     
     qm_dipole = retrieved.dipole 
-    batch_dict['qm_dipoles'] = qm_dipole.tolist()
+    batch_dict['qm_dipoles'] = np.linalg.norm(qm_dipole).tolist()
     
     #mbis dipole
     batch_dict['mbis_dipoles'] = calculate_dipole_magnitude(
@@ -381,7 +382,7 @@ def process_molecule(retrieved: MoleculePropRecord):
         conformer=retrieved.conformer
     ).tolist()
     
-    return dict(batch_dict)
+    return batch_dict
 
 def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """Create a tmp file with all the molblocks
@@ -394,8 +395,7 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """
     json_dict = {}
     for item in pylist:
-        print(item)
-        json_dict[item['mol_id']] = (item['molblock'],item['grid'].tolist())
+        json_dict[item['mol_id']] = (item['molblock'],item['grid'])
     json_file = os.path.join(temp_dir, 'molblocks.json')
     json.dump(json_dict, open(json_file, "w"))
     
@@ -411,7 +411,7 @@ def main(output: str):
         ('mbis_charges', pyarrow.list_(pyarrow.float64())),
         ('am1bcc_charges', pyarrow.list_(pyarrow.float64())),
         ('espaloma_charges', pyarrow.list_(pyarrow.float64())),
-        ('riniker_monopole_charges', pyarrow.list_(pyarrow.float64())),
+        ('riniker_monopoles', pyarrow.list_(pyarrow.float64())),
         ('resp_charges', pyarrow.list_(pyarrow.float64())),
         ('qm_dipoles', pyarrow.float64()),
         ('mbis_dipoles', pyarrow.float64()),
@@ -420,7 +420,7 @@ def main(output: str):
         ('riniker_dipoles', pyarrow.float64()),
         ('resp_dipole', pyarrow.float64()),
         ('molecule', pyarrow.string()),
-        ('grid', pyarrow.list_(pyarrow.float64())),
+        ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
     ])    
     limit = 40
     limited_molecules_list = molecules_list[:limit]  
@@ -443,7 +443,6 @@ def main(output: str):
                         batched_conformers.append(conformer)
                 batches.append(batched_conformers)
             with ProcessPoolExecutor(max_workers=8) as pool:
-                total_batch = []
                 for batch in batches:
                     results_batch = []
                     jobs = [pool.submit(process_molecule, conformer) for conformer in batch]
@@ -458,17 +457,8 @@ def main(output: str):
 
                         # for rec_data in result:
                         # Convert rec_data to a format suitable for pyarrow
-                        print('dict')
-                        print(result)
                         results_batch.append(result)
                 
-                    #collect molblocks from total_batch and send to charge model
-                    #add results back to total_batch dictionary 
-                    #results will be ['riniker_monopoles'], ['riniker_dipoles']
-                    #create tmp file
-                    # total_batches_riniker = []
-                    # print('processing molecules for riniker model')
-                    # for batch in tqdm(batched(total_batch, 20), total = len(total_batches_riniker)):
                     with tempfile.TemporaryDirectory() as temp_dir:
                         # Create temporary molblock file in the temp directory
                         tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
@@ -491,13 +481,11 @@ def main(output: str):
                             mol_id = item['mol_id']
                             esp_result = esps_dict.get(mol_id)
                             if esp_result:
-                                item['riniker_monopoles'] = np.array(esp_result['esp_values'][0])
+                                item['riniker_monopoles'] = esp_result['esp_values'][0]
                                 item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result['esp_values'][1], axis=0)).tolist()
                             else:
                                 print(f'No ESP result found for molecule ID {mol_id}')
                         # total_batches_riniker.append(batch)
-                    print('total results batch:')
-                    print(results_batch)
                     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
                     writer.write_batch(rec_batch)
                 
