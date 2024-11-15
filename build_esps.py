@@ -210,7 +210,7 @@ def main():
     grid_settings = LatticeGridSettings(
         type="fcc", spacing=0.5, inner_vdw_scale=1.4, outer_vdw_scale=2.0
     )
-    prop_store = MoleculePropStore("/mnt/storage/nobackup/nca121/QC_archive_50K_esp_gen/async_chargecraft_more_workers/ESP_rebuilt.db")
+    prop_store = MoleculePropStore("./ESP_rebuilt.db")
 
     molecules = [record for record in client.query_records(dataset_id=347)]
 
