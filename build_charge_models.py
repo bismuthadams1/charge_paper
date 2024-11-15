@@ -422,11 +422,11 @@ def main(output: str):
         ('molecule', pyarrow.string()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
     ])    
-    limit = 40
-    limited_molecules_list = molecules_list[:limit]  
+    # limit = 40
+    # limited_molecules_list = molecules_list[:limit]  
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema) as writer:
             batches = []
-            for batch in tqdm(batched(limited_molecules_list, 20), total=len(limited_molecules_list),desc='Building batches'):
+            for batch in tqdm(batched(molecules_list, 20), total=len(molecules_list),desc='Building batches'):
                 batched_conformers = []
                 for molecule in batch:
                     #skip charged species 
