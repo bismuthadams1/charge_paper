@@ -4,3 +4,7 @@
 *.db-shm
 *.db-wal
 *.json
+*.parquet
+*.db-shm
+*.db-wal
+*.yml
