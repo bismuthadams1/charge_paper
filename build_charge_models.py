@@ -403,7 +403,7 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
 
 def main(output: str):
     
-    prop_store = MoleculePropStore("./ESP_rebuilt.db", cache_size=100)
+    prop_store = MoleculePropStore("./ESP_rebuilt.db", cache_size=1000)
     molecules_list = prop_store.list()
     # print(molecules_list)
 
@@ -426,7 +426,7 @@ def main(output: str):
     # limited_molecules_list = molecules_list[:limit]  
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema) as writer:
             batches = []
-            for batch in tqdm(batched(molecules_list, 20), total=len(molecules_list),desc='Building batches'):
+            for batch in tqdm(batched(molecules_list, 1000), total=len(molecules_list),desc='Building batches'):
                 batched_conformers = []
                 for molecule in batch:
                     #skip charged species 
