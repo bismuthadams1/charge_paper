@@ -62,9 +62,9 @@ def build_mol(openff_molecule: Molecule) -> str:
     return rdmolfiles.MolToMolBlock(openff_molecule.to_rdkit())
 
 
-def riniker_esp(openff_molecule: Molecule,
+def calc_riniker_esp(openff_molecule: Molecule,
                 grid: np.ndarray,
-                monopole: list,
+                monopole: unit.Quantity,
                 dipole: list,
                 quadrupole: list,
                 ) -> list[int]:
@@ -82,7 +82,7 @@ def riniker_esp(openff_molecule: Molecule,
     (coordinates, elements) = convert_to_charge_format(openff_molecule)
     # print(f'rdkit to openff yields {(coordinates, elements)}')
     #multipoles with correct units
-    monopoles_quantity = monopole.numpy()*unit.e
+    monopoles_quantity = monopole
     dipoles_quantity = dipole.numpy().reshape(3,-1)*unit.e*unit.angstrom
     quadropoles_quantity = quadrupole.numpy().reshape(3,3,-1)*unit.e*unit.angstrom*unit.angstrom
     coordinates_ang = coordinates * unit.angstrom
@@ -96,7 +96,7 @@ def riniker_esp(openff_molecule: Molecule,
                                     atom_coordinates=coordinates_ang,
                                     quadrupoles= quadropoles_quantity)
     #NOTE: ESP units, hartree/e and grid units are angstrom
-    return (monopole_esp + dipole_esp + quadrupole_esp).m.flatten().tolist()
+    return (monopole_esp + dipole_esp + quadrupole_esp)
 
 def convert_to_charge_format(openff_mol: Molecule) -> tuple[np.ndarray,list[str]]:
     """Convert openff molecule to appropriate format on which to assign charges
@@ -141,9 +141,14 @@ def calculate_esp_monopole_au(
     monopole_esp: unit.Quantity
         monopole esp
     """
-    #prefactor
+    #prefactor  
     ke = 1 / (4 * np.pi * unit.epsilon_0) # 1/vacuum_permittivity, 1/(e**2 * a0 *Eh)
-
+    print('building esp with the charges', flush=True)
+    print(charges, flush=True)
+    if isinstance(charges, unit.Quantity):
+       charges = charges.flatten()
+    else:
+        charges = np.array(charges).flatten() * unit.e
     #Ensure everything is in AU and correct dimensions
     grid_coordinates = grid_coordinates.reshape((-1, 3)).to(unit.bohr)  #Å to Bohr
     atom_coordinates = atom_coordinates.reshape((-1, 3)).to(unit.bohr)    #Å to Bohr
@@ -225,7 +230,7 @@ def calculate_esp_quadropole_au(
     #prefactor
     ke = 1 / (4 * np.pi * unit.epsilon_0) # 1/vacuum_permittivity, 1/(e**2 * a0 *Eh)
     #Ensure everything is in AU
-    quadrupoles = quadrupoles.to(unit.e*unit.bohr*unit.bohr)    
+    quadrupoles = _detrace(quadrupoles.to(unit.e * unit.bohr * unit.bohr))
     grid_coordinates = grid_coordinates.reshape((-1, 3)).to(unit.bohr)  #Å to Bohr
     atom_coordinates = atom_coordinates.reshape((-1, 3)).to(unit.bohr)    #Å to Bohr
 
@@ -239,7 +244,7 @@ def calculate_esp_quadropole_au(
 
     return esp.to(AU_ESP)
 
-def _detrace(self, quadrupoles: unit.Quantity) -> unit.Quantity:
+def _detrace( quadrupoles: unit.Quantity) -> unit.Quantity:
     """Make sure we have the traceless quadrupole tensor.
 
     Parameters
@@ -527,12 +532,12 @@ def process_esp(results_batch):
         for item in results_batch:
             mol_id = item['mol_id']
             esp_result = esps_dict.get(mol_id)
-            rdkit_mol = Chem.Chem.rdmolfiles.MolFromMolBlock(item['molblock'], removeHs = False)
+            rdkit_mol = Chem.rdmolfiles.MolFromMolBlock(item['molblock'], removeHs = False)
             openff_mol = Molecule.from_rdkit(rdkit_mol)
             if esp_result:
                 item['riniker_monopoles'] = esp_result['esp_values'][0]
                 item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result['esp_values'][1], axis=0)).tolist()
-                riniker_esp = riniker_esp(
+                riniker_esp = calc_riniker_esp(
                     openff_molecule=openff_mol,
                     grid= esp_result['esp_grid'][-1] * unit.angstrom,
                     monopole= esp_result['esp_values'][0] * unit.e,
