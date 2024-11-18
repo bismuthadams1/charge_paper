@@ -5,6 +5,7 @@
 
 
 from chargecraft.storage.storage import MoleculePropRecord, MoleculePropStore
+from chargecraft.storage.db import DBMoleculePropRecord, DBConformerPropRecord
 from openff.toolkit.topology import Molecule
 from openff.units import unit
 from collections import defaultdict
@@ -13,7 +14,7 @@ from more_itertools import batched
 from rdkit.Chem import rdmolfiles
 from rdkit import Chem
 from MultipoleNet import load_model, build_graph_batched, D_Q
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
 from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
 from tqdm import tqdm
 import traceback
@@ -260,9 +261,12 @@ def calculate_resp_charges(openff_mol: Molecule,
     resp_charge_parameter = generate_resp_charge_parameter(
         [qc_data_record], resp_solver
     )
+    resp_charges = fix_resp_ordering(openff_mol, resp_charge_parameter )
+
     resp_charges = LibraryChargeGenerator.generate(
         openff_mol, LibraryChargeCollection(parameters=[resp_charge_parameter])
     )
+
     
     return np.round(resp_charges, 4).tolist()
 
@@ -272,7 +276,13 @@ def calculate_dipole_magnitude(charges: np.ndarray,
     
     Parameters
     ----------
-    charges: np.
+    charges: np.ndarray
+    
+    conformer: np.ndarray
+    
+    Returns
+    -------
+    float
     
     """
     reshaped_charges = np.reshape(charges,(-1,1))
@@ -301,6 +311,16 @@ def make_hash(openff_mol: Molecule) -> str:
     hash_input = openff_mol.to_smiles() + ''.join(f"{c:.6f}" for c in conformer)
     
     return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
+
+def stream_records(batch_size=1000):
+    session = Session()
+    query = session.query(DBMoleculePropRecord).options(
+        joinedload(DBMoleculePropRecord.conformers)
+    ).yield_per(batch_size)
+    for db_record in query:
+        yield db_record
+    session.close()
+
     
 def process_molecule(retrieved: MoleculePropRecord):
     """Process molecules to their charge model envs
@@ -384,6 +404,17 @@ def process_molecule(retrieved: MoleculePropRecord):
     
     return batch_dict
 
+def fix_resp_ordering(openff_mol: Molecule, esp_charge_parameter):
+    # extract the charges into an array
+    # we get back the tagged smiles with duplicated index, where the index matches the value in the arrary of the charge to use
+    matchs = openff_mol.chemical_environment_matches(query=esp_charge_parameter.smiles)
+    resp_charges = [0.0 for _ in range(openff_mol.n_atoms)]
+    for match in matchs:
+        for i, atom_indx in enumerate(match):
+            resp_charges[atom_indx] = esp_charge_parameter.value[i]
+    
+    return openff_mol
+
 def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """Create a tmp file with all the molblocks
     
@@ -423,71 +454,72 @@ def main(output: str):
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
     ])    
     # limit = 40
+    total_batch = []
+    for db_record in tqdm(stream_records(), desc="Processing molecules"):
+        molecule_smiles = db_record.smiles
+        # Skip charged species
+        if "+" in molecule_smiles or "-" in molecule_smiles:
+            continue
+        # Convert DB records to data models using the instance method
+        models = prop_store._db_records_to_model([db_record])
+        for model in models:
+            try:
+                # Process the molecule (your existing logic)
+                result = process_molecule(model)
+                total_batch.append(result)
+            except Exception as e:
+                print(f"Error processing molecule {molecule_smiles}: {e}")
+
     # limited_molecules_list = molecules_list[:limit]  
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema) as writer:
-            batches = []
-            for batch in tqdm(batched(molecules_list, 1000), total=len(molecules_list),desc='Building batches'):
-                batched_conformers = []
-                for molecule in batch:
-                    #skip charged species 
-                    if "+" in molecule or "-" in molecule:
-                        continue
+#         batches = []
+                    
+        with ProcessPoolExecutor(max_workers=8) as pool:
+            for batch in total_batch:
+                results_batch = []
+                jobs = [pool.submit(process_molecule, conformer) for conformer in batch]
+
+                for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
                     try:
-                        no_conformers = len(retrieved := prop_store.retrieve(smiles = molecule))
+                        result = future.result()
                     except Exception as e:
-                        print(f'skipping this result due to {e}')
+                        print(f'failure of job due to {e}')
                         print(traceback.format_exc())
-                        continue
-                    for conformer_no in range(no_conformers):
-                        conformer = retrieved[conformer_no]
-                        batched_conformers.append(conformer)
-                batches.append(batched_conformers)
-            with ProcessPoolExecutor(max_workers=8) as pool:
-                for batch in batches:
-                    results_batch = []
-                    jobs = [pool.submit(process_molecule, conformer) for conformer in batch]
+                        continue  # Skip if the molecule was skipped or had no results
 
-                    for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
-                        try:
-                            result = future.result()
-                        except Exception as e:
-                            print(f'failure of job due to {e}')
-                            print(traceback.format_exc())
-                            continue  # Skip if the molecule was skipped or had no results
+                    # for rec_data in result:
+                    # Convert rec_data to a format suitable for pyarrow
+                    results_batch.append(result)
+            
+                with tempfile.TemporaryDirectory() as temp_dir:
+                    # Create temporary molblock file in the temp directory
+                    tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
 
-                        # for rec_data in result:
-                        # Convert rec_data to a format suitable for pyarrow
-                        results_batch.append(result)
-                
-                    with tempfile.TemporaryDirectory() as temp_dir:
-                        # Create temporary molblock file in the temp directory
-                        tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
+                    # tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
 
-                        # tmp_output_file = os.path.join(temp_dir, 'esp_results.json')
+                    # Run the ESP computation in batched mode
+                    output_file = handle_esp_request(
+                        charge_model='RIN',
+                        conformer_mol=tmp_input_file,
+                        broken_up=True,
+                        batched=True,
+                        batched_grid=True,
+                    )
 
-                        # Run the ESP computation in batched mode
-                        output_file = handle_esp_request(
-                            charge_model='RIN',
-                            conformer_mol=tmp_input_file,
-                            broken_up=True,
-                            batched=True,
-                            batched_grid=True,
-                        )
+                    with open(output_file['file_path'], 'r') as f:
+                        esps_dict = json.load(f)
 
-                        with open(output_file['file_path'], 'r') as f:
-                            esps_dict = json.load(f)
-
-                        for item in results_batch:
-                            mol_id = item['mol_id']
-                            esp_result = esps_dict.get(mol_id)
-                            if esp_result:
-                                item['riniker_monopoles'] = esp_result['esp_values'][0]
-                                item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result['esp_values'][1], axis=0)).tolist()
-                            else:
-                                print(f'No ESP result found for molecule ID {mol_id}')
-                        # total_batches_riniker.append(batch)
-                    rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
-                    writer.write_batch(rec_batch)
-                
+                    for item in results_batch:
+                        mol_id = item['mol_id']
+                        esp_result = esps_dict.get(mol_id)
+                        if esp_result:
+                            item['riniker_monopoles'] = esp_result['esp_values'][0]
+                            item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result['esp_values'][1], axis=0)).tolist()
+                        else:
+                            print(f'No ESP result found for molecule ID {mol_id}')
+                    # total_batches_riniker.append(batch)
+                rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
+                writer.write_batch(rec_batch)
+        
 if __name__ == "__main__":
     main(output='./charge_models.parquet')

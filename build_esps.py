@@ -202,8 +202,6 @@ def process_item_function(
         return record
 
 
-
-
 def main():
     client = PortalClient("api.qcarchive.molssi.org")
 
