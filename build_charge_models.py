@@ -263,12 +263,18 @@ def calculate_resp_charges(openff_mol: Molecule,
     resp_charge_parameter = generate_resp_charge_parameter(
         [qc_data_record], resp_solver
     )
-    resp_charges = fix_resp_ordering(openff_mol, resp_charge_parameter )
-
-    resp_charges = LibraryChargeGenerator.generate(
-        openff_mol, LibraryChargeCollection(parameters=[resp_charge_parameter])
-    )
-
+    
+    # resp_charges = LibraryChargeGenerator.generate(
+    #     openff_mol, LibraryChargeCollection(parameters=[resp_charge_parameter])
+    # )
+    
+    matchs = openff_mol.chemical_environment_matches(query=resp_charge_parameter.smiles)
+    resp_charges = [0.0 for _ in range(openff_mol.n_atoms)]
+    for match in matchs:
+        for i, atom_indx in enumerate(match):
+            resp_charges[atom_indx] = resp_charge_parameter.value[i]
+            
+    
     
     return np.round(resp_charges, 4).tolist()
 
@@ -455,7 +461,8 @@ def process_esp(results_batch):
             batched=True,
             batched_grid=True,
         )
-
+        print('charge api output:')
+        print(output_file)
         with open(output_file['file_path'], 'r') as f:
             esps_dict = json.load(f)
 
@@ -489,7 +496,7 @@ def main(output: str):
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
     ])    
     batch_count = 4
-    batch_size = 1000
+    batch_size = 20
     batch_models = []
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
@@ -498,7 +505,7 @@ def main(output: str):
         for model in tqdm(prop_store.stream_records(), desc="Processing molecules"):
             molecule_smiles = model.tagged_smiles
             # Skip charged species as Riniker cannot accept them
-            if "+" in molecule_smiles or "-" in molecule_smiles:
+            if "+" in molecule_smiles or "-" in molecule_smiles or "Br" in molecule_smiles:
                 continue
             batch_models.append(model)
             if len(batch_models) >= batch_size:
