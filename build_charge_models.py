@@ -471,7 +471,6 @@ def process_esp(results_batch):
 
 def main(output: str):
 
-    
     prop_store = MoleculePropStore("./ESP_rebuilt_2.db", cache_size=1000)
 
     schema = pyarrow.schema([
@@ -489,77 +488,31 @@ def main(output: str):
         ('molecule', pyarrow.string()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
     ])    
-    # limit = 40
+    batch_count = 4
     batch_size = 1000
     batch_models = []
-
+    
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
-        for db_record in tqdm(prop_store.stream_records(), desc="Processing molecules"):
-            molecule_smiles = db_record.smiles
-            # Skip charged species as riniker cannot accept them
+        batch_count = 0  # Initialize the batch counter
+        batch_models = []
+        for model in tqdm(prop_store.stream_records(), desc="Processing molecules"):
+            molecule_smiles = model.tagged_smiles
+            # Skip charged species as Riniker cannot accept them
             if "+" in molecule_smiles or "-" in molecule_smiles:
                 continue
-            # Convert DB records to data models using the instance method
-            models = prop_store._db_records_to_model([db_record])
-            for model in models:
-                batch_models.append(model)
-                if len(batch_models) >= batch_size:
-                    # Process the batch
-                    process_and_write_batch(batch_models, schema, writer)
-                    # Clear the batch_models for the next batch
-                    batch_models = []
+            batch_models.append(model)
+            if len(batch_models) >= batch_size:
+                # Process the batch
+                process_and_write_batch(batch_models, schema, writer)
+                batch_models = []
+                batch_count += 1  # Increment the batch counter
+                if batch_count >= 4:
+                    break  # Exit the loop after processing 4 batches
 
-        # Process any remaining models
-        if batch_models:
+        # Optionally process any remaining models if you haven't reached 4 batches
+        if batch_models and batch_count < 4:
             process_and_write_batch(batch_models, schema, writer)
 
-#     # limited_molecules_list = molecules_list[:limit]  
-#     with pyarrow.parquet.ParquetWriter(where=output, schema=schema) as writer:
-# #         batches = []
-                    
-#         with ProcessPoolExecutor(max_workers=8) as pool:
-#             for batch in total_batch:
-#                 results_batch = []
-#                 jobs = [pool.submit(process_molecule, conformer) for conformer in batch]
-
-#                 for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
-#                     try:
-#                         result = future.result()
-#                     except Exception as e:
-#                         print(f'failure of job due to {e}')
-#                         print(traceback.format_exc())
-#                         continue  # Skip if the molecule was skipped or had no results
-
-#                     # for rec_data in result:
-#                     # Convert rec_data to a format suitable for pyarrow
-#                     results_batch.append(result)
-            
-#                 with tempfile.TemporaryDirectory() as temp_dir:
-#                     # Create temporary molblock file in the temp directory
-#                     tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
-#                     # Run the ESP computation in batched mode
-#                     output_file = handle_esp_request(
-#                         charge_model='RIN',
-#                         conformer_mol=tmp_input_file,
-#                         broken_up=True,
-#                         batched=True,
-#                         batched_grid=True,
-#                     )
-
-#                     with open(output_file['file_path'], 'r') as f:
-#                         esps_dict = json.load(f)
-
-#                     for item in results_batch:
-#                         mol_id = item['mol_id']
-#                         esp_result = esps_dict.get(mol_id)
-#                         if esp_result:
-#                             item['riniker_monopoles'] = esp_result['esp_values'][0]
-#                             item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result['esp_values'][1], axis=0)).tolist()
-#                         else:
-#                             print(f'No ESP result found for molecule ID {mol_id}')
-#                     # total_batches_riniker.append(batch)
-#                 rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
-#                 writer.write_batch(rec_batch)
         
 if __name__ == "__main__":
     main(output='./charge_models.parquet')
