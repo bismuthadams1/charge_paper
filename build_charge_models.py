@@ -44,6 +44,7 @@ from openff.recharge.charges.resp.solvers import IterativeSolver
 toolkit_registry = EspalomaChargeToolkitWrapper()
 riniker_model = load_model()
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
+HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
 resp_solver = IterativeSolver()
 
 
@@ -61,7 +62,12 @@ def build_mol(openff_molecule: Molecule) -> str:
     return rdmolfiles.MolToMolBlock(openff_molecule.to_rdkit())
 
 
-def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
+def riniker_esp(openff_molecule: Molecule,
+                grid: np.ndarray,
+                monopole: list,
+                dipole: list,
+                quadrupole: list,
+                ) -> list[int]:
     """Assign charges according to charge model selected
 
     Parameters
@@ -75,11 +81,10 @@ def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
     """
     (coordinates, elements) = convert_to_charge_format(openff_molecule)
     # print(f'rdkit to openff yields {(coordinates, elements)}')
-    monopoles, dipoles, quadrupoles = riniker_model.predict(coordinates, elements)
     #multipoles with correct units
-    monopoles_quantity = monopoles.numpy()*unit.e
-    dipoles_quantity = dipoles.numpy()*unit.e*unit.angstrom
-    quadropoles_quantity = quadrupoles.numpy()*unit.e*unit.angstrom*unit.angstrom
+    monopoles_quantity = monopole.numpy()*unit.e
+    dipoles_quantity = dipole.numpy().reshape(3,-1)*unit.e*unit.angstrom
+    quadropoles_quantity = quadrupole.numpy().reshape(3,3,-1)*unit.e*unit.angstrom*unit.angstrom
     coordinates_ang = coordinates * unit.angstrom
     monopole_esp = calculate_esp_monopole_au(grid_coordinates=grid,
                                         atom_coordinates=coordinates_ang,
@@ -91,7 +96,7 @@ def riniker_esp(openff_molecule: Molecule, grid: np.ndarray) -> list[int]:
                                     atom_coordinates=coordinates_ang,
                                     quadrupoles= quadropoles_quantity)
     #NOTE: ESP units, hartree/e and grid units are angstrom
-    return (monopole_esp + dipole_esp + quadrupole_esp).m.flatten().tolist(), grid.m.tolist(), monopoles, dipoles
+    return (monopole_esp + dipole_esp + quadrupole_esp).m.flatten().tolist()
 
 def convert_to_charge_format(openff_mol: Molecule) -> tuple[np.ndarray,list[str]]:
     """Convert openff molecule to appropriate format on which to assign charges
@@ -140,7 +145,6 @@ def calculate_esp_monopole_au(
     ke = 1 / (4 * np.pi * unit.epsilon_0) # 1/vacuum_permittivity, 1/(e**2 * a0 *Eh)
 
     #Ensure everything is in AU and correct dimensions
-    charges = charges.flatten()
     grid_coordinates = grid_coordinates.reshape((-1, 3)).to(unit.bohr)  #Å to Bohr
     atom_coordinates = atom_coordinates.reshape((-1, 3)).to(unit.bohr)    #Å to Bohr
     #displacement and distance
@@ -234,6 +238,29 @@ def calculate_esp_quadropole_au(
     esp = ke*np.sum((3*quadrupole_dot_2*(1/2 * inv_distance**5)),axis=-1)
 
     return esp.to(AU_ESP)
+
+def _detrace(self, quadrupoles: unit.Quantity) -> unit.Quantity:
+    """Make sure we have the traceless quadrupole tensor.
+
+    Parameters
+    ----------
+    quadrupoles : unit.Quantity
+        Quadrupoles.
+
+    Returns
+    -------
+    unit.Quantity
+        Detraced quadrupoles.
+    """
+    quadrupoles = quadrupoles.m
+    for i in range(quadrupoles.shape[0]):
+        trace = np.trace(quadrupoles[i])
+        trace /= 3
+        quadrupoles[i][0][0] -= trace
+        quadrupoles[i][1][1] -= trace
+        quadrupoles[i][2][2] -= trace
+
+        return quadrupoles * unit.e * unit.bohr * unit.bohr
         
 def calculate_resp_charges(openff_mol: Molecule,
                            grid: unit.Quantity,
@@ -344,7 +371,7 @@ def process_molecule(retrieved: MoleculePropRecord):
     batch_dict['grid'] = retrieved.grid_coordinates.tolist()
     batch_dict['mol_id'] = make_hash(openff_mol)
     #mbis charges
-    batch_dict['mbis_charges'] = retrieved.mbis_charges.flatten().tolist()
+    batch_dict['mbis_charges'] = (mbis_charges := retrieved.mbis_charges.flatten().tolist())
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = openff_mol
@@ -394,6 +421,52 @@ def process_molecule(retrieved: MoleculePropRecord):
         charges=resp_charges, 
         conformer=retrieved.conformer
     ).tolist()
+        
+    #------ESP RMSE Calculations-------#
+
+    # Convert grid and atom coordinates to Bohr
+    grid_coordinates = retrieved.grid_coordinates_quantity.to(unit.bohr)  # Units: Bohr
+    atom_coordinates = retrieved.conformer_quantity.to(unit.bohr)  # Units: Bohr
+
+    # QM ESP (already in atomic units)
+    qm_esp = retrieved.esp_quantity  # Units: Hartree / e
+    batch_dict['qm_esp'] = qm_esp.m.flatten().tolist()
+    # AM1-BCC ESP
+    am1bcc_esp = calculate_esp_monopole_au(
+        grid_coordinates=grid_coordinates,
+        atom_coordinates=atom_coordinates,
+        charges=am1_bcc_charges
+    )
+    am1bcc_esp_rms = (((am1bcc_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
+    batch_dict['am1bcc_esp_rms'] = am1bcc_esp_rms * HA_TO_KCAL_P_MOL
+
+    # Espaloma ESP
+    espaloma_esp = calculate_esp_monopole_au(
+        grid_coordinates=grid_coordinates,
+        atom_coordinates=atom_coordinates,
+        charges=espaloma_charges
+    )
+    espaloma_esp_rms = (((espaloma_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
+    batch_dict['espaloma_esp_rms'] = espaloma_esp_rms * HA_TO_KCAL_P_MOL
+
+    # RESP ESP
+    resp_esp = calculate_esp_monopole_au(
+        grid_coordinates=grid_coordinates,
+        atom_coordinates=atom_coordinates,
+        charges=resp_charges
+    )
+    resp_esp_rms = (((resp_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
+    batch_dict['resp_esp_rms'] = resp_esp_rms * HA_TO_KCAL_P_MOL
+
+    # MBIS ESP
+    mbis_esp = calculate_esp_monopole_au(
+        grid_coordinates=grid_coordinates,
+        atom_coordinates=atom_coordinates,
+        charges=mbis_charges
+    )
+    mbis_esp_rms = (((mbis_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
+    batch_dict['mbis_esp_rms'] = mbis_esp_rms * HA_TO_KCAL_P_MOL
+
     
     return batch_dict
 
@@ -454,12 +527,21 @@ def process_esp(results_batch):
         for item in results_batch:
             mol_id = item['mol_id']
             esp_result = esps_dict.get(mol_id)
+            rdkit_mol = Chem.Chem.rdmolfiles.MolFromMolBlock(item['molblock'], removeHs = False)
+            openff_mol = Molecule.from_rdkit(rdkit_mol)
             if esp_result:
                 item['riniker_monopoles'] = esp_result['esp_values'][0]
                 item['riniker_dipoles'] = np.linalg.norm(np.sum(esp_result['esp_values'][1], axis=0)).tolist()
+                riniker_esp = riniker_esp(
+                    openff_molecule=openff_mol,
+                    grid= esp_result['esp_grid'][-1] * unit.angstrom,
+                    monopole= esp_result['esp_values'][0] * unit.e,
+                    dipole= esp_result['esp_values'][1],
+                    quadrupole= esp_result['esp_values'][2],
+                )
+                item['riniker_esp_rms'] =  (((riniker_esp.m - item['qm_esp'].numpy()) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
             else:
                 print(f'No ESP result found for molecule ID {mol_id}')
-
 
 def main(output: str):
 
@@ -477,9 +559,15 @@ def main(output: str):
         ('espaloma_dipole', pyarrow.float64()),
         ('riniker_dipoles', pyarrow.float64()),
         ('resp_dipole', pyarrow.float64()),
+        ('am1bcc_esp_rms', pyarrow.float64()),
+        ('espaloma_esp_rms', pyarrow.float64()),
+        ('resp_esp_rms', pyarrow.float64()),
+        ('mbis_esp_rms', pyarrow.float64()),
         ('molecule', pyarrow.string()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
-    ])    
+        ('qm_esp', pyarrow.list_(pyarrow.float64())),
+        ('riniker_esp_rms',pyarrow.float64()),
+    ])
     batch_count = 4
     batch_size = 20
     batch_models = []
