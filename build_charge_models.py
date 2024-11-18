@@ -264,17 +264,12 @@ def calculate_resp_charges(openff_mol: Molecule,
         [qc_data_record], resp_solver
     )
     
-    # resp_charges = LibraryChargeGenerator.generate(
-    #     openff_mol, LibraryChargeCollection(parameters=[resp_charge_parameter])
-    # )
-    
     matchs = openff_mol.chemical_environment_matches(query=resp_charge_parameter.smiles)
     resp_charges = [0.0 for _ in range(openff_mol.n_atoms)]
     for match in matchs:
         for i, atom_indx in enumerate(match):
             resp_charges[atom_indx] = resp_charge_parameter.value[i]
             
-    
     
     return np.round(resp_charges, 4).tolist()
 
@@ -343,7 +338,7 @@ def process_molecule(retrieved: MoleculePropRecord):
         coordinates=coordinates
     )
     rdkit_mol = openff_mol.to_rdkit()
-    batch_dict['molecule'] = openff_mol.to_smiles()
+    batch_dict['molecule'] = mapped_smiles
     batch_dict['geometry'] = coordinates.m.flatten().tolist()
     batch_dict['molblock'] = rdkit.Chem.rdmolfiles.MolToMolBlock(rdkit_mol)
     batch_dict['grid'] = retrieved.grid_coordinates.tolist()
@@ -402,16 +397,6 @@ def process_molecule(retrieved: MoleculePropRecord):
     
     return batch_dict
 
-def fix_resp_ordering(openff_mol: Molecule, esp_charge_parameter):
-    # extract the charges into an array
-    # we get back the tagged smiles with duplicated index, where the index matches the value in the arrary of the charge to use
-    matchs = openff_mol.chemical_environment_matches(query=esp_charge_parameter.smiles)
-    resp_charges = [0.0 for _ in range(openff_mol.n_atoms)]
-    for match in matchs:
-        for i, atom_indx in enumerate(match):
-            resp_charges[atom_indx] = esp_charge_parameter.value[i]
-    
-    return openff_mol
 
 def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """Create a tmp file with all the molblocks
