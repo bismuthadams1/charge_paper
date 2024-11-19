@@ -517,8 +517,7 @@ def process_and_write_batch(batch_models, schema, writer):
     writer.write_batch(rec_batch)
     
 def process_esp(results_batch):
-        temp_dir = '/mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/'
-    # with tempfile.TemporaryDirectory() as temp_dir:
+    with tempfile.TemporaryDirectory() as temp_dir:
         # Create temporary molblock file in the temp directory
         tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
         # Run the ESP computation in batched mode
@@ -585,7 +584,7 @@ def main(output: str):
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('riniker_esp_rms',pyarrow.float64()),
     ])
-    batch_count = 1
+    # batch_count = 1
     batch_size = 20
     batch_models = []
     
@@ -603,12 +602,12 @@ def main(output: str):
                 # Process the batch
                 process_and_write_batch(batch_models, schema, writer)
                 batch_models = []
-                batch_count += 1  # Increment the batch counter
-                if batch_count >= 1:
-                    break  # Exit the loop after processing 4 batches
+                # batch_count += 1  # Increment the batch counter
+                # if batch_count >= 1:
+                #     break  # Exit the loop after processing 4 batches
 
         # Optionally process any remaining models if you haven't reached 4 batches
-        if batch_models and batch_count < 1:
+        if batch_models:# and batch_count < 1:
             process_and_write_batch(batch_models, schema, writer)
 
         
