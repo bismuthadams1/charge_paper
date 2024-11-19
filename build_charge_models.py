@@ -318,8 +318,8 @@ def calculate_resp_charges(openff_mol: Molecule,
     
     return np.round(resp_charges, 4).tolist()
 
-def calculate_dipole_magnitude(charges: np.ndarray,
-                               conformer: np.ndarray) -> float:
+def calculate_dipole_magnitude(charges: unit.Quantity,
+                               conformer: unit.Quantity) -> float:
     """Calculate dipole magnitude
     
     Parameters
@@ -334,10 +334,12 @@ def calculate_dipole_magnitude(charges: np.ndarray,
     
     """
     reshaped_charges = np.reshape(charges,(-1,1))
-    dipole_vector = np.sum(conformer * reshaped_charges,axis=0)
+    dipole_vector = np.sum(conformer.to(unit.bohr) * reshaped_charges,axis=0)
     dipole_magnitude = np.linalg.norm(dipole_vector)
+    print('calculated dipole')
+    print(dipole_magnitude)
 
-    return dipole_magnitude
+    return dipole_magnitude.m
 
 def make_hash(openff_mol: Molecule) -> str:
     """Make a molblock for the purposes of batching
@@ -412,23 +414,24 @@ def process_molecule(retrieved: MoleculePropRecord):
     
     #------Dipoles-------#
     
-    qm_dipole = retrieved.dipole 
-    batch_dict['qm_dipoles'] = np.linalg.norm(qm_dipole).tolist()
+    qm_dipole = retrieved.dipole_quantity 
+    print('dipoles',qm_dipole)
+    batch_dict['qm_dipoles'] = np.linalg.norm(qm_dipole.m).tolist()
     
     #mbis dipole
     batch_dict['mbis_dipoles'] = calculate_dipole_magnitude(
-        charges=retrieved.mbis_charges, 
-        conformer=retrieved.conformer
+        charges=retrieved.mbis_charges_quantity, 
+        conformer=retrieved.conformer_quantity
     ).tolist()
     #am1bcc dipoles
     batch_dict['am1bcc_dipole'] = calculate_dipole_magnitude(
-        charges=am1_bcc_charges, 
-        conformer=retrieved.conformer
+        charges=am1_bcc_charges * unit.e, 
+        conformer=retrieved.conformer_quantity
     ).tolist()
     #espaloma dipole
     batch_dict['espaloma_dipole'] = calculate_dipole_magnitude(
-        charges=espaloma_charges, 
-        conformer=retrieved.conformer
+        charges=espaloma_charges* unit.e, 
+        conformer=retrieved.conformer_quantity
     ).tolist()
     
     #riniker dipole
@@ -436,8 +439,8 @@ def process_molecule(retrieved: MoleculePropRecord):
     
     #resp dipole
     batch_dict['resp_dipole'] =  calculate_dipole_magnitude(
-        charges=resp_charges, 
-        conformer=retrieved.conformer
+        charges=resp_charges* unit.e, 
+        conformer=retrieved.conformer_quantity
     ).tolist()
         
     #------ESP RMSE Calculations-------#
@@ -559,7 +562,7 @@ def process_esp(results_batch):
                 riniker_monopoles = esp_result['esp_values'][0]
                 item['riniker_monopoles'] = riniker_monopoles
                 #include charge and dipole contributions
-                D_charge = np.sum(np.array(riniker_monopoles)[:, np.newaxis] * openff_mol.conformers[0].m, axis=0) 
+                D_charge = np.sum(np.array(riniker_monopoles)[:, np.newaxis] * openff_mol.conformers[0].to(unit.bohr).m, axis=0) 
                 summed_dipole = np.sum(np.array(esp_result['esp_values'][1]).reshape(-1,3), axis=0) + D_charge
                 item['riniker_dipoles'] = np.linalg.norm(summed_dipole).tolist()
                 riniker_esp = calc_riniker_esp(
@@ -601,7 +604,7 @@ def main(output: str):
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('riniker_esp_rms',pyarrow.float64()),
     ])
-    batch_count = 4
+    batch_count = 1
     batch_size = 20
     batch_models = []
     
