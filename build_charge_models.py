@@ -80,34 +80,24 @@ def calc_riniker_esp(
     -------
     partial_charges: list of partial charges 
     """
-    # print(f'rdkit to openff yields {(coordinates, elements)}')
     #multipoles with correct units
     monopoles_quantity = monopole
     dipoles_quantity = np.array(dipole).reshape((-1,3))*unit.e*unit.angstrom
     quadropoles_quantity = np.array(quadrupole).reshape((-1,3,3))*unit.e*unit.angstrom*unit.angstrom
     coordinates_ang = coordinates.to(unit.angstrom)
-    print("grid_coordinates shape:", grid.shape)
-    print("grid_coordinates units:", grid.units)
-    print("atom_coordinates shape:", coordinates_ang.shape)
-    print("atom_coordinates units:", coordinates_ang.units)
-    print("monopoles shape",monopole.shape )
-    print("dipole shape:",dipoles_quantity.shape)
-    print("quadrupoles shape", quadropoles_quantity.shape)
+
     monopole_esp = calculate_esp_monopole_au(grid_coordinates=grid,
                                         atom_coordinates=coordinates_ang,
                                         charges = monopoles_quantity)
-    print("monopole esp")
-    print(monopole_esp)
+
     dipole_esp = calculate_esp_dipole_au(grid_coordinates=grid,
                                     atom_coordinates=coordinates_ang,
                                     dipoles= dipoles_quantity)
-    print("dipole esp")
-    print(dipole_esp)
+
     quadrupole_esp = calculate_esp_quadropole_au(grid_coordinates=grid,
                                     atom_coordinates=coordinates_ang,
                                     quadrupoles= quadropoles_quantity)
-    print("quadrupole esp")
-    print(quadrupole_esp)
+
     #NOTE: ESP units, hartree/e and grid units are angstrom
     return (monopole_esp + dipole_esp + quadrupole_esp)
 
@@ -156,8 +146,7 @@ def calculate_esp_monopole_au(
     """
     #prefactor  
     ke = 1 / (4 * np.pi * unit.epsilon_0) # 1/vacuum_permittivity, 1/(e**2 * a0 *Eh)
-    print('building esp with the charges', flush=True)
-    print(charges, flush=True)
+
     if isinstance(charges, unit.Quantity):
        charges = charges.flatten()
     else:
@@ -336,8 +325,6 @@ def calculate_dipole_magnitude(charges: unit.Quantity,
     reshaped_charges = np.reshape(charges,(-1,1))
     dipole_vector = np.sum(conformer.to(unit.bohr) * reshaped_charges,axis=0)
     dipole_magnitude = np.linalg.norm(dipole_vector)
-    print('calculated dipole')
-    print(dipole_magnitude)
 
     return dipole_magnitude.m
 
@@ -401,6 +388,7 @@ def process_molecule(retrieved: MoleculePropRecord):
     espalomamol = openff_mol
     espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
     batch_dict['espaloma_charges']= (espaloma_charges := espalomamol.partial_charges.magnitude.flatten().tolist())
+
     #riniker charges
     # esp, _, monopole, dipoles  =  riniker_esp(openff_molecule=openff_mol,
     #                                           grid =retrieved.grid_coordinates )
@@ -415,7 +403,6 @@ def process_molecule(retrieved: MoleculePropRecord):
     #------Dipoles-------#
     
     qm_dipole = retrieved.dipole_quantity 
-    print('dipoles',qm_dipole)
     batch_dict['qm_dipoles'] = np.linalg.norm(qm_dipole.m).tolist()
     
     #mbis dipole
@@ -458,8 +445,7 @@ def process_molecule(retrieved: MoleculePropRecord):
         atom_coordinates=atom_coordinates,
         charges=am1_bcc_charges
     )
-    print('qm esp:', qm_esp)
-    print('am1bcc esp:', am1bcc_esp)
+    
     am1bcc_esp_rms = (((am1bcc_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['am1bcc_esp_rms'] = am1bcc_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -543,8 +529,7 @@ def process_esp(results_batch):
             batched=True,
             batched_grid=True,
         )
-        print('charge api output:')
-        print(output_file)
+
         with open(output_file['file_path'], 'r') as f:
             esps_dict = json.load(f)
 
@@ -552,12 +537,9 @@ def process_esp(results_batch):
         for item in results_batch:
             mol_id = item['mol_id']
             esp_result = esps_dict.get(mol_id)
-            print('esp values total')
-            print(esp_result['esp_values'])
             rdkit_mol = Chem.rdmolfiles.MolFromMolBlock(item['molblock'], removeHs = False)
             openff_mol = Molecule.from_rdkit(rdkit_mol)
-            print('making esp for')
-            print(openff_mol.to_smiles())
+
             if esp_result:
                 riniker_monopoles = esp_result['esp_values'][0]
                 item['riniker_monopoles'] = riniker_monopoles
@@ -572,8 +554,7 @@ def process_esp(results_batch):
                     quadrupole= esp_result['esp_values'][2],
                     coordinates= openff_mol.conformers[0]
                 )
-                print('calculated esp')
-                print(riniker_esp)
+
                 qm_esp = np.array(item['qm_esp']) * unit.hartree/unit.e
                 item['riniker_esp_rms'] =  ((((riniker_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
             else:
@@ -613,8 +594,7 @@ def main(output: str):
         batch_models = []
         for model in tqdm(prop_store.stream_records(), desc="Processing molecules"):
             molecule_smiles = model.tagged_smiles
-            print('processing')
-            print(molecule_smiles)
+
             # Skip charged species as Riniker cannot accept them
             if "+" in molecule_smiles or "-" in molecule_smiles or "Br" in molecule_smiles:
                 continue
