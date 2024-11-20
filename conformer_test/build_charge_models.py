@@ -482,7 +482,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=am1_bcc_charges
     )
-    
+    batch_dict['am1bcc_esp'] = am1bcc_esp.m
     am1bcc_esp_rms = (((am1bcc_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['am1bcc_esp_rms'] = am1bcc_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -492,6 +492,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=espaloma_charges
     )
+    batch_dict['espaloma_esp'] = espaloma_esp.m
     espaloma_esp_rms = (((espaloma_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['espaloma_esp_rms'] = espaloma_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -501,6 +502,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=resp_charges
     )
+    batch_dict['resp_esp'] = resp_esp.m
     resp_esp_rms = (((resp_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['resp_esp_rms'] = resp_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -510,10 +512,10 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=mbis_charges
     )
+    batch_dict['mbis_esp'] = mbis_esp.m
     mbis_esp_rms = (((mbis_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['mbis_esp_rms'] = mbis_esp_rms * HA_TO_KCAL_P_MOL
 
-    
     return batch_dict
 
 
@@ -535,7 +537,7 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-    with ProcessPoolExecutor(max_workers=32) as pool:
+    with ProcessPoolExecutor(max_workers=8) as pool:
         # Submit jobs to process the models in parallel
         jobs = [pool.submit(process_molecule, model, conformer_no) for (model,conformer_no) in batch_models]
         results_batch = []
@@ -549,7 +551,7 @@ def process_and_write_batch(batch_models, schema, writer):
                 continue  # Skip if the molecule was skipped or had no results
 
     process_esp(results_batch)
-
+    process_resp_multiconfs(results_batch)
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
     
@@ -597,15 +599,17 @@ def process_esp(results_batch):
                 print(f'No ESP result found for molecule ID {mol_id}')
 
 
-def process_resp_multipoles(results_batch):
+def process_resp_multiconfs(results_batch):
 
     complete_smiles = []
     for item in results_batch:
-        if item['smiles'] in complete_smiles:
+        if any(smiles  == item['smiles'] for smiles in complete_smiles):
             continue
         else:
             target_smiles = item['smiles']
+            complete_smiles.append(item['smiles'])
             esp_settings = item['esp_settings']
+            
         conformers = []
         grids = []
         esps = []
@@ -637,6 +641,7 @@ def process_resp_multipoles(results_batch):
                     atom_coordines = conformers[conformer_no].conformers[0],
                     charges = resp_charges, 
                 )
+                item['resp_multiconf_esp'] = resp_multi_esp
                 qm_esp = np.array(item['qm_esp']) * unit.hartree/unit.e
                 item['resp_multiconf_esp_rmse'] = ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
                 
@@ -664,14 +669,19 @@ def main(output: str):
         ('resp_dipole', pyarrow.float64()),
         ('resp_multiconformer_dipole', pyarrow.float64()),
         ('am1bcc_esp_rms', pyarrow.float64()),
+        ('am1bcc_esp',pyarrow.list_(pyarrow.float64())),
         ('espaloma_esp_rms', pyarrow.float64()),
+        ('espaloma_esp',pyarrow.list_(pyarrow.float64())),
         ('resp_esp_rms', pyarrow.float64()),
+        ('resp_esp', pyarrow.list_(pyarrow.float64())),
         ('mbis_esp_rms', pyarrow.float64()),
-        ('qm_esp', pyarrow.list_(pyarrow.float64())),
+        ('mbis_esp', pyarrow.list_(pyarrow.float64())),
         ('riniker_esp_rms',pyarrow.float64()),
-        ('resp_esp_rms', pyarrow.float64()),
+        ('riniker_esp',pyarrow.float64()),
+        ('resp_multiconf_esp_rms', pyarrow.float64()),
+        ('resp_multiconf_esp', pyarrow.float64()),
+        ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('molecule', pyarrow.string()),
-        ('conformer_number',pyarrow.int16()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
         ('conformer_no', pyarrow.int16()),
         ('smiles', pyarrow.string()),
@@ -691,8 +701,9 @@ def main(output: str):
             for conformer_no in range(len(retrieved_records)):
                 retrieved = retrieved_records[conformer_no]             
                 batch_models.append((retrieved,conformer_no))
-            
-
+        
+        # for batch in batched(batch_models, 50):
+            # process_and_write_batch(batch, schema, writer)
         process_and_write_batch(batch_models, schema, writer)
         
 if __name__ == "__main__":
