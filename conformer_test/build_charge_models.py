@@ -537,7 +537,7 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-    with ProcessPoolExecutor(max_workers=8) as pool:
+    with ProcessPoolExecutor() as pool:
         # Submit jobs to process the models in parallel
         jobs = [pool.submit(process_molecule, model, conformer_no) for (model,conformer_no) in batch_models]
         results_batch = []
@@ -619,7 +619,7 @@ def process_resp_multiconfs(results_batch):
                 conformers.append(Molecule.from_rdkit(rdmol=rdkit_mol, allow_undefined_stereo=True, hydrogens_are_explicit=True))
                 grid = np.array(item['grid']).reshape(3,-1) * unit.angstrom
                 grids.append(grid)
-                esp = np.array(item['esps']) * unit.hartree/unit.e
+                esp = np.array(item['esp']) * unit.hartree/unit.e
                 esps.append(esp)
         resp_charges = calculate_resp_multiconformer_charges(
             openff_mols=conformers,
