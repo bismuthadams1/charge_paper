@@ -164,7 +164,7 @@ def process_molecule(parquet: dict):
     """
     batch_dict = {}
     #------Charges-------#
-    coordinates = (parquet['conformation'] * unit.angstrom).reshape((-1,3))
+    coordinates = (parquet['conformation'] * unit.bohr).reshape((-1,3))
     mapped_smiles = parquet['smiles']
     openff_mol: Molecule =  make_openff_molecule(
         mapped_smiles=mapped_smiles,
@@ -200,7 +200,7 @@ def process_molecule(parquet: dict):
     #------ESP RMSE Calculations-------#
 
     # Convert grid and atom coordinates to Bohr
-    grid_coordinates = (parquet['grid'] * unit.angstrom).reshape(-1,3) # Units: Bohr
+    grid_coordinates = (parquet['grid'] * unit.bohr).reshape(-1,3) # Units: Bohr
     atom_coordinates = coordinates  # Units: Bohr
 
     # QM ESP (already in atomic units)

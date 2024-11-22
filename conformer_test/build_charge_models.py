@@ -339,7 +339,7 @@ def calculate_resp_multiconformer_charges(openff_mols: list[Molecule],
         qc_data_records, resp_solver
     )
     
-    resp_charges = [resp_charge_parameter.value[i] for i in len(resp_charge_parameter.value)]
+    resp_charges = [resp_charge_parameter.value[i] for i in range(len(resp_charge_parameter.value))]
     
     return np.round(resp_charges, 4).tolist()
     
@@ -617,7 +617,7 @@ def process_resp_multiconfs(results_batch):
             if item['smiles'] == target_smiles:
                 rdkit_mol = rdmolfiles.MolFromMolBlock(item['molblock'], removeHs=False)
                 conformers.append(Molecule.from_rdkit(rdmol=rdkit_mol, allow_undefined_stereo=True, hydrogens_are_explicit=True))
-                grid = np.array(item['grid']).reshape(3,-1) * unit.angstrom
+                grid = np.array(item['grid']).reshape(-1,3) * unit.angstrom
                 grids.append(grid)
                 esp = np.array(item['esp']) * unit.hartree/unit.e
                 esps.append(esp)

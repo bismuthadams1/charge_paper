@@ -498,7 +498,7 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-    with ProcessPoolExecutor(max_workers=8) as pool:
+    with ProcessPoolExecutor(max_workers=40) as pool:
         # Submit jobs to process the models in parallel
         jobs = [pool.submit(process_molecule, model) for model in batch_models]
         results_batch = []
@@ -528,16 +528,19 @@ def process_esp(results_batch):
             batched=True,
             batched_grid=True,
         )
+        # if output_file['esp_values'] is None:
+        
+        print('riniker failure?')
+        print('charge results error:', output_file['error'])
 
         with open(output_file['file_path'], 'r') as f:
             esps_dict = json.load(f)
-
  
         for item in results_batch:
             mol_id = item['mol_id']
             esp_result = esps_dict.get(mol_id)
             rdkit_mol = Chem.rdmolfiles.MolFromMolBlock(item['molblock'], removeHs = False)
-            openff_mol = Molecule.from_rdkit(rdkit_mol)
+            openff_mol = Molecule.from_rdkit(rdkit_mol, allow_undefined_stereo=True)
 
             if esp_result:
                 riniker_monopoles = esp_result['esp_values'][0]
@@ -584,8 +587,8 @@ def main(output: str):
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('riniker_esp_rms',pyarrow.float64()),
     ])
-    # batch_count = 1
-    batch_size = 20
+    # batch_count = 2
+    batch_size = 200
     batch_models = []
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
@@ -595,21 +598,21 @@ def main(output: str):
             molecule_smiles = model.tagged_smiles
 
             # Skip charged species as Riniker cannot accept them
-            if "+" in molecule_smiles or "-" in molecule_smiles or "Br" in molecule_smiles:
+            if "+" in molecule_smiles or "-" in molecule_smiles or "Br" in molecule_smiles or "P" in molecule_smiles:
                 continue
             batch_models.append(model)
             if len(batch_models) >= batch_size:
                 # Process the batch
                 process_and_write_batch(batch_models, schema, writer)
                 batch_models = []
-                # batch_count += 1  # Increment the batch counter
+                batch_count += 1  # Increment the batch counter
                 # if batch_count >= 1:
                 #     break  # Exit the loop after processing 4 batches
 
         # Optionally process any remaining models if you haven't reached 4 batches
-        if batch_models:# and batch_count < 1:
+        if batch_models: #and batch_count < 1:
             process_and_write_batch(batch_models, schema, writer)
 
         
 if __name__ == "__main__":
-    main(output='./charge_models.parquet')
+    main(output='./charge_models_test.parquet')
