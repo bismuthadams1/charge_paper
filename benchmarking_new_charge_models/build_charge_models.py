@@ -174,7 +174,7 @@ def process_molecule(parquet: dict):
     batch_dict['mbis_charges'] = parquet['mbis-charges']
 
     predicted_nagl_charges = gas_charge_dipole_model.compute_properties(rdkit_mol)["mbis-charges"].detach().numpy()
-    batch_dict['predicted_charges'] = predicted_nagl_charges.tolist()
+    batch_dict['predicted_charges'] = predicted_nagl_charges.flatten().tolist()
     
     batch_dict['molecule'] = mapped_smiles
     batch_dict['geometry'] = coordinates.m.flatten().tolist()
@@ -205,17 +205,17 @@ def process_molecule(parquet: dict):
 
     # QM ESP (already in atomic units)
     qm_esp = parquet['esp'] * unit.hartree/unit.e
-    batch_dict['qm_esp'] = qm_esp.m.flatten().tolist()
+    batch_dict['qm_esp'] = qm_esp.m.flatten().tolist() 
     # AM1-BCC ESP
     predicted_esp = calculate_esp_monopole_au(
         grid_coordinates=grid_coordinates,
         atom_coordinates=atom_coordinates,
         charges=parquet['mbis-charges'] * unit.e
     )
-    
+    batch_dict['predicted_esp'] = predicted_esp.m.flatten().tolist()
     esp_rms = (((predicted_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
-    batch_dict['predicted_esp'] = esp_rms * HA_TO_KCAL_P_MOL
-    
+    batch_dict['predicted_esp_rmse'] = esp_rms * HA_TO_KCAL_P_MOL
+    print(batch_dict)
     return batch_dict
 
 
@@ -267,9 +267,10 @@ def main(output: str):
         ('mol_id', pyarrow.string()),
         ('qm_dipoles_magnitude', pyarrow.float64()),
         ('mbis_dipoles_magnitude', pyarrow.float64()),
-        ('predicted_dipoles', pyarrow.list_(pyarrow.float64())),
+        ('predicted_dipoles', pyarrow.float64()),
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
-        ('predicted_esp', pyarrow.float64()),
+        ('predicted_esp_rmse',pyarrow.float64()),
+        ('predicted_esp', pyarrow.list_(pyarrow.float64())),
     ])
     # batch_count = 2
     batch_size = 20000
