@@ -585,6 +585,7 @@ def process_esp(results_batch):
                 D_charge = np.sum(np.array(riniker_monopoles)[:, np.newaxis] * openff_mol.conformers[0].to(unit.bohr).m, axis=0) 
                 summed_dipole = np.sum(np.array(esp_result['esp_values'][1]).reshape(-1,3), axis=0) + D_charge
                 item['riniker_dipoles'] = np.linalg.norm(summed_dipole).tolist()
+                
                 riniker_esp = calc_riniker_esp(
                     grid= (esp_result['esp_grid'] * unit.angstrom).reshape(3,-1),
                     monopole= esp_result['esp_values'][0] * unit.e,
