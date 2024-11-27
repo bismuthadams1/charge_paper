@@ -294,6 +294,7 @@ def calculate_resp_charges(openff_mol: Molecule,
     qc_data_record = MoleculeESPRecord.from_molecule(
         openff_mol, openff_mol.conformers[0], grid, esp, None, qc_data_settings
     )
+
     resp_charge_parameter = generate_resp_charge_parameter(
         [qc_data_record], resp_solver
     )
@@ -306,10 +307,11 @@ def calculate_resp_charges(openff_mol: Molecule,
     
     return np.round(resp_charges, 4).tolist()
 
-def calculate_resp_multiconformer_charges(openff_mols: list[Molecule],
-                           grids: list[unit.Quantity],
-                           esps: list[unit.Quantity],
-                           qc_data_settings: ESPSettings) -> list[float]:
+def calculate_resp_multiconformer_charges(
+    openff_mols: list[Molecule],
+    grids: list[unit.Quantity],
+    esps: list[unit.Quantity],
+    qc_data_settings: ESPSettings) -> list[float]:
     """Calculate resp charges given a set of input data
     
     Parameters
@@ -329,18 +331,25 @@ def calculate_resp_multiconformer_charges(openff_mols: list[Molecule],
     
     """
     qc_data_records = []
-    for conformer, grid, esp in zip(openff_mols,grids,esps):
+    for idx,(conformer, grid, esp) in enumerate(zip(openff_mols,grids,esps)):
+        print(f"Processing conformer {idx}, number of atoms: {conformer.n_atoms}")
         qc_data_record = MoleculeESPRecord.from_molecule(
             conformer, conformer.conformers[0], grid, esp, None, qc_data_settings
         )
         qc_data_records.append(qc_data_record)
+        print(f"QC Data Record {idx} molecule has {qc_data_record.molecule.n_atoms} atoms.")
+
         
     resp_charge_parameter = generate_resp_charge_parameter(
         qc_data_records, resp_solver
     )
-    
+    print(f"Number of RESP charges: {len(resp_charges)}")
+
     resp_charges = [resp_charge_parameter.value[i] for i in range(len(resp_charge_parameter.value))]
     
+    for idx, charge in enumerate(resp_charges):
+        print(f"Atom {idx}: Charge = {charge}")
+
     return np.round(resp_charges, 4).tolist()
     
 def calculate_dipole_magnitude(charges: unit.Quantity,
@@ -551,7 +560,7 @@ def process_and_write_batch(batch_models, schema, writer):
                 continue  # Skip if the molecule was skipped or had no results
 
     process_esp(results_batch)
-    process_resp_multiconfs(results_batch)
+    # process_resp_multiconfs(results_batch)
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
     
@@ -601,52 +610,64 @@ def process_esp(results_batch):
 
 
 def process_resp_multiconfs(results_batch):
-
     complete_smiles = []
     for item in results_batch:
-        if any(smiles  == item['smiles'] for smiles in complete_smiles):
+        if item['smiles'] in complete_smiles:
             continue
         else:
             target_smiles = item['smiles']
-            complete_smiles.append(item['smiles'])
+            complete_smiles.append(target_smiles)
             esp_settings = item['esp_settings']
             
-        conformers = []
-        grids = []
-        esps = []
-        for item in results_batch:
-            if item['smiles'] == target_smiles:
-                rdkit_mol = rdmolfiles.MolFromMolBlock(item['molblock'], removeHs=False)
-                conformers.append(Molecule.from_rdkit(rdmol=rdkit_mol, allow_undefined_stereo=True, hydrogens_are_explicit=True))
-                grid = np.array(item['grid']).reshape(-1,3) * unit.angstrom
-                grids.append(grid)
-                esp = np.array(item['esp']) * unit.hartree/unit.e
-                esps.append(esp)
-        resp_charges = calculate_resp_multiconformer_charges(
-            openff_mols=conformers,
-            grids = grids,
-            esps=esps,
-            qc_data_settings=esp_settings
-        )
-        for item in results_batch:
-            conformer_no = 0
-            if item['smiles'] == target_smiles:
+            # Collect matching items and their data
+            conformers = []
+            grids = []
+            esps = []
+            matching_items = []
+            for item2 in results_batch:
+                if item2['smiles'] == target_smiles:
+                    rdkit_mol = rdmolfiles.MolFromMolBlock(item2['molblock'], removeHs=False)
+                    conformer = Molecule.from_rdkit(
+                        rdmol=rdkit_mol, 
+                        allow_undefined_stereo=True, 
+                        hydrogens_are_explicit=True
+                    )
+                    conformers.append(conformer)
+                    grid = np.array(item2['grid']).reshape(-1, 3) * unit.angstrom
+                    grids.append(grid)
+                    esp = np.array(item2['esp']) * unit.hartree / unit.e
+                    esps.append(esp)
+                    matching_items.append(item2)
 
-                item['resp_multiconf_charges'] = resp_charges
-                item['resp_multiconf_dipoles'] = calculate_dipole_magnitude(
+            # Calculate RESP charges for all conformers of the molecule
+            resp_charges = calculate_resp_multiconformer_charges(
+                openff_mols=conformers,
+                grids=grids,
+                esps=esps,
+                qc_data_settings=esp_settings
+            )
+            print(target_smiles)
+            print(conformers)
+            
+            # Iterate over the matching items and their corresponding conformers
+            for item2, conf, grid in zip(matching_items, conformers, grids):
+                item2['resp_multiconf_charges'] = resp_charges
+                print(resp_charges)
+                item2['resp_multiconf_dipoles'] = calculate_dipole_magnitude(
                     charges=resp_charges,
-                    conformer=conformers[conformer_no].conformers[0]
+                    conformer=conf.conformers[0]
                 )
                 resp_multi_esp = calculate_esp_monopole_au(
-                    grid_coordinates= grids[0],
-                    atom_coordines = conformers[conformer_no].conformers[0],
-                    charges = resp_charges, 
+                    grid_coordinates=grid,
+                    atom_coordinates=conf.conformers[0],
+                    charges=resp_charges, 
                 )
-                item['resp_multiconf_esp'] = resp_multi_esp
-                qm_esp = np.array(item['qm_esp']) * unit.hartree/unit.e
-                item['resp_multiconf_esp_rmse'] = ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-                
-                conformer_no += 1
+                item2['resp_multiconf_esp'] = resp_multi_esp
+                qm_esp = np.array(item2['qm_esp']) * unit.hartree / unit.e
+                item2['resp_multiconf_esp_rmse'] = (
+                    ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
+                )
+
 
 def main(output: str):
 
@@ -661,14 +682,14 @@ def main(output: str):
         ('espaloma_charges', pyarrow.list_(pyarrow.float64())),
         ('riniker_monopoles', pyarrow.list_(pyarrow.float64())),
         ('resp_charges', pyarrow.list_(pyarrow.float64())),
-        ('resp_multiconformer_charges',pyarrow.list_(pyarrow.float64())),
+        # ('resp_multiconformer_charges',pyarrow.list_(pyarrow.float64())),
         ('qm_dipoles', pyarrow.float64()),
         ('mbis_dipoles', pyarrow.float64()),
         ('am1bcc_dipole', pyarrow.float64()),
         ('espaloma_dipole', pyarrow.float64()),
         ('riniker_dipoles', pyarrow.float64()),
         ('resp_dipole', pyarrow.float64()),
-        ('resp_multiconformer_dipole', pyarrow.float64()),
+        # ('resp_multiconformer_dipole', pyarrow.float64()),
         ('am1bcc_esp_rms', pyarrow.float64()),
         ('am1bcc_esp',pyarrow.list_(pyarrow.float64())),
         ('espaloma_esp_rms', pyarrow.float64()),
@@ -679,8 +700,8 @@ def main(output: str):
         ('mbis_esp', pyarrow.list_(pyarrow.float64())),
         ('riniker_esp_rms',pyarrow.float64()),
         ('riniker_esp',pyarrow.float64()),
-        ('resp_multiconf_esp_rms', pyarrow.float64()),
-        ('resp_multiconf_esp', pyarrow.float64()),
+        # ('resp_multiconf_esp_rms', pyarrow.float64()),
+        # ('resp_multiconf_esp', pyarrow.float64()),
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('molecule', pyarrow.string()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
