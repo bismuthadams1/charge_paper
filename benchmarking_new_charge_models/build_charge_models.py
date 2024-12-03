@@ -53,6 +53,12 @@ gas_charge_model = load_charge_model(charge_model=charge_model_charge)
 gas_charge_dipole_model = load_charge_model(charge_model=charge_model_dipole)
 gas_charge_dipole_esp_model = load_charge_model(charge_model_esp)
 
+models = {
+    "charge_model": gas_charge_model,
+    "dipole_model": gas_charge_dipole_model,
+    "esp_model": gas_charge_dipole_esp_model
+}
+
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
     
     molecule = Molecule.from_mapped_smiles(
@@ -193,7 +199,7 @@ def process_molecule(parquet: dict, models: dict):
             charges=predicted_charges * unit.e,
             conformer=coordinates
         )
-        charge_models_data[f'{model_name}_dipoles'] = predicted_dipole.magnitude.tolist()
+        charge_models_data[f'{model_name}_dipoles'] = predicted_dipole.tolist()
         
         # Calculate ESP and RMSE
         grid_coordinates = (parquet['grid'] * unit.bohr).reshape(-1, 3)
@@ -250,7 +256,7 @@ def process_and_write_batch(batch_models, schema, writer):
                 # continue  # Skip if the molecule was skipped or had no results
     results_batch = []
     for model in tqdm(batch_models, total=len(batch_models), desc='Processing molecules'):
-        results_batch.append(process_molecule(model))
+        results_batch.append(process_molecule(model, models=models ))
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
     

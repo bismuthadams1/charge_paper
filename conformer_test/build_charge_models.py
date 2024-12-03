@@ -425,7 +425,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     batch_dict['grid'] = retrieved.grid_coordinates.tolist()
     batch_dict['esp'] = retrieved.esp.tolist()
     batch_dict['esp_settings'] = retrieved.esp_settings
-    batch_dict['energy'] = retrieved.energy
+    batch_dict['energy'] = retrieved.energy.tolist()
     batch_dict['mol_id'] = make_hash(openff_mol)
     #mbis charges
     batch_dict['mbis_charges'] = (mbis_charges := retrieved.mbis_charges.flatten().tolist())
