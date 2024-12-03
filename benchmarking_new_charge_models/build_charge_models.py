@@ -42,13 +42,16 @@ from openff.recharge.charges.library import (
 from openff.recharge.esp import ESPSettings
 from openff.recharge.charges.resp.solvers import IterativeSolver
 
-charge_model= 'nagl-gas-dipole-wb'
-
-
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
 HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
-gas_charge_dipole_model = load_charge_model(charge_model=charge_model)
 
+charge_model_esp= 'nagl-water-charge-dipole-esp-wb-default'
+charge_model_charge = "nagl-water-charge-wb"
+charge_model_dipole =  "nagl-water-charge-dipole-wb"
+
+gas_charge_model = load_charge_model(charge_model=charge_model_charge)
+gas_charge_dipole_model = load_charge_model(charge_model=charge_model_dipole)
+gas_charge_dipole_esp_model = load_charge_model(charge_model_esp)
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
     
@@ -148,75 +151,71 @@ def make_hash(openff_mol: Molecule) -> str:
     
     return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
     
-def process_molecule(parquet: dict):
-    """Process molecules to their charge model envs
+def process_molecule(parquet: dict, models: dict):
+    """Process molecules with multiple charge models
     
     Parameters
     ----------
-    retrieved: MoleculePropRecord
-        record containing qm info
+    parquet : dict
+        Record containing QM info.
+    models : dict
+        Dictionary of loaded charge models:
+            - "charge_model"
+            - "dipole_model"
+            - "esp_model"
     
     Returns
     -------
-    batch_dict: dict
-        dictionary containing all the charge info
-    
+    batch_dict : dict
+        Dictionary containing all the charge info for multiple charge models.
     """
     batch_dict = {}
-    #------Charges-------#
-    coordinates = (parquet['conformation'] * unit.bohr).reshape((-1,3))
+    coordinates = (parquet['conformation'] * unit.bohr).reshape((-1, 3))
     mapped_smiles = parquet['smiles']
-    openff_mol: Molecule =  make_openff_molecule(
+    openff_mol: Molecule = make_openff_molecule(
         mapped_smiles=mapped_smiles,
         coordinates=coordinates
     )
     rdkit_mol = openff_mol.to_rdkit()
-    batch_dict['mbis_charges'] = parquet['mbis-charges']
-
-    predicted_nagl_charges = gas_charge_dipole_model.compute_properties(rdkit_mol)["mbis-charges"].detach().numpy()
-    batch_dict['predicted_charges'] = predicted_nagl_charges.flatten().tolist()
-    
     batch_dict['molecule'] = mapped_smiles
     batch_dict['geometry'] = coordinates.m.flatten().tolist()
     batch_dict['molblock'] = rdkit.Chem.rdmolfiles.MolToMolBlock(rdkit_mol)
-    # batch_dict['grid'] = retrieved.grid_coordinates.tolist()
     batch_dict['mol_id'] = make_hash(openff_mol)
-    #mbis charges
-    # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
+    
+    # ------ Charges and Dipoles for each model -------#
+    charge_models_data = {}
+    for model_name, model in models.items():
+        predicted_charges = model.compute_properties(rdkit_mol)["mbis-charges"].detach().numpy().flatten()
+        charge_models_data[f'{model_name}_charges'] = predicted_charges.tolist()
 
-    #------Dipoles-------#
-    
-    qm_dipole = parquet['dipole']
-    batch_dict['qm_dipoles_magnitude'] = np.linalg.norm(qm_dipole).tolist()
-    mbis_dipole = parquet['mbis-dipoles']
-    batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(mbis_dipole).tolist()
-    
-    #predicted mbis dipole
-    batch_dict['predicted_dipoles'] = calculate_dipole_magnitude(
-        charges=parquet['mbis-charges'] * unit.e, 
-        conformer=coordinates
-    ).tolist()
+        # Calculate dipoles
+        predicted_dipole = calculate_dipole_magnitude(
+            charges=predicted_charges * unit.e,
+            conformer=coordinates
+        )
+        charge_models_data[f'{model_name}_dipoles'] = predicted_dipole.magnitude.tolist()
         
-    #------ESP RMSE Calculations-------#
+        # Calculate ESP and RMSE
+        grid_coordinates = (parquet['grid'] * unit.bohr).reshape(-1, 3)
+        predicted_esp = calculate_esp_monopole_au(
+            grid_coordinates=grid_coordinates,
+            atom_coordinates=coordinates,
+            charges=predicted_charges * unit.e
+        )
+        qm_esp = parquet['esp'] * unit.hartree / unit.e
+        esp_rms = (((predicted_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
+        charge_models_data[f'{model_name}_esp'] = predicted_esp.m.flatten().tolist()
+        charge_models_data[f'{model_name}_esp_rmse'] = esp_rms * HA_TO_KCAL_P_MOL
 
-    # Convert grid and atom coordinates to Bohr
-    grid_coordinates = (parquet['grid'] * unit.bohr).reshape(-1,3) # Units: Bohr
-    atom_coordinates = coordinates  # Units: Bohr
+    # ------ QM and MBIS properties -------#
+    batch_dict['mbis_charges'] = parquet['mbis-charges']
+    batch_dict['qm_dipoles_magnitude'] = np.linalg.norm(parquet['dipole']).tolist()
+    batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet['mbis-dipoles']).tolist()
+    batch_dict.update(charge_models_data)
 
-    # QM ESP (already in atomic units)
-    qm_esp = parquet['esp'] * unit.hartree/unit.e
-    batch_dict['qm_esp'] = qm_esp.m.flatten().tolist() 
-    # AM1-BCC ESP
-    predicted_esp = calculate_esp_monopole_au(
-        grid_coordinates=grid_coordinates,
-        atom_coordinates=atom_coordinates,
-        charges=parquet['mbis-charges'] * unit.e
-    )
-    batch_dict['predicted_esp'] = predicted_esp.m.flatten().tolist()
-    esp_rms = (((predicted_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
-    batch_dict['predicted_esp_rmse'] = esp_rms * HA_TO_KCAL_P_MOL
     print(batch_dict)
     return batch_dict
+
 
 
 def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
@@ -269,13 +268,26 @@ def main(output: str):
         ('mbis_dipoles_magnitude', pyarrow.float64()),
         ('predicted_dipoles', pyarrow.float64()),
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
-        ('predicted_esp_rmse',pyarrow.float64()),
+        ('predicted_esp_rmse', pyarrow.float64()),
         ('predicted_esp', pyarrow.list_(pyarrow.float64())),
+        ('charge_model_charges', pyarrow.list_(pyarrow.float64())),
+        ('charge_model_dipoles', pyarrow.float64()),
+        ('charge_model_esp', pyarrow.list_(pyarrow.float64())),
+        ('charge_model_esp_rmse', pyarrow.float64()),
+        ('dipole_model_charges', pyarrow.list_(pyarrow.float64())),
+        ('dipole_model_dipoles', pyarrow.float64()),
+        ('dipole_model_esp', pyarrow.list_(pyarrow.float64())),
+        ('dipole_model_esp_rmse', pyarrow.float64()),
+        ('esp_model_charges', pyarrow.list_(pyarrow.float64())),
+        ('esp_model_dipoles', pyarrow.float64()),
+        ('esp_model_esp', pyarrow.list_(pyarrow.float64())),
+        ('esp_model_esp_rmse', pyarrow.float64()),
     ])
+
     # batch_count = 2
     batch_size = 20000
     batch_models = []
-    parquet_location = '/mnt/storage/nobackup/nca121/test_data_sets/gas/testing_gas_esp.parquet'
+    parquet_location = '/mnt/storage/nobackup/nca121/test_data_sets/water/testing_water_esp.parquet'
     parquet_table = pyarrow.parquet.read_table(parquet_location)
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batch_count = 0  # Initialize the batch counter
@@ -300,4 +312,4 @@ def main(output: str):
 
         
 if __name__ == "__main__":
-    main(output='./charge_models_test.parquet')
+    main(output='./test_models.parquet')
