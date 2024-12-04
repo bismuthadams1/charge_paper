@@ -432,11 +432,11 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = openff_mol
-    am1bccmol.assign_partial_charges(partial_charge_method='am1bcc')
+    am1bccmol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[coordinates])
     batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges
     espalomamol = openff_mol
-    espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
+    espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry, use_conformers=[coordinates])
     batch_dict['espaloma_charges']= (espaloma_charges := espalomamol.partial_charges.magnitude.flatten().tolist())
 
     #resp charges
@@ -546,23 +546,25 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-    with ProcessPoolExecutor(max_workers=4) as pool:
+    with ProcessPoolExecutor(max_workers=2) as pool:
         # Submit jobs to process the models in parallel
         jobs = [pool.submit(process_molecule, model, conformer_no) for (model,conformer_no) in batch_models]
         results_batch = []
         for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
             try:
                 result = future.result()
+                # rec = pyarrow.RecordBatch.from_pylist([result], schema=schema)
                 results_batch.append(result)
+                # writer.write_batch(rec)
+                if len(results_batch) >= 100:
+                    rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
+                    writer.write_batch(rec_batch)
+                    results_batch.clear()
             except Exception as e:
                 print(f'Failure of job due to {e}')
                 print(traceback.format_exc())
                 continue  # Skip if the molecule was skipped or had no results
 
-    # process_esp(results_batch)
-    # process_resp_multiconfs(results_batch)
-    rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
-    writer.write_batch(rec_batch)
     
 def process_esp(results_batch):
     with tempfile.TemporaryDirectory() as temp_dir:
