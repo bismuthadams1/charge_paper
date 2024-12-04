@@ -546,7 +546,7 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-    with ProcessPoolExecutor() as pool:
+    with ProcessPoolExecutor(max_workers=4) as pool:
         # Submit jobs to process the models in parallel
         jobs = [pool.submit(process_molecule, model, conformer_no) for (model,conformer_no) in batch_models]
         results_batch = []
@@ -559,7 +559,7 @@ def process_and_write_batch(batch_models, schema, writer):
                 print(traceback.format_exc())
                 continue  # Skip if the molecule was skipped or had no results
 
-    process_esp(results_batch)
+    # process_esp(results_batch)
     # process_resp_multiconfs(results_batch)
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
@@ -705,6 +705,7 @@ def main(output: str):
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('molecule', pyarrow.string()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
+        ('geometry',pyarrow.list_(pyarrow.float64())),
         ('conformer_no', pyarrow.int16()),
         ('smiles', pyarrow.string()),
         ('energy', pyarrow.float64()),
@@ -717,8 +718,8 @@ def main(output: str):
         batch_models = []
         # for model in tqdm(prop_store.stream_records(), desc="Processing molecules"):
         for molecule_no in range(number_of_molecules):
-            if "+" in molecules_list[molecule_no] or "-" in molecules_list[molecule_no] or "Br" in molecules_list[molecule_no] or "P" in molecules_list[molecule_no]:
-                continue
+            # if "+" in molecules_list[molecule_no] or "-" in molecules_list[molecule_no] or "Br" in molecules_list[molecule_no] or "P" in molecules_list[molecule_no]:
+            #     continue
             retrieved_records = prop_store.retrieve(smiles = molecules_list[molecule_no])
             for conformer_no in range(len(retrieved_records)):
                 retrieved = retrieved_records[conformer_no]             
@@ -729,4 +730,4 @@ def main(output: str):
         process_and_write_batch(batch_models, schema, writer)
         
 if __name__ == "__main__":
-    main(output='./charge_models.parquet')
+    main(output='./charge_models_no_riniker.parquet')
