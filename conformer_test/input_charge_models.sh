@@ -5,7 +5,7 @@
 #SBATCH --export=ALL
 #SBATCH -c 32
 #SBATCH -N 1
-#SBATCH --mem=40gb
+#SBATCH --mem=60gb
 
 source activate /mnt/nfs/home/nca121/mambaforge/envs/charge_model_env
 

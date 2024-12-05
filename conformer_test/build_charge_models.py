@@ -556,7 +556,7 @@ def process_and_write_batch(batch_models, schema, writer):
                 # rec = pyarrow.RecordBatch.from_pylist([result], schema=schema)
                 results_batch.append(result)
                 # writer.write_batch(rec)
-                if len(results_batch) >= 100:
+                if len(results_batch) >= 20:
                     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
                     writer.write_batch(rec_batch)
                     results_batch.clear()
