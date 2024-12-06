@@ -546,17 +546,16 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-    with ProcessPoolExecutor(max_workers=2) as pool:
+    with ProcessPoolExecutor(max_workers=8) as pool:
         # Submit jobs to process the models in parallel
         jobs = [pool.submit(process_molecule, model, conformer_no) for (model,conformer_no) in batch_models]
         results_batch = []
         for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
             try:
                 result = future.result()
-                # rec = pyarrow.RecordBatch.from_pylist([result], schema=schema)
                 results_batch.append(result)
-                # writer.write_batch(rec)
-                if len(results_batch) >= 20:
+                if len(results_batch) >= 5:
+                    print('storing 5 results!')
                     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
                     writer.write_batch(rec_batch)
                     results_batch.clear()
@@ -727,9 +726,9 @@ def main(output: str):
                 retrieved = retrieved_records[conformer_no]             
                 batch_models.append((retrieved,conformer_no))
         
-        # for batch in batched(batch_models, 50):
-            # process_and_write_batch(batch, schema, writer)
-        process_and_write_batch(batch_models, schema, writer)
+        for batch in batched(batch_models, 10):
+            process_and_write_batch(batch, schema, writer)
+        # process_and_write_batch(batch_models, schema, writer)
         
 if __name__ == "__main__":
     main(output='./charge_models_no_riniker.parquet')
