@@ -45,9 +45,9 @@ from openff.recharge.charges.resp.solvers import IterativeSolver
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
 HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
 
-charge_model_esp= 'nagl-water-charge-dipole-esp-wb-default'
-charge_model_charge = "nagl-water-charge-wb"
-charge_model_dipole =  "nagl-water-charge-dipole-wb"
+charge_model_esp= 'nagl-gas-charge-dipole-esp-wb-default'
+charge_model_charge = "nagl-gas-charge-wb"
+charge_model_dipole =  "nagl-gas-charge-dipole-wb"
 
 gas_charge_model = load_charge_model(charge_model=charge_model_charge)
 gas_charge_dipole_model = load_charge_model(charge_model=charge_model_dipole)
@@ -293,7 +293,7 @@ def main(output: str):
     # batch_count = 2
     batch_size = 20000
     batch_models = []
-    parquet_location = '/mnt/storage/nobackup/nca121/test_data_sets/water/testing_water_esp.parquet'
+    parquet_location = '/mnt/storage/nobackup/nca121/test_data_sets/gas/gas/testing_gas_esp.parquet'
     parquet_table = pyarrow.parquet.read_table(parquet_location)
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batch_count = 0  # Initialize the batch counter
@@ -318,4 +318,4 @@ def main(output: str):
 
         
 if __name__ == "__main__":
-    main(output='./test_models.parquet')
+    main(output='./test_models_gas.parquet')

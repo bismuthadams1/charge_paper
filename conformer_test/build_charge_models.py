@@ -466,10 +466,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         charges=espaloma_charges* unit.e, 
         conformer=retrieved.conformer_quantity
     ).tolist()
-    
-    #riniker dipole
-    # batch_dict['riniker_dipoles'] = np.linalg.norm(np.sum(dipoles, axis=0)).tolist()
-    
+ 
     #resp dipole
     batch_dict['resp_dipole'] =  calculate_dipole_magnitude(
         charges=resp_charges* unit.e, 
@@ -545,24 +542,33 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     
     return json_file
 
+
+
 def process_and_write_batch(batch_models, schema, writer):
     with ProcessPoolExecutor(max_workers=8) as pool:
-        # Submit jobs to process the models in parallel
-        jobs = [pool.submit(process_molecule, model, conformer_no) for (model,conformer_no) in batch_models]
+        jobs = [pool.submit(process_molecule, model, conformer_no) for (model, conformer_no) in batch_models]
         results_batch = []
         for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
             try:
                 result = future.result()
                 results_batch.append(result)
+                # Write every 5 results
                 if len(results_batch) >= 5:
-                    print('storing 5 results!')
+                    print('writing 5 items')
                     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
                     writer.write_batch(rec_batch)
                     results_batch.clear()
             except Exception as e:
                 print(f'Failure of job due to {e}')
                 print(traceback.format_exc())
-                continue  # Skip if the molecule was skipped or had no results
+                continue
+
+        # After processing all futures, write any leftover results
+        if len(results_batch) > 0:
+            print(f"Writing leftover {len(results_batch)} results")
+            rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
+            writer.write_batch(rec_batch)
+            results_batch.clear()
 
     
 def process_esp(results_batch):
@@ -683,14 +689,12 @@ def main(output: str):
         ('espaloma_charges', pyarrow.list_(pyarrow.float64())),
         ('riniker_monopoles', pyarrow.list_(pyarrow.float64())),
         ('resp_charges', pyarrow.list_(pyarrow.float64())),
-        # ('resp_multiconformer_charges',pyarrow.list_(pyarrow.float64())),
         ('qm_dipoles', pyarrow.float64()),
         ('mbis_dipoles', pyarrow.float64()),
         ('am1bcc_dipole', pyarrow.float64()),
         ('espaloma_dipole', pyarrow.float64()),
         ('riniker_dipoles', pyarrow.float64()),
         ('resp_dipole', pyarrow.float64()),
-        # ('resp_multiconformer_dipole', pyarrow.float64()),
         ('am1bcc_esp_rms', pyarrow.float64()),
         ('am1bcc_esp',pyarrow.list_(pyarrow.float64())),
         ('espaloma_esp_rms', pyarrow.float64()),
@@ -701,8 +705,6 @@ def main(output: str):
         ('mbis_esp', pyarrow.list_(pyarrow.float64())),
         ('riniker_esp_rms',pyarrow.float64()),
         ('riniker_esp',pyarrow.float64()),
-        # ('resp_multiconf_esp_rms', pyarrow.float64()),
-        # ('resp_multiconf_esp', pyarrow.float64()),
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('molecule', pyarrow.string()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
@@ -713,22 +715,22 @@ def main(output: str):
     ])
     # batch_count = 1
     # batch_size = 1000
-    batch_models = []
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
-        batch_models = []
-        # for model in tqdm(prop_store.stream_records(), desc="Processing molecules"):
-        for molecule_no in range(number_of_molecules):
-            # if "+" in molecules_list[molecule_no] or "-" in molecules_list[molecule_no] or "Br" in molecules_list[molecule_no] or "P" in molecules_list[molecule_no]:
-            #     continue
-            retrieved_records = prop_store.retrieve(smiles = molecules_list[molecule_no])
-            for conformer_no in range(len(retrieved_records)):
-                retrieved = retrieved_records[conformer_no]             
-                batch_models.append((retrieved,conformer_no))
         
-        for batch in batched(batch_models, 10):
-            process_and_write_batch(batch, schema, writer)
-        # process_and_write_batch(batch_models, schema, writer)
+        chunk_size = 100  # Adjust as needed
+        for i in range(0, number_of_molecules, chunk_size):
+            subset = molecules_list[i:i+chunk_size]
+            batch_models = []
+            for smiles in subset:
+                retrieved_records = prop_store.retrieve(smiles=smiles)
+                for conformer_no, retrieved in enumerate(retrieved_records):
+                    batch_models.append((retrieved, conformer_no))
+            # Now process this subset only
+            for batch in batched(batch_models, 100):
+                process_and_write_batch(batch, schema, writer)
+                
+   
         
 if __name__ == "__main__":
-    main(output='./charge_models_no_riniker.parquet')
+    main(output='./charge_models_no_riniker_2.parquet')

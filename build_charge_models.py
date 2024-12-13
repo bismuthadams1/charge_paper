@@ -382,11 +382,11 @@ def process_molecule(retrieved: MoleculePropRecord):
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = openff_mol
-    am1bccmol.assign_partial_charges(partial_charge_method='am1bcc')
+    am1bccmol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[coordinates])
     batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges
     espalomamol = openff_mol
-    espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry)
+    espalomamol.assign_partial_charges('espaloma-am1bcc', toolkit_registry=toolkit_registry, use_conformers=[coordinates])
     batch_dict['espaloma_charges']= (espaloma_charges := espalomamol.partial_charges.magnitude.flatten().tolist())
 
     #riniker charges
@@ -606,8 +606,7 @@ def main(output: str):
                 process_and_write_batch(batch_models, schema, writer)
                 batch_models = []
                 batch_count += 1  # Increment the batch counter
-                # if batch_count >= 1:
-                #     break  # Exit the loop after processing 4 batches
+
 
         # Optionally process any remaining models if you haven't reached 4 batches
         if batch_models: #and batch_count < 1:

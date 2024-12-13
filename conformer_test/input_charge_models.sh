@@ -3,9 +3,10 @@
 #SBATCH -A DCCADD
 #SBATCH --mail-type=ALL
 #SBATCH --export=ALL
-#SBATCH -c 32
+#SBATCH -c 40
 #SBATCH -N 1
-#SBATCH --mem=60gb
+#SBATCH -p bigmem
+#SBATCH --mem=500gb
 
 source activate /mnt/nfs/home/nca121/mambaforge/envs/charge_model_env
 
