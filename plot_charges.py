@@ -5,7 +5,21 @@ import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
 from matplotlib.colors import Normalize
 from matplotlib import cm
+from sklearn.metrics import r2_score
 
+def annotate_metrics(x, y, ax=None, **kwargs):
+    """
+    Annotate MAE, RMSE, and R² directly on the graph as red text.
+    """
+    ax = ax or plt.gca()
+    mae = np.mean(np.abs(x - y))
+    rmse = np.sqrt(np.mean((x - y) ** 2))
+    # Compute R²
+    r2 = 1 - np.sum((y - x)**2)/np.sum((x - np.mean(x))**2)
+
+    # Plot text in red in the top-left corner of the axes
+    ax.text(0.05, 0.95, f'MAE: {mae:.2f}\nRMSE: {rmse:.2f}\nR²: {r2:.2f}',
+            transform=ax.transAxes, fontsize=6, color='red', ha='left', va='top')
 # Load the DataFrame
 df = pd.read_parquet('/mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/charge_models_test.parquet')
 
@@ -30,13 +44,16 @@ def density_scatter_plot(x, y, **kwargs):
 # Define MAE and RMSE annotation function
 def annotate_metrics(x, y, ax=None, **kwargs):
     """
-    Annotate MAE and RMSE directly on the graph as plain text.
+    Annotate MAE, RMSE, and R² directly on the graph as red text.
     """
+    ax = ax or plt.gca()
     mae = np.mean(np.abs(x - y))
     rmse = np.sqrt(np.mean((x - y) ** 2))
-    ax = ax or plt.gca()
-    ax.text(0.05, 0.9, f'MAE: {mae:.2f}\nRMSE: {rmse:.2f}',
-            transform=ax.transAxes, fontsize=6, color='darkblue', ha='left', va='top')
+    # Compute R² using sklearn
+    r2 = r2_score(x, y)
+
+    ax.text(0.05, 0.95, f'MAE: {mae:.2f}\nRMSE: {rmse:.2f}\nR²: {r2:.2f}',
+            transform=ax.transAxes, fontsize=6, color='red', ha='left', va='top')
 
 # Define charge models and flatten the arrays
 charge_columns = ['am1bcc_charges', 'riniker_monopoles', 'espaloma_charges', 'resp_charges']
@@ -50,10 +67,10 @@ for col in charge_columns:
     charges_df[col.replace('_charges', '').replace('_monopoles', '').capitalize()] = np.concatenate(df[col].values)
 
 # Initialize the PairGrid for pairwise comparison
-g = sns.PairGrid(charges_df, height=3, aspect=1.2)
+g = sns.PairGrid(charges_df, height=3, aspect=1.2, diag_sharey=False)
 
 # Use density scatter plot for off-diagonal comparisons
-g.map_offdiag(density_scatter_plot, s=2, alpha=0.7)  # Smaller points, transparent
+g.map_offdiag(density_scatter_plot, s=0.5, alpha=0.7)  # Smaller points, transparent
 
 # Add the equality line (y = x) to all off-diagonal plots
 for ax in np.ravel(g.axes):
@@ -76,5 +93,5 @@ g.fig.subplots_adjust(top=0.9)
 g.fig.suptitle('Pairwise Comparison of Charge Models', fontsize=16)
 
 # Save and display the plot
-plt.savefig('pairwise_partial_charges_density.png', dpi=300, bbox_inches='tight')
+plt.savefig('pairwise_partial_charges_density_2.png', dpi=300, bbox_inches='tight')
 plt.show()
