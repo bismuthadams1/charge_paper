@@ -6,7 +6,7 @@
 
 from chargecraft.storage.storage import MoleculePropRecord, MoleculePropStore
 from chargecraft.storage.db import DBMoleculePropRecord, DBConformerPropRecord
-import pyarrow.parquet
+import pyarrow.parquet as pq
 from sqlalchemy.orm import Session, sessionmaker, contains_eager, joinedload
 from openff.toolkit.topology import Molecule
 from openff.units import unit
@@ -30,6 +30,7 @@ import rdkit
 import pyarrow
 import hashlib
 import os
+import polars as pl
 
 from openff.recharge.charges.resp import generate_resp_charge_parameter
 from openff.recharge.grids import GridSettingsType, GridGenerator
@@ -293,17 +294,43 @@ def main(output: str):
     # batch_count = 2
     batch_size = 20000
     batch_models = []
-    parquet_location = '/mnt/storage/nobackup/nca121/test_data_sets/gas/gas/testing_gas_esp.parquet'
-    parquet_table = pyarrow.parquet.read_table(parquet_location)
+    parquet_location = '/mnt/storage/nobackup/nca121/training_data_splits/gas/training_gas_esp.parquet'
+    # parquet_table = pyarrow.parquet.read_table(parquet_location)
+    # table = pl.scan_parquet(parquet_location, low_memory=True, cache=False).to_dicts()
+    # parquet_table = table.collect(streaming=True)
+    # print('converting to dicts')
+    # data_list = parquet_table
+    
+    parquet_file = pq.ParquetFile(parquet_location)
+    total_rows = parquet_file.metadata.num_rows
+
+    def convert_arrow_to_numpy(batch):
+        """
+        Convert a PyArrow RecordBatch to a dictionary of NumPy-compatible arrays.
+        Handles nested list<element> structures.
+        """
+        numpy_data = {}
+        for column in batch.schema.names:
+            if isinstance(batch[column], pyarrow.lib.ListArray):
+                numpy_data[column] = np.array([
+                    np.array(sublist) if sublist is not None else np.array([])
+                    for sublist in batch[column].to_pylist()
+                ])
+            else:
+                numpy_data[column] = np.array(batch[column])
+        return numpy_data
+
+
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batch_count = 0  # Initialize the batch counter
         batch_models = []
-        
-        for item in tqdm(parquet_table.to_pylist(),total= parquet_table.shape[0], desc='processing table'):
+        for item in tqdm(parquet_file.iter_batches(batch_size=10_000), desc='Processing table'):
+        # for item in tqdm(data_list,total= len(data_list), desc='processing table'):
             # # Skip charged species as Riniker cannot accept them
             # if "+" in molecule_smiles or "-" in molecule_smiles or "Br" in molecule_smiles or "P" in molecule_smiles:
             #     continue
-            batch_models.append(item)
+            print(item)
+            batch_models.append(convert_arrow_to_numpy(item))
             if len(batch_models) >= batch_size:
                 # Process the batch
                 process_and_write_batch(batch_models, schema, writer)
@@ -318,4 +345,4 @@ def main(output: str):
 
         
 if __name__ == "__main__":
-    main(output='./test_models_gas.parquet')
+    main(output='./train_esp_model.parquet')
