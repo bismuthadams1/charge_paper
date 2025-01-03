@@ -21,6 +21,8 @@ from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_e
 from tqdm import tqdm
 from typing import Iterator
 from naglmbis.models import load_charge_model
+import logging
+import gc
 
 import traceback
 import json
@@ -42,6 +44,13 @@ from openff.recharge.charges.library import (
 )
 from openff.recharge.esp import ESPSettings
 from openff.recharge.charges.resp.solvers import IterativeSolver
+import builtins
+
+def print(*args):
+    builtins.print(*args, sep=' ', end='\n', file=None, flush=True)
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='build_charge_models.log', level=logging.INFO)
 
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
 HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
@@ -158,7 +167,7 @@ def make_hash(openff_mol: Molecule) -> str:
     
     return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
     
-def process_molecule(parquet: dict, models: dict):
+def process_molecule(parquet: dict, models: dict, index: int):
     """Process molecules with multiple charge models
     
     Parameters
@@ -177,8 +186,8 @@ def process_molecule(parquet: dict, models: dict):
         Dictionary containing all the charge info for multiple charge models.
     """
     batch_dict = {}
-    coordinates = (parquet['conformation'] * unit.bohr).reshape((-1, 3))
-    mapped_smiles = parquet['smiles']
+    coordinates = (parquet[index]['conformation'] * unit.bohr).reshape((-1, 3))
+    mapped_smiles = parquet[index]['smiles']
     openff_mol: Molecule = make_openff_molecule(
         mapped_smiles=mapped_smiles,
         coordinates=coordinates
@@ -203,24 +212,24 @@ def process_molecule(parquet: dict, models: dict):
         charge_models_data[f'{model_name}_dipoles'] = predicted_dipole.tolist()
         
         # Calculate ESP and RMSE
-        grid_coordinates = (parquet['grid'] * unit.bohr).reshape(-1, 3)
+        grid_coordinates = (parquet[index]['grid'] * unit.bohr).reshape(-1, 3)
         predicted_esp = calculate_esp_monopole_au(
             grid_coordinates=grid_coordinates,
             atom_coordinates=coordinates,
             charges=predicted_charges * unit.e
         )
-        qm_esp = parquet['esp'] * unit.hartree / unit.e
+        qm_esp = parquet[index]['esp'] * unit.hartree / unit.e
         esp_rms = (((predicted_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
         charge_models_data[f'{model_name}_esp'] = predicted_esp.m.flatten().tolist()
         charge_models_data[f'{model_name}_esp_rmse'] = esp_rms * HA_TO_KCAL_P_MOL
 
     # ------ QM and MBIS properties -------#
-    batch_dict['mbis_charges'] = parquet['mbis-charges']
-    batch_dict['qm_dipoles_magnitude'] = np.linalg.norm(parquet['dipole']).tolist()
-    batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet['mbis-dipoles']).tolist()
+    batch_dict['mbis_charges'] = parquet[index]['mbis-charges']
+    batch_dict['qm_dipoles_magnitude'] = np.linalg.norm(parquet[index]['dipole']).tolist()
+    batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet[index]['mbis-dipoles']).tolist()
     batch_dict.update(charge_models_data)
 
-    print(batch_dict)
+    # print(batch_dict)
     return batch_dict
 
 
@@ -243,21 +252,12 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-    # with ProcessPoolExecutor(max_workers=40) as pool:
-        # Submit jobs to process the models in parallel
-        # jobs = [pool.submit(process_molecule, model) for model in batch_models]
-        # results_batch = []
-        # for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
-        #     try:
-        #         result = future.result()
-        #         results_batch.append(result)
-        #     except Exception as e:
-        #         print(f'Failure of job due to {e}')
-        #         print(traceback.format_exc())
-                # continue  # Skip if the molecule was skipped or had no results
+
     results_batch = []
-    for model in tqdm(batch_models, total=len(batch_models), desc='Processing molecules'):
-        results_batch.append(process_molecule(model, models=models ))
+    print('batch models')
+    print(batch_models)
+    for index, model in enumerate(tqdm(batch_models, total=len(batch_models), desc='Processing molecules')):
+        results_batch.append(process_molecule(model, models=models, index= index))
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
     
@@ -291,15 +291,9 @@ def main(output: str):
         ('esp_model_esp_rmse', pyarrow.float64()),
     ])
 
-    # batch_count = 2
-    batch_size = 20000
+    batch_size = 500
     batch_models = []
     parquet_location = '/mnt/storage/nobackup/nca121/training_data_splits/gas/training_gas_esp.parquet'
-    # parquet_table = pyarrow.parquet.read_table(parquet_location)
-    # table = pl.scan_parquet(parquet_location, low_memory=True, cache=False).to_dicts()
-    # parquet_table = table.collect(streaming=True)
-    # print('converting to dicts')
-    # data_list = parquet_table
     
     parquet_file = pq.ParquetFile(parquet_location)
     total_rows = parquet_file.metadata.num_rows
@@ -312,32 +306,27 @@ def main(output: str):
         numpy_data = {}
         for column in batch.schema.names:
             if isinstance(batch[column], pyarrow.lib.ListArray):
-                numpy_data[column] = np.array([
+                numpy_data[column] = [
                     np.array(sublist) if sublist is not None else np.array([])
                     for sublist in batch[column].to_pylist()
-                ])
+                ]
             else:
-                numpy_data[column] = np.array(batch[column])
+                numpy_data[column] = batch[column].to_pylist()
         return numpy_data
 
 
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
-        batch_count = 0  # Initialize the batch counter
         batch_models = []
-        for item in tqdm(parquet_file.iter_batches(batch_size=10_000), desc='Processing table'):
-        # for item in tqdm(data_list,total= len(data_list), desc='processing table'):
-            # # Skip charged species as Riniker cannot accept them
-            # if "+" in molecule_smiles or "-" in molecule_smiles or "Br" in molecule_smiles or "P" in molecule_smiles:
-            #     continue
-            print(item)
-            batch_models.append(convert_arrow_to_numpy(item))
-            if len(batch_models) >= batch_size:
-                # Process the batch
+        for item in tqdm(parquet_file.iter_batches(batch_size=batch_size), desc='Processing table'):
+
+            batch_models.append(converted:=item.to_pylist())
+            logger.info(f"{len(converted)}")
+            if len(converted) >= batch_size:
+                logger.info('processing batch')
                 process_and_write_batch(batch_models, schema, writer)
+                gc.collect()
+                del batch_models
                 batch_models = []
-                batch_count += 1  # Increment the batch counter
-                # if batch_count >= 1:
-                #     break  # Exit the loop after processing 4 batches
 
         # Optionally process any remaining models if you haven't reached 4 batches
         if batch_models: #and batch_count < 1:
