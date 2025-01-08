@@ -45,6 +45,15 @@ from openff.recharge.charges.library import (
 from openff.recharge.esp import ESPSettings
 from openff.recharge.charges.resp.solvers import IterativeSolver
 import builtins
+import psutil
+
+process = psutil.Process(os.getpid())
+
+def log_memory_usage(msg=""):
+    mem_info = process.memory_info()
+    rss_mb = mem_info.rss / (1024 * 1024)  # Resident Set Size in MB
+    logging.info(f"{msg} - RSS memory usage: {rss_mb:.2f} MB")
+
 
 def print(*args):
     builtins.print(*args, sep=' ', end='\n', file=None, flush=True)
@@ -59,14 +68,28 @@ charge_model_esp= 'nagl-gas-charge-dipole-esp-wb-default'
 charge_model_charge = "nagl-gas-charge-wb"
 charge_model_dipole =  "nagl-gas-charge-dipole-wb"
 
+charge_model_water_esp = 'nagl-water-charge-dipole-esp-wb-default'
+charge_model_water_charge = 'nagl-water-charge-wb'
+charge_model_water_dipole = 'nagl-water-charge-dipole-wb'
+
 gas_charge_model = load_charge_model(charge_model=charge_model_charge)
 gas_charge_dipole_model = load_charge_model(charge_model=charge_model_dipole)
 gas_charge_dipole_esp_model = load_charge_model(charge_model_esp)
 
+water_charge_model = load_charge_model(charge_model=charge_model_water_charge)
+water_charge_dipole_model = load_charge_model(charge_model=charge_model_water_dipole)
+water_charge_dipole_esp_model = load_charge_model(charge_model = charge_model_water_esp)
+
 models = {
-    "charge_model": gas_charge_model,
-    "dipole_model": gas_charge_dipole_model,
-    "esp_model": gas_charge_dipole_esp_model
+    # "charge_model": gas_charge_model,
+    # "dipole_model": gas_charge_dipole_model,
+    # "esp_model": gas_charge_dipole_esp_model,
+    "charge_model": water_charge_model,
+    "dipole_model": water_charge_dipole_model,
+    "esp_model": water_charge_dipole_esp_model,
+    # "charge_model_water": charge_model_water_charge,
+    # "dipole_model_water": charge_model_water_dipole,
+    # "esp_model_water": charge_model_water_esp
 }
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
@@ -167,7 +190,7 @@ def make_hash(openff_mol: Molecule) -> str:
     
     return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
     
-def process_molecule(parquet: dict, models: dict, index: int):
+def process_molecule(parquet: dict, models: dict):
     """Process molecules with multiple charge models
     
     Parameters
@@ -186,8 +209,8 @@ def process_molecule(parquet: dict, models: dict, index: int):
         Dictionary containing all the charge info for multiple charge models.
     """
     batch_dict = {}
-    coordinates = (parquet[index]['conformation'] * unit.bohr).reshape((-1, 3))
-    mapped_smiles = parquet[index]['smiles']
+    coordinates = (parquet['conformation'] * unit.bohr).reshape((-1, 3))
+    mapped_smiles = parquet['smiles']
     openff_mol: Molecule = make_openff_molecule(
         mapped_smiles=mapped_smiles,
         coordinates=coordinates
@@ -212,21 +235,21 @@ def process_molecule(parquet: dict, models: dict, index: int):
         charge_models_data[f'{model_name}_dipoles'] = predicted_dipole.tolist()
         
         # Calculate ESP and RMSE
-        grid_coordinates = (parquet[index]['grid'] * unit.bohr).reshape(-1, 3)
+        grid_coordinates = (parquet['grid'] * unit.bohr).reshape(-1, 3)
         predicted_esp = calculate_esp_monopole_au(
             grid_coordinates=grid_coordinates,
             atom_coordinates=coordinates,
             charges=predicted_charges * unit.e
         )
-        qm_esp = parquet[index]['esp'] * unit.hartree / unit.e
+        qm_esp = parquet['esp'] * unit.hartree / unit.e
         esp_rms = (((predicted_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
         charge_models_data[f'{model_name}_esp'] = predicted_esp.m.flatten().tolist()
         charge_models_data[f'{model_name}_esp_rmse'] = esp_rms * HA_TO_KCAL_P_MOL
 
     # ------ QM and MBIS properties -------#
-    batch_dict['mbis_charges'] = parquet[index]['mbis-charges']
-    batch_dict['qm_dipoles_magnitude'] = np.linalg.norm(parquet[index]['dipole']).tolist()
-    batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet[index]['mbis-dipoles']).tolist()
+    batch_dict['mbis_charges'] = parquet['mbis-charges']
+    batch_dict['qm_dipoles_magnitude'] = np.linalg.norm(parquet['dipole']).tolist()
+    batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet['mbis-dipoles']).tolist()
     batch_dict.update(charge_models_data)
 
     # print(batch_dict)
@@ -254,15 +277,14 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
 def process_and_write_batch(batch_models, schema, writer):
 
     results_batch = []
-    print('batch models')
-    print(batch_models)
-    for index, model in enumerate(tqdm(batch_models, total=len(batch_models), desc='Processing molecules')):
-        results_batch.append(process_molecule(model, models=models, index= index))
+
+    for model in tqdm(batch_models, total=len(batch_models[0]), desc='Processing molecules'):
+        results_batch.append(process_molecule(model, models=models))
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
     
 
-def main(output: str):
+def main(output: str, data: str):
 
     schema = pyarrow.schema([
         ('mbis_charges', pyarrow.list_(pyarrow.float64())),
@@ -293,8 +315,8 @@ def main(output: str):
 
     batch_size = 500
     batch_models = []
-    parquet_location = '/mnt/storage/nobackup/nca121/training_data_splits/gas/training_gas_esp.parquet'
-    
+    # parquet_location = '/mnt/storage/nobackup/nca121/test_data_sets/water/training_water_esp.parquet'
+    parquet_location = data
     parquet_file = pq.ParquetFile(parquet_location)
     total_rows = parquet_file.metadata.num_rows
 
@@ -318,20 +340,23 @@ def main(output: str):
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batch_models = []
         for item in tqdm(parquet_file.iter_batches(batch_size=batch_size), desc='Processing table'):
-
+            logging.info(f'{log_memory_usage("Before to_pylist()")}')
             batch_models.append(converted:=item.to_pylist())
+            logging.info(f'{log_memory_usage("After to_pylist()")}')
             logger.info(f"{len(converted)}")
             if len(converted) >= batch_size:
                 logger.info('processing batch')
-                process_and_write_batch(batch_models, schema, writer)
-                gc.collect()
+                process_and_write_batch(converted, schema, writer)
                 del batch_models
+                del converted
+                gc.collect()
                 batch_models = []
 
         # Optionally process any remaining models if you haven't reached 4 batches
         if batch_models: #and batch_count < 1:
-            process_and_write_batch(batch_models, schema, writer)
+            process_and_write_batch(converted, schema, writer)
 
         
 if __name__ == "__main__":
-    main(output='./train_esp_model.parquet')
+    # main(output='./train_water_esp_model.parquet')
+    main(output='./test_water_esp_model.parquet', data='/mnt/storage/nobackup/nca121/test_data_sets/water/testing_water_esp.parquet')
