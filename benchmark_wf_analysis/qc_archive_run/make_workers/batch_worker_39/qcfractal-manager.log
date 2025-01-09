@@ -1,0 +1,1119 @@
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: --------------------------------------------------------------------------------
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: QCFractal Compute Manager:
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     Version:     0.56
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     Base folder: /mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/benchmark_wf_analysis/qc_archive_run/make_workers/batch_worker_39
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     Cluster:     Rocket
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     Hostname:    sb093.cluster
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     UUID:        8efd5a76-6519-4568-b372-004714681a71
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: 
+
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     Parsl Executors:
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     local_executor:
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     Type: local
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:               Queue Tags: ['*']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                 Programs:
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     psi4: ['1.9.1', '1.8.2']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     dftd3: ['3.2.1']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     xtb: ['20.2']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     rdkit: ['2023.3.3', '2024.3.5']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     qcengine: ['v0.29.0', 'v0.30.0']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     optking: ['0.3.0', '0.2.1']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     torsiondrive: ['unknown']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     geometric: ['1.0', '1.0.2']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     mctc-gcp: ['2.3.2']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:                     s-dftd3: ['1.2.1']
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: 
+
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:     Connected to:
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:         Address:     http://10.64.1.130:7778/
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:         Name:        QCFractal Server
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:         Version:     0.56
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:         Username:    charlie_compute
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager:         Heartbeat:   1800
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: --------------------------------------------------------------------------------
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Starting DataFlowKernel with config
+Config(
+    app_cache=True, 
+    checkpoint_files=None, 
+    checkpoint_mode=None, 
+    checkpoint_period=None, 
+    dependency_resolver=None, 
+    executors=(ThreadPoolExecutor(
+        label='threads', 
+        max_threads=2, 
+        storage_access=None, 
+        thread_name_prefix='', 
+        working_dir=None
+    ),), 
+    exit_mode='cleanup', 
+    garbage_collect=True, 
+    initialize_logging=False, 
+    internal_tasks_max_threads=10, 
+    max_idletime=120.0, 
+    monitoring=None, 
+    project_name=None, 
+    retries=0, 
+    retry_handler=None, 
+    run_dir='parsl_run_dir', 
+    std_autopath=None, 
+    strategy='simple', 
+    strategy_period=5, 
+    usage_tracking=0
+)
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Parsl version: 2024.10.07
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Run id is: ee6ccf09-d53b-4ac6-9db1-d790dcfd7127
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.memoization: App caching initialized
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: Compute Manager successfully started.
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: Task Stats: Total finished=0, Failed=0, Success=0, Rejected=0
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.00
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:21:00 GMT]     INFO: ComputeManager: Acquired 3 new tasks.
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Task 0 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Task 1 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Parsl task 0 try 0 launched on executor local_executor
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Task 2 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 0 will not be redirected.
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 0 will not be redirected.
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Parsl task 1 try 0 launched on executor local_executor
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 1 will not be redirected.
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 1 will not be redirected.
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Parsl task 2 try 0 launched on executor local_executor
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 2 will not be redirected.
+[2025-01-09 12:21:00 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 2 will not be redirected.
+[2025-01-09 12:21:41 GMT]     INFO: parsl.dataflow.dflow: Task 0 completed (launched -> exec_done)
+[2025-01-09 12:21:41 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 0 will not be redirected.
+[2025-01-09 12:21:41 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 0 will not be redirected.
+[2025-01-09 12:21:54 GMT]     INFO: parsl.dataflow.dflow: Task 1 completed (launched -> exec_done)
+[2025-01-09 12:21:54 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 1 will not be redirected.
+[2025-01-09 12:21:54 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 1 will not be redirected.
+[2025-01-09 12:22:00 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14118       251860  local_executor  00:00:40.99  success
+    14119       251861  local_executor  00:00:13.31  success
+[2025-01-09 12:22:01 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 12:22:01 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 12:22:01 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14118       251860  sent
+    14119       251861  sent
+[2025-01-09 12:22:01 GMT]     INFO: ComputeManager: Task Stats: Total finished=2, Failed=0, Success=2, Rejected=0
+[2025-01-09 12:22:01 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.06
+[2025-01-09 12:22:01 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 12:22:01 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Task 3 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Task 4 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Parsl task 3 try 0 launched on executor local_executor
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 3 will not be redirected.
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 3 will not be redirected.
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Parsl task 4 try 0 launched on executor local_executor
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 4 will not be redirected.
+[2025-01-09 12:22:01 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 4 will not be redirected.
+[2025-01-09 12:22:51 GMT]     INFO: parsl.dataflow.dflow: Task 2 completed (launched -> exec_done)
+[2025-01-09 12:22:51 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 2 will not be redirected.
+[2025-01-09 12:22:51 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 2 will not be redirected.
+[2025-01-09 12:23:01 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14120       251862  local_executor  00:00:56.64  success
+[2025-01-09 12:23:02 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:23:02 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:23:02 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14120       251862  sent
+[2025-01-09 12:23:02 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:23:02 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.12
+[2025-01-09 12:23:02 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:23:02 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:23:02 GMT]     INFO: parsl.dataflow.dflow: Task 5 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:23:02 GMT]     INFO: parsl.dataflow.dflow: Parsl task 5 try 0 launched on executor local_executor
+[2025-01-09 12:23:02 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 5 will not be redirected.
+[2025-01-09 12:23:02 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 5 will not be redirected.
+[2025-01-09 12:23:15 GMT]     INFO: parsl.dataflow.dflow: Task 3 completed (launched -> exec_done)
+[2025-01-09 12:23:15 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 3 will not be redirected.
+[2025-01-09 12:23:15 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 3 will not be redirected.
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14178       251920  local_executor  00:00:24.15  success
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14178       251920  sent
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Task Stats: Total finished=4, Failed=0, Success=4, Rejected=0
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.15
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:24:02 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:24:02 GMT]     INFO: parsl.dataflow.dflow: Task 6 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:24:02 GMT]     INFO: parsl.dataflow.dflow: Parsl task 6 try 0 launched on executor local_executor
+[2025-01-09 12:24:02 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 6 will not be redirected.
+[2025-01-09 12:24:02 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 6 will not be redirected.
+[2025-01-09 12:24:28 GMT]     INFO: parsl.dataflow.dflow: Task 4 completed (launched -> exec_done)
+[2025-01-09 12:24:28 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 4 will not be redirected.
+[2025-01-09 12:24:28 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 4 will not be redirected.
+[2025-01-09 12:24:42 GMT]     INFO: parsl.dataflow.dflow: Task 5 completed (launched -> exec_done)
+[2025-01-09 12:24:42 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 5 will not be redirected.
+[2025-01-09 12:24:42 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 5 will not be redirected.
+[2025-01-09 12:25:02 GMT]     INFO: parsl.dataflow.dflow: Task 6 completed (launched -> exec_done)
+[2025-01-09 12:25:02 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 6 will not be redirected.
+[2025-01-09 12:25:02 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 6 will not be redirected.
+[2025-01-09 12:25:02 GMT]     INFO: ComputeManager: Acquired 3 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14179       251921  local_executor  00:01:12.27  success
+    14207       251949  local_executor  00:00:14.28  success
+    14246       251988  local_executor  00:00:20.35  success
+[2025-01-09 12:25:03 GMT]     INFO: ComputeManager: Successfully returned 3 tasks to the fractal server
+[2025-01-09 12:25:03 GMT]     INFO: ComputeManager: Executor local_executor: Processed 3 tasks: 3 success / 0 failed
+[2025-01-09 12:25:03 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14179       251921  sent
+    14207       251949  sent
+    14246       251988  sent
+[2025-01-09 12:25:03 GMT]     INFO: ComputeManager: Task Stats: Total finished=7, Failed=0, Success=7, Rejected=0
+[2025-01-09 12:25:03 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.27
+[2025-01-09 12:25:03 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:25:04 GMT]     INFO: ComputeManager: Acquired 3 new tasks.
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Task 7 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Task 8 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Task 9 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Parsl task 7 try 0 launched on executor local_executor
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 7 will not be redirected.
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 7 will not be redirected.
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Parsl task 8 try 0 launched on executor local_executor
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 8 will not be redirected.
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 8 will not be redirected.
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Parsl task 9 try 0 launched on executor local_executor
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 9 will not be redirected.
+[2025-01-09 12:25:04 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 9 will not be redirected.
+[2025-01-09 12:25:32 GMT]     INFO: parsl.dataflow.dflow: Task 7 completed (launched -> exec_done)
+[2025-01-09 12:25:32 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 7 will not be redirected.
+[2025-01-09 12:25:32 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 7 will not be redirected.
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14285       252027  local_executor  00:00:27.95  success
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14285       252027  sent
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Task Stats: Total finished=8, Failed=0, Success=8, Rejected=0
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.30
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:26:04 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:26:04 GMT]     INFO: parsl.dataflow.dflow: Task 10 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:26:04 GMT]     INFO: parsl.dataflow.dflow: Parsl task 10 try 0 launched on executor local_executor
+[2025-01-09 12:26:04 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 10 will not be redirected.
+[2025-01-09 12:26:04 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 10 will not be redirected.
+[2025-01-09 12:26:37 GMT]     INFO: parsl.dataflow.dflow: Task 8 completed (launched -> exec_done)
+[2025-01-09 12:26:37 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 8 will not be redirected.
+[2025-01-09 12:26:37 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 8 will not be redirected.
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime    status
+---------  -----------  --------------  ----------  --------
+    14286       252028  local_executor  00:01:4.89  success
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14286       252028  sent
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Task Stats: Total finished=9, Failed=0, Success=9, Rejected=0
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.37
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:27:04 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:27:04 GMT]     INFO: parsl.dataflow.dflow: Task 11 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:27:04 GMT]     INFO: parsl.dataflow.dflow: Parsl task 11 try 0 launched on executor local_executor
+[2025-01-09 12:27:04 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 11 will not be redirected.
+[2025-01-09 12:27:04 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 11 will not be redirected.
+[2025-01-09 12:27:10 GMT]     INFO: parsl.dataflow.dflow: Task 9 completed (launched -> exec_done)
+[2025-01-09 12:27:10 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 9 will not be redirected.
+[2025-01-09 12:27:10 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 9 will not be redirected.
+[2025-01-09 12:27:37 GMT]     INFO: parsl.dataflow.dflow: Task 10 completed (launched -> exec_done)
+[2025-01-09 12:27:37 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 10 will not be redirected.
+[2025-01-09 12:27:37 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 10 will not be redirected.
+[2025-01-09 12:28:04 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14287       252029  local_executor  00:00:33.73  success
+    14330       252072  local_executor  00:00:26.71  success
+[2025-01-09 12:28:05 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 12:28:05 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 12:28:05 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14287       252029  sent
+    14330       252072  sent
+[2025-01-09 12:28:05 GMT]     INFO: ComputeManager: Task Stats: Total finished=11, Failed=0, Success=11, Rejected=0
+[2025-01-09 12:28:05 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.44
+[2025-01-09 12:28:05 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 12:28:05 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Task 12 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Task 13 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Parsl task 12 try 0 launched on executor local_executor
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 12 will not be redirected.
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 12 will not be redirected.
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Parsl task 13 try 0 launched on executor local_executor
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 13 will not be redirected.
+[2025-01-09 12:28:05 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 13 will not be redirected.
+[2025-01-09 12:28:22 GMT]     INFO: parsl.dataflow.dflow: Task 11 completed (launched -> exec_done)
+[2025-01-09 12:28:22 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 11 will not be redirected.
+[2025-01-09 12:28:22 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 11 will not be redirected.
+[2025-01-09 12:28:39 GMT]     INFO: parsl.dataflow.dflow: Task 12 completed (launched -> exec_done)
+[2025-01-09 12:28:39 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 12 will not be redirected.
+[2025-01-09 12:28:39 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 12 will not be redirected.
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14369       252111  local_executor  00:00:44.55  success
+    14404       252146  local_executor  00:00:17.37  success
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14369       252111  sent
+    14404       252146  sent
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Task Stats: Total finished=13, Failed=0, Success=13, Rejected=0
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.51
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 12:29:05 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Task 14 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Task 15 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Parsl task 14 try 0 launched on executor local_executor
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 14 will not be redirected.
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 14 will not be redirected.
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Parsl task 15 try 0 launched on executor local_executor
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 15 will not be redirected.
+[2025-01-09 12:29:05 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 15 will not be redirected.
+[2025-01-09 12:30:00 GMT]     INFO: parsl.dataflow.dflow: Task 13 completed (launched -> exec_done)
+[2025-01-09 12:30:00 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 13 will not be redirected.
+[2025-01-09 12:30:00 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 13 will not be redirected.
+[2025-01-09 12:30:05 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14405       252147  local_executor  00:01:20.42  success
+[2025-01-09 12:30:06 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:30:06 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:30:06 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14405       252147  sent
+[2025-01-09 12:30:06 GMT]     INFO: ComputeManager: Task Stats: Total finished=14, Failed=0, Success=14, Rejected=0
+[2025-01-09 12:30:06 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.60
+[2025-01-09 12:30:06 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:30:06 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:30:06 GMT]     INFO: parsl.dataflow.dflow: Task 16 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:30:06 GMT]     INFO: parsl.dataflow.dflow: Parsl task 16 try 0 launched on executor local_executor
+[2025-01-09 12:30:06 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 16 will not be redirected.
+[2025-01-09 12:30:06 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 16 will not be redirected.
+[2025-01-09 12:30:29 GMT]     INFO: parsl.dataflow.dflow: Task 14 completed (launched -> exec_done)
+[2025-01-09 12:30:29 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 14 will not be redirected.
+[2025-01-09 12:30:29 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 14 will not be redirected.
+[2025-01-09 12:30:58 GMT]     INFO: parsl.dataflow.dflow: Task 15 completed (launched -> exec_done)
+[2025-01-09 12:30:58 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 15 will not be redirected.
+[2025-01-09 12:30:58 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 15 will not be redirected.
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14445       252187  local_executor  00:00:29.59  success
+    14446       252188  local_executor  00:00:28.40  success
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14445       252187  sent
+    14446       252188  sent
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Task Stats: Total finished=16, Failed=0, Success=16, Rejected=0
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.66
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 12:31:06 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Task 17 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Task 18 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Parsl task 17 try 0 launched on executor local_executor
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 17 will not be redirected.
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 17 will not be redirected.
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Parsl task 18 try 0 launched on executor local_executor
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 18 will not be redirected.
+[2025-01-09 12:31:06 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 18 will not be redirected.
+[2025-01-09 12:31:32 GMT]     INFO: parsl.dataflow.dflow: Task 16 completed (launched -> exec_done)
+[2025-01-09 12:31:32 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 16 will not be redirected.
+[2025-01-09 12:31:32 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 16 will not be redirected.
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14480       252222  local_executor  00:00:34.49  success
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14480       252222  sent
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Task Stats: Total finished=17, Failed=0, Success=17, Rejected=0
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.70
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:32:06 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:32:06 GMT]     INFO: parsl.dataflow.dflow: Task 19 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:32:06 GMT]     INFO: parsl.dataflow.dflow: Parsl task 19 try 0 launched on executor local_executor
+[2025-01-09 12:32:06 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 19 will not be redirected.
+[2025-01-09 12:32:06 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 19 will not be redirected.
+[2025-01-09 12:32:18 GMT]     INFO: parsl.dataflow.dflow: Task 17 completed (launched -> exec_done)
+[2025-01-09 12:32:18 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 17 will not be redirected.
+[2025-01-09 12:32:18 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 17 will not be redirected.
+[2025-01-09 12:33:06 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14526       252268  local_executor  00:00:45.48  success
+[2025-01-09 12:33:07 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:33:07 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:33:07 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14526       252268  sent
+[2025-01-09 12:33:07 GMT]     INFO: ComputeManager: Task Stats: Total finished=18, Failed=0, Success=18, Rejected=0
+[2025-01-09 12:33:07 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.75
+[2025-01-09 12:33:07 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:33:07 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:33:07 GMT]     INFO: parsl.dataflow.dflow: Task 20 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:33:07 GMT]     INFO: parsl.dataflow.dflow: Parsl task 20 try 0 launched on executor local_executor
+[2025-01-09 12:33:07 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 20 will not be redirected.
+[2025-01-09 12:33:07 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 20 will not be redirected.
+[2025-01-09 12:34:01 GMT]     INFO: parsl.dataflow.dflow: Task 18 completed (launched -> exec_done)
+[2025-01-09 12:34:01 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 18 will not be redirected.
+[2025-01-09 12:34:01 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 18 will not be redirected.
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14527       252269  local_executor  00:01:42.99  success
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14527       252269  sent
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Task Stats: Total finished=19, Failed=0, Success=19, Rejected=0
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.87
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:34:07 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:34:07 GMT]     INFO: parsl.dataflow.dflow: Task 21 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:34:07 GMT]     INFO: parsl.dataflow.dflow: Parsl task 21 try 0 launched on executor local_executor
+[2025-01-09 12:34:07 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 21 will not be redirected.
+[2025-01-09 12:34:07 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 21 will not be redirected.
+[2025-01-09 12:34:42 GMT]     INFO: parsl.dataflow.dflow: Task 19 completed (launched -> exec_done)
+[2025-01-09 12:34:42 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 19 will not be redirected.
+[2025-01-09 12:34:42 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 19 will not be redirected.
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14562       252304  local_executor  00:00:40.88  success
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14562       252304  sent
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Task Stats: Total finished=20, Failed=0, Success=20, Rejected=0
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.91
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:35:07 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:35:07 GMT]     INFO: parsl.dataflow.dflow: Task 22 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:35:07 GMT]     INFO: parsl.dataflow.dflow: Parsl task 22 try 0 launched on executor local_executor
+[2025-01-09 12:35:07 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 22 will not be redirected.
+[2025-01-09 12:35:07 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 22 will not be redirected.
+[2025-01-09 12:36:07 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:36:07 GMT]     INFO: ComputeManager: Task Stats: Total finished=20, Failed=0, Success=20, Rejected=0
+[2025-01-09 12:36:07 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.91
+[2025-01-09 12:36:07 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:36:15 GMT]     INFO: parsl.dataflow.dflow: Task 20 completed (launched -> exec_done)
+[2025-01-09 12:36:15 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 20 will not be redirected.
+[2025-01-09 12:36:15 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 20 will not be redirected.
+[2025-01-09 12:37:07 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14584       252326  local_executor  00:01:33.43  success
+[2025-01-09 12:37:07 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:37:07 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:37:07 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14584       252326  sent
+[2025-01-09 12:37:07 GMT]     INFO: ComputeManager: Task Stats: Total finished=21, Failed=0, Success=21, Rejected=0
+[2025-01-09 12:37:07 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.01
+[2025-01-09 12:37:07 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:37:08 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:37:08 GMT]     INFO: parsl.dataflow.dflow: Task 23 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:37:08 GMT]     INFO: parsl.dataflow.dflow: Parsl task 23 try 0 launched on executor local_executor
+[2025-01-09 12:37:08 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 23 will not be redirected.
+[2025-01-09 12:37:08 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 23 will not be redirected.
+[2025-01-09 12:37:48 GMT]     INFO: parsl.dataflow.dflow: Task 21 completed (launched -> exec_done)
+[2025-01-09 12:37:48 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 21 will not be redirected.
+[2025-01-09 12:37:48 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 21 will not be redirected.
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14603       252345  local_executor  00:01:32.08  success
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14603       252345  sent
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Task Stats: Total finished=22, Failed=0, Success=22, Rejected=0
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.12
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:38:08 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:38:08 GMT]     INFO: parsl.dataflow.dflow: Task 24 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:38:08 GMT]     INFO: parsl.dataflow.dflow: Parsl task 24 try 0 launched on executor local_executor
+[2025-01-09 12:38:08 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 24 will not be redirected.
+[2025-01-09 12:38:08 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 24 will not be redirected.
+[2025-01-09 12:39:08 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:39:08 GMT]     INFO: ComputeManager: Task Stats: Total finished=22, Failed=0, Success=22, Rejected=0
+[2025-01-09 12:39:08 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.12
+[2025-01-09 12:39:08 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:40:08 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:40:08 GMT]     INFO: ComputeManager: Task Stats: Total finished=22, Failed=0, Success=22, Rejected=0
+[2025-01-09 12:40:08 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.12
+[2025-01-09 12:40:08 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:41:08 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:41:08 GMT]     INFO: ComputeManager: Task Stats: Total finished=22, Failed=0, Success=22, Rejected=0
+[2025-01-09 12:41:08 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.12
+[2025-01-09 12:41:08 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:41:14 GMT]     INFO: parsl.dataflow.dflow: Task 22 completed (launched -> exec_done)
+[2025-01-09 12:41:14 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 22 will not be redirected.
+[2025-01-09 12:41:14 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 22 will not be redirected.
+[2025-01-09 12:41:35 GMT]     INFO: parsl.dataflow.dflow: Task 23 completed (launched -> exec_done)
+[2025-01-09 12:41:35 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 23 will not be redirected.
+[2025-01-09 12:41:35 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 23 will not be redirected.
+[2025-01-09 12:42:08 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14619       252361  local_executor  00:03:26.29  success
+    14660       252402  local_executor  00:00:21.25  success
+[2025-01-09 12:42:09 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 12:42:09 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 12:42:09 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14619       252361  sent
+    14660       252402  sent
+[2025-01-09 12:42:09 GMT]     INFO: ComputeManager: Task Stats: Total finished=24, Failed=0, Success=24, Rejected=0
+[2025-01-09 12:42:09 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.37
+[2025-01-09 12:42:09 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 12:42:09 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Task 25 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Task 26 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Parsl task 25 try 0 launched on executor local_executor
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 25 will not be redirected.
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 25 will not be redirected.
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Parsl task 26 try 0 launched on executor local_executor
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 26 will not be redirected.
+[2025-01-09 12:42:09 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 26 will not be redirected.
+[2025-01-09 12:43:09 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:43:09 GMT]     INFO: ComputeManager: Task Stats: Total finished=24, Failed=0, Success=24, Rejected=0
+[2025-01-09 12:43:09 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.37
+[2025-01-09 12:43:09 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:43:30 GMT]     INFO: parsl.dataflow.dflow: Task 24 completed (launched -> exec_done)
+[2025-01-09 12:43:30 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 24 will not be redirected.
+[2025-01-09 12:43:30 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 24 will not be redirected.
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14676       252418  local_executor  00:01:54.27  success
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14676       252418  sent
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Task Stats: Total finished=25, Failed=0, Success=25, Rejected=0
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.50
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:44:09 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:44:09 GMT]     INFO: parsl.dataflow.dflow: Task 27 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:44:09 GMT]     INFO: parsl.dataflow.dflow: Parsl task 27 try 0 launched on executor local_executor
+[2025-01-09 12:44:09 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 27 will not be redirected.
+[2025-01-09 12:44:09 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 27 will not be redirected.
+[2025-01-09 12:44:15 GMT]     INFO: parsl.dataflow.dflow: Task 25 completed (launched -> exec_done)
+[2025-01-09 12:44:15 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 25 will not be redirected.
+[2025-01-09 12:44:15 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 25 will not be redirected.
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14757       252499  local_executor  00:00:44.98  success
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14757       252499  sent
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Task Stats: Total finished=26, Failed=0, Success=26, Rejected=0
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.55
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:45:09 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:45:09 GMT]     INFO: parsl.dataflow.dflow: Task 28 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:45:09 GMT]     INFO: parsl.dataflow.dflow: Parsl task 28 try 0 launched on executor local_executor
+[2025-01-09 12:45:09 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 28 will not be redirected.
+[2025-01-09 12:45:09 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 28 will not be redirected.
+[2025-01-09 12:45:52 GMT]     INFO: parsl.dataflow.dflow: Task 26 completed (launched -> exec_done)
+[2025-01-09 12:45:52 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 26 will not be redirected.
+[2025-01-09 12:45:52 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 26 will not be redirected.
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14758       252500  local_executor  00:01:36.81  success
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14758       252500  sent
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Task Stats: Total finished=27, Failed=0, Success=27, Rejected=0
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.65
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:46:09 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:46:09 GMT]     INFO: parsl.dataflow.dflow: Task 29 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:46:09 GMT]     INFO: parsl.dataflow.dflow: Parsl task 29 try 0 launched on executor local_executor
+[2025-01-09 12:46:09 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 29 will not be redirected.
+[2025-01-09 12:46:09 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 29 will not be redirected.
+[2025-01-09 12:47:09 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:47:09 GMT]     INFO: ComputeManager: Task Stats: Total finished=27, Failed=0, Success=27, Rejected=0
+[2025-01-09 12:47:09 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.65
+[2025-01-09 12:47:09 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:47:46 GMT]     INFO: parsl.dataflow.dflow: Task 27 completed (launched -> exec_done)
+[2025-01-09 12:47:46 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 27 will not be redirected.
+[2025-01-09 12:47:46 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 27 will not be redirected.
+[2025-01-09 12:48:09 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14803       252545  local_executor  00:01:54.12  success
+[2025-01-09 12:48:10 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:48:10 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:48:10 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14803       252545  sent
+[2025-01-09 12:48:10 GMT]     INFO: ComputeManager: Task Stats: Total finished=28, Failed=0, Success=28, Rejected=0
+[2025-01-09 12:48:10 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.78
+[2025-01-09 12:48:10 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:48:10 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:48:10 GMT]     INFO: parsl.dataflow.dflow: Task 30 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:48:10 GMT]     INFO: parsl.dataflow.dflow: Parsl task 30 try 0 launched on executor local_executor
+[2025-01-09 12:48:10 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 30 will not be redirected.
+[2025-01-09 12:48:10 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 30 will not be redirected.
+[2025-01-09 12:49:10 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:49:10 GMT]     INFO: ComputeManager: Task Stats: Total finished=28, Failed=0, Success=28, Rejected=0
+[2025-01-09 12:49:10 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.78
+[2025-01-09 12:49:10 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:49:12 GMT]     INFO: parsl.dataflow.dflow: Task 28 completed (launched -> exec_done)
+[2025-01-09 12:49:12 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 28 will not be redirected.
+[2025-01-09 12:49:12 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 28 will not be redirected.
+[2025-01-09 12:50:05 GMT]     INFO: parsl.dataflow.dflow: Task 29 completed (launched -> exec_done)
+[2025-01-09 12:50:05 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 29 will not be redirected.
+[2025-01-09 12:50:05 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 29 will not be redirected.
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14819       252561  local_executor  00:01:25.95  success
+    14839       252581  local_executor  00:00:52.86  success
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14819       252561  sent
+    14839       252581  sent
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Task Stats: Total finished=30, Failed=0, Success=30, Rejected=0
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=1.93
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 12:50:10 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Task 31 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Task 32 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Parsl task 31 try 0 launched on executor local_executor
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 31 will not be redirected.
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 31 will not be redirected.
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Parsl task 32 try 0 launched on executor local_executor
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 32 will not be redirected.
+[2025-01-09 12:50:10 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 32 will not be redirected.
+[2025-01-09 12:51:00 GMT]     INFO: parsl.dataflow.dflow: Task 30 completed (launched -> exec_done)
+[2025-01-09 12:51:00 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 30 will not be redirected.
+[2025-01-09 12:51:00 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 30 will not be redirected.
+[2025-01-09 12:51:10 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14881       252623  local_executor  00:00:55.01  success
+[2025-01-09 12:51:10 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:51:10 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:51:10 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14881       252623  sent
+[2025-01-09 12:51:10 GMT]     INFO: ComputeManager: Task Stats: Total finished=31, Failed=0, Success=31, Rejected=0
+[2025-01-09 12:51:10 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.00
+[2025-01-09 12:51:10 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:51:11 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:51:11 GMT]     INFO: parsl.dataflow.dflow: Task 33 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:51:11 GMT]     INFO: parsl.dataflow.dflow: Parsl task 33 try 0 launched on executor local_executor
+[2025-01-09 12:51:11 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 33 will not be redirected.
+[2025-01-09 12:51:11 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 33 will not be redirected.
+[2025-01-09 12:51:43 GMT]     INFO: parsl.dataflow.dflow: Task 31 completed (launched -> exec_done)
+[2025-01-09 12:51:43 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 31 will not be redirected.
+[2025-01-09 12:51:43 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 31 will not be redirected.
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14926       252668  local_executor  00:00:43.30  success
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14926       252668  sent
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Task Stats: Total finished=32, Failed=0, Success=32, Rejected=0
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.04
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:52:11 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:52:11 GMT]     INFO: parsl.dataflow.dflow: Task 34 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:52:11 GMT]     INFO: parsl.dataflow.dflow: Parsl task 34 try 0 launched on executor local_executor
+[2025-01-09 12:52:11 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 34 will not be redirected.
+[2025-01-09 12:52:11 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 34 will not be redirected.
+[2025-01-09 12:52:32 GMT]     INFO: parsl.dataflow.dflow: Task 32 completed (launched -> exec_done)
+[2025-01-09 12:52:32 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 32 will not be redirected.
+[2025-01-09 12:52:32 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 32 will not be redirected.
+[2025-01-09 12:52:59 GMT]     INFO: parsl.dataflow.dflow: Task 33 completed (launched -> exec_done)
+[2025-01-09 12:52:59 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 33 will not be redirected.
+[2025-01-09 12:52:59 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 33 will not be redirected.
+[2025-01-09 12:53:11 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    14927       252669  local_executor  00:00:48.67  success
+    14949       252691  local_executor  00:00:27.05  success
+[2025-01-09 12:53:12 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 12:53:12 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 12:53:12 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14927       252669  sent
+    14949       252691  sent
+[2025-01-09 12:53:12 GMT]     INFO: ComputeManager: Task Stats: Total finished=34, Failed=0, Success=34, Rejected=0
+[2025-01-09 12:53:12 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.13
+[2025-01-09 12:53:12 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 12:53:12 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Task 35 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Task 36 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Parsl task 35 try 0 launched on executor local_executor
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 35 will not be redirected.
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 35 will not be redirected.
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Parsl task 36 try 0 launched on executor local_executor
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 36 will not be redirected.
+[2025-01-09 12:53:12 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 36 will not be redirected.
+[2025-01-09 12:54:02 GMT]     INFO: parsl.dataflow.dflow: Task 34 completed (launched -> exec_done)
+[2025-01-09 12:54:02 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 34 will not be redirected.
+[2025-01-09 12:54:02 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 34 will not be redirected.
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime    status
+---------  -----------  --------------  ----------  --------
+    14975       252717  local_executor  00:01:2.55  success
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    14975       252717  sent
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Task Stats: Total finished=35, Failed=0, Success=35, Rejected=0
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.20
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:54:12 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:54:12 GMT]     INFO: parsl.dataflow.dflow: Task 37 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:54:12 GMT]     INFO: parsl.dataflow.dflow: Parsl task 37 try 0 launched on executor local_executor
+[2025-01-09 12:54:12 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 37 will not be redirected.
+[2025-01-09 12:54:12 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 37 will not be redirected.
+[2025-01-09 12:55:09 GMT]     INFO: parsl.dataflow.dflow: Task 35 completed (launched -> exec_done)
+[2025-01-09 12:55:09 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 35 will not be redirected.
+[2025-01-09 12:55:09 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 35 will not be redirected.
+[2025-01-09 12:55:12 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime    status
+---------  -----------  --------------  ----------  --------
+    15014       252756  local_executor  00:01:7.35  success
+[2025-01-09 12:55:13 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:55:13 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:55:13 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15014       252756  sent
+[2025-01-09 12:55:13 GMT]     INFO: ComputeManager: Task Stats: Total finished=36, Failed=0, Success=36, Rejected=0
+[2025-01-09 12:55:13 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.27
+[2025-01-09 12:55:13 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:55:13 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:55:13 GMT]     INFO: parsl.dataflow.dflow: Task 38 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:55:13 GMT]     INFO: parsl.dataflow.dflow: Parsl task 38 try 0 launched on executor local_executor
+[2025-01-09 12:55:13 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 38 will not be redirected.
+[2025-01-09 12:55:13 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 38 will not be redirected.
+[2025-01-09 12:56:08 GMT]     INFO: parsl.dataflow.dflow: Task 36 completed (launched -> exec_done)
+[2025-01-09 12:56:08 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 36 will not be redirected.
+[2025-01-09 12:56:08 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 36 will not be redirected.
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    15015       252757  local_executor  00:00:58.15  success
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15015       252757  sent
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Task Stats: Total finished=37, Failed=0, Success=37, Rejected=0
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.34
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:56:13 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:56:13 GMT]     INFO: parsl.dataflow.dflow: Task 39 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:56:13 GMT]     INFO: parsl.dataflow.dflow: Parsl task 39 try 0 launched on executor local_executor
+[2025-01-09 12:56:13 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 39 will not be redirected.
+[2025-01-09 12:56:13 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 39 will not be redirected.
+[2025-01-09 12:56:56 GMT]     INFO: parsl.dataflow.dflow: Task 37 completed (launched -> exec_done)
+[2025-01-09 12:56:56 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 37 will not be redirected.
+[2025-01-09 12:56:56 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 37 will not be redirected.
+[2025-01-09 12:57:13 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    15048       252790  local_executor  00:00:48.24  success
+[2025-01-09 12:57:14 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:57:14 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:57:14 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15048       252790  sent
+[2025-01-09 12:57:14 GMT]     INFO: ComputeManager: Task Stats: Total finished=38, Failed=0, Success=38, Rejected=0
+[2025-01-09 12:57:14 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.39
+[2025-01-09 12:57:14 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:57:14 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:57:14 GMT]     INFO: parsl.dataflow.dflow: Task 40 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:57:14 GMT]     INFO: parsl.dataflow.dflow: Parsl task 40 try 0 launched on executor local_executor
+[2025-01-09 12:57:14 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 40 will not be redirected.
+[2025-01-09 12:57:14 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 40 will not be redirected.
+[2025-01-09 12:58:09 GMT]     INFO: parsl.dataflow.dflow: Task 38 completed (launched -> exec_done)
+[2025-01-09 12:58:09 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 38 will not be redirected.
+[2025-01-09 12:58:09 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 38 will not be redirected.
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    15088       252830  local_executor  00:01:12.66  success
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15088       252830  sent
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Task Stats: Total finished=39, Failed=0, Success=39, Rejected=0
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.47
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 12:58:14 GMT]     INFO: ComputeManager: Acquired 1 new tasks.
+[2025-01-09 12:58:14 GMT]     INFO: parsl.dataflow.dflow: Task 41 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 12:58:14 GMT]     INFO: parsl.dataflow.dflow: Parsl task 41 try 0 launched on executor local_executor
+[2025-01-09 12:58:14 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 41 will not be redirected.
+[2025-01-09 12:58:14 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 41 will not be redirected.
+[2025-01-09 12:59:14 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:59:14 GMT]     INFO: ComputeManager: Task Stats: Total finished=39, Failed=0, Success=39, Rejected=0
+[2025-01-09 12:59:14 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.47
+[2025-01-09 12:59:14 GMT]     INFO: ComputeManager: Executor local_executor has 3 active tasks and 0 open slots
+[2025-01-09 12:59:15 GMT]     INFO: parsl.dataflow.dflow: Task 39 completed (launched -> exec_done)
+[2025-01-09 12:59:15 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 39 will not be redirected.
+[2025-01-09 12:59:15 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 39 will not be redirected.
+[2025-01-09 12:59:54 GMT]     INFO: parsl.dataflow.dflow: Task 40 completed (launched -> exec_done)
+[2025-01-09 12:59:54 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 40 will not be redirected.
+[2025-01-09 12:59:54 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 40 will not be redirected.
+[2025-01-09 13:00:14 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    15123       252865  local_executor  00:01:6.38   success
+    15175       252917  local_executor  00:00:39.14  success
+[2025-01-09 13:00:15 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 13:00:15 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 13:00:15 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15123       252865  sent
+    15175       252917  sent
+[2025-01-09 13:00:15 GMT]     INFO: ComputeManager: Task Stats: Total finished=41, Failed=0, Success=41, Rejected=0
+[2025-01-09 13:00:15 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.59
+[2025-01-09 13:00:15 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 13:00:15 GMT]     INFO: ComputeManager: Acquired 2 new tasks.
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Task 42 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Task 43 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Parsl task 42 try 0 launched on executor local_executor
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 42 will not be redirected.
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 42 will not be redirected.
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Parsl task 43 try 0 launched on executor local_executor
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 43 will not be redirected.
+[2025-01-09 13:00:15 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 43 will not be redirected.
+[2025-01-09 13:00:29 GMT]     INFO: parsl.dataflow.dflow: Task 41 completed (launched -> exec_done)
+[2025-01-09 13:00:29 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 41 will not be redirected.
+[2025-01-09 13:00:29 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 41 will not be redirected.
+[2025-01-09 13:00:59 GMT]     INFO: parsl.dataflow.dflow: Task 42 completed (launched -> exec_done)
+[2025-01-09 13:00:59 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 42 will not be redirected.
+[2025-01-09 13:00:59 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 42 will not be redirected.
+[2025-01-09 13:01:15 GMT]     INFO: parsl.dataflow.dflow: Task 43 completed (launched -> exec_done)
+[2025-01-09 13:01:15 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 43 will not be redirected.
+[2025-01-09 13:01:15 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 43 will not be redirected.
+[2025-01-09 13:01:15 GMT]     INFO: ComputeManager: Acquired 3 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    15210       252952  local_executor  00:00:34.78  success
+    15321       253063  local_executor  00:00:29.58  success
+    15322       253064  local_executor  00:00:16.04  success
+[2025-01-09 13:01:16 GMT]     INFO: ComputeManager: Successfully returned 3 tasks to the fractal server
+[2025-01-09 13:01:16 GMT]     INFO: ComputeManager: Executor local_executor: Processed 3 tasks: 3 success / 0 failed
+[2025-01-09 13:01:16 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15210       252952  sent
+    15321       253063  sent
+    15322       253064  sent
+[2025-01-09 13:01:16 GMT]     INFO: ComputeManager: Task Stats: Total finished=44, Failed=0, Success=44, Rejected=0
+[2025-01-09 13:01:16 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.68
+[2025-01-09 13:01:16 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:01:16 GMT]     INFO: ComputeManager: Acquired 3 new tasks.
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Task 44 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Task 45 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Parsl task 44 try 0 launched on executor local_executor
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 44 will not be redirected.
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Task 46 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 44 will not be redirected.
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Parsl task 45 try 0 launched on executor local_executor
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 45 will not be redirected.
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 45 will not be redirected.
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Parsl task 46 try 0 launched on executor local_executor
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 46 will not be redirected.
+[2025-01-09 13:01:16 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 46 will not be redirected.
+[2025-01-09 13:01:48 GMT]     INFO: parsl.dataflow.dflow: Task 44 completed (launched -> exec_done)
+[2025-01-09 13:01:48 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 44 will not be redirected.
+[2025-01-09 13:01:48 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 44 will not be redirected.
+[2025-01-09 13:02:06 GMT]     INFO: parsl.dataflow.dflow: Task 45 completed (launched -> exec_done)
+[2025-01-09 13:02:06 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 45 will not be redirected.
+[2025-01-09 13:02:06 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 45 will not be redirected.
+[2025-01-09 13:02:16 GMT]     INFO: ComputeManager: Acquired 2 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    15408       253150  local_executor  00:00:31.95  success
+    15409       253151  local_executor  00:00:17.99  success
+[2025-01-09 13:02:17 GMT]     INFO: ComputeManager: Successfully returned 2 tasks to the fractal server
+[2025-01-09 13:02:17 GMT]     INFO: ComputeManager: Executor local_executor: Processed 2 tasks: 2 success / 0 failed
+[2025-01-09 13:02:17 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15408       253150  sent
+    15409       253151  sent
+[2025-01-09 13:02:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=46, Failed=0, Success=46, Rejected=0
+[2025-01-09 13:02:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.73
+[2025-01-09 13:02:17 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 13:02:17 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:02:35 GMT]     INFO: parsl.dataflow.dflow: Task 46 completed (launched -> exec_done)
+[2025-01-09 13:02:35 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 46 will not be redirected.
+[2025-01-09 13:02:35 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 46 will not be redirected.
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    15410       253152  local_executor  00:00:28.57  success
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    15410       253152  sent
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:03:17 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:04:17 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:04:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:04:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:04:17 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:04:17 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:05:17 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:05:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:05:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:05:17 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:05:17 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:06:17 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:06:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:06:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:06:17 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:06:17 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:07:17 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:07:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:07:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:07:17 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:07:17 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:08:17 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:08:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:08:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:08:17 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:08:17 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:09:17 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:09:17 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:09:17 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:09:17 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:09:18 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:10:18 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:10:18 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:10:18 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:10:18 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:10:18 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:11:18 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:11:18 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:11:18 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:11:18 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:11:18 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:12:18 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:12:18 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:12:18 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:12:18 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:12:18 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:13:18 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:13:18 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:13:18 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:13:18 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:13:18 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:14:18 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:14:18 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:14:18 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:14:18 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:14:18 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:15:18 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:15:18 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:15:18 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:15:18 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:15:18 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:16:18 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:16:18 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:16:18 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:16:18 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:16:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:17:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:17:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:17:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:17:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:17:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:18:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:18:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:18:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:18:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:18:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:19:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:19:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:19:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:19:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:19:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:20:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:20:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:20:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:20:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:20:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:21:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:21:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:21:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:21:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:21:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:22:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:22:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:22:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:22:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:22:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:23:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:23:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:23:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:23:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:23:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:24:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:24:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:24:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:24:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:24:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:25:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:25:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:25:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:25:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:25:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:26:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:26:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:26:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:26:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:26:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:27:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:27:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:27:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:27:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:27:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:28:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:28:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:28:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:28:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:28:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:29:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:29:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:29:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:29:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:29:19 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:30:19 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:30:19 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:30:19 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:30:19 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:30:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:31:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:31:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:31:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:31:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:31:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:32:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:32:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:32:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:32:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:32:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:33:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:33:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:33:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:33:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:33:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:34:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:34:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:34:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:34:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:34:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:35:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:35:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:35:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:35:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:35:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:36:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:36:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:36:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:36:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:36:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:37:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:37:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:37:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:37:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:37:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:38:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:38:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:38:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:38:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:38:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:39:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:39:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:39:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:39:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:39:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 13:40:20 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 13:40:20 GMT]     INFO: ComputeManager: Task Stats: Total finished=47, Failed=0, Success=47, Rejected=0
+[2025-01-09 13:40:20 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=2.77
+[2025-01-09 13:40:20 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 13:40:20 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
