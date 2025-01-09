@@ -1,0 +1,377 @@
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: --------------------------------------------------------------------------------
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: QCFractal Compute Manager:
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     Version:     0.56
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     Base folder: /mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/benchmark_wf_analysis/qc_archive_run/make_workers/batch_worker_21
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     Cluster:     Rocket
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     Hostname:    sb005.cluster
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     UUID:        7e07dcb6-b2d1-4609-a00b-d1b9b82c8ad5
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: 
+
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     Parsl Executors:
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     local_executor:
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     Type: local
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:               Queue Tags: ['*']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                 Programs:
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     dftd3: ['3.2.1']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     mctc-gcp: ['2.3.2']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     s-dftd3: ['1.2.1']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     rdkit: ['2024.3.5']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     psi4: ['1.8.2']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     qcengine: ['v0.29.0']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     geometric: ['1.0.2']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:                     optking: ['0.3.0']
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: 
+
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:     Connected to:
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:         Address:     http://10.64.1.130:7778/
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:         Name:        QCFractal Server
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:         Version:     0.56
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:         Username:    charlie_compute
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager:         Heartbeat:   1800
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: --------------------------------------------------------------------------------
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Starting DataFlowKernel with config
+Config(
+    app_cache=True, 
+    checkpoint_files=None, 
+    checkpoint_mode=None, 
+    checkpoint_period=None, 
+    dependency_resolver=None, 
+    executors=(ThreadPoolExecutor(
+        label='threads', 
+        max_threads=2, 
+        storage_access=None, 
+        thread_name_prefix='', 
+        working_dir=None
+    ),), 
+    exit_mode='cleanup', 
+    garbage_collect=True, 
+    initialize_logging=False, 
+    internal_tasks_max_threads=10, 
+    max_idletime=120.0, 
+    monitoring=None, 
+    project_name=None, 
+    retries=0, 
+    retry_handler=None, 
+    run_dir='parsl_run_dir', 
+    std_autopath=None, 
+    strategy='simple', 
+    strategy_period=5, 
+    usage_tracking=0
+)
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Parsl version: 2024.10.07
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Run id is: b11217d6-f0e2-421b-935e-00b651577ea5
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.memoization: App caching initialized
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: Compute Manager successfully started.
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: Task Stats: Total finished=0, Failed=0, Success=0, Rejected=0
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.00
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:15:35 GMT]     INFO: ComputeManager: Acquired 3 new tasks.
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Task 0 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Task 1 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Parsl task 0 try 0 launched on executor local_executor
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Task 2 submitted for App wrapper, not waiting on any dependency
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 0 will not be redirected.
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 0 will not be redirected.
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Parsl task 1 try 0 launched on executor local_executor
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 1 will not be redirected.
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 1 will not be redirected.
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Parsl task 2 try 0 launched on executor local_executor
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 2 will not be redirected.
+[2025-01-09 11:15:35 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 2 will not be redirected.
+[2025-01-09 11:16:21 GMT]     INFO: parsl.dataflow.dflow: Task 0 completed (launched -> exec_done)
+[2025-01-09 11:16:21 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 0 will not be redirected.
+[2025-01-09 11:16:21 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 0 will not be redirected.
+[2025-01-09 11:16:35 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    13976       251206  local_executor  00:00:46.37  success
+[2025-01-09 11:16:35 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 11:16:35 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 11:16:35 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    13976       251206  sent
+[2025-01-09 11:16:35 GMT]     INFO: ComputeManager: Task Stats: Total finished=1, Failed=0, Success=1, Rejected=0
+[2025-01-09 11:16:35 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.05
+[2025-01-09 11:16:35 GMT]     INFO: ComputeManager: Executor local_executor has 2 active tasks and 1 open slots
+[2025-01-09 11:16:38 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:16:49 GMT]     INFO: parsl.dataflow.dflow: Task 1 completed (launched -> exec_done)
+[2025-01-09 11:16:49 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 1 will not be redirected.
+[2025-01-09 11:16:49 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 1 will not be redirected.
+[2025-01-09 11:17:38 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime     status
+---------  -----------  --------------  -----------  --------
+    13977       251207  local_executor  00:00:27.25  success
+[2025-01-09 11:17:38 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 11:17:38 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 11:17:38 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    13977       251207  sent
+[2025-01-09 11:17:38 GMT]     INFO: ComputeManager: Task Stats: Total finished=2, Failed=0, Success=2, Rejected=0
+[2025-01-09 11:17:38 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.08
+[2025-01-09 11:17:38 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 11:17:39 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:18:39 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:18:39 GMT]     INFO: ComputeManager: Task Stats: Total finished=2, Failed=0, Success=2, Rejected=0
+[2025-01-09 11:18:39 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.08
+[2025-01-09 11:18:39 GMT]     INFO: ComputeManager: Executor local_executor has 1 active tasks and 2 open slots
+[2025-01-09 11:18:39 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:18:56 GMT]     INFO: parsl.dataflow.dflow: Task 2 completed (launched -> exec_done)
+[2025-01-09 11:18:56 GMT]     INFO: parsl.dataflow.dflow: Standard out for task 2 will not be redirected.
+[2025-01-09 11:18:56 GMT]     INFO: parsl.dataflow.dflow: Standard error for task 2 will not be redirected.
+[2025-01-09 11:19:39 GMT]     INFO: ComputeManager: Acquired 1 finished tasks from the executors
+  task id    record id  executor        walltime    status
+---------  -----------  --------------  ----------  --------
+    13978       251208  local_executor  00:02:6.63  success
+[2025-01-09 11:19:40 GMT]     INFO: ComputeManager: Successfully returned 1 tasks to the fractal server
+[2025-01-09 11:19:40 GMT]     INFO: ComputeManager: Executor local_executor: Processed 1 tasks: 1 success / 0 failed
+[2025-01-09 11:19:40 GMT]     INFO: ComputeManager: Task return status:
+  task id    record id  status    reason
+---------  -----------  --------  --------
+    13978       251208  sent
+[2025-01-09 11:19:40 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:19:40 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:19:40 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:19:40 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:20:40 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:20:40 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:20:40 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:20:40 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:20:40 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:21:40 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:21:40 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:21:40 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:21:40 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:21:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:22:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:22:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:22:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:22:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:22:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:23:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:23:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:23:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:23:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:23:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:24:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:24:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:24:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:24:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:24:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:25:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:25:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:25:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:25:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:25:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:26:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:26:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:26:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:26:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:26:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:27:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:27:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:27:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:27:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:27:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:28:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:28:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:28:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:28:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:28:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:29:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:29:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:29:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:29:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:29:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:30:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:30:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:30:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:30:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:30:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:31:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:31:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:31:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:31:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:31:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:32:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:32:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:32:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:32:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:32:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:33:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:33:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:33:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:33:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:33:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:34:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:34:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:34:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:34:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:34:42 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:35:42 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:35:42 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:35:42 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:35:42 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:35:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:36:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:36:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:36:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:36:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:36:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:37:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:37:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:37:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:37:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:37:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:38:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:38:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:38:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:38:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:38:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:39:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:39:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:39:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:39:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:39:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:40:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:40:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:40:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:40:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:40:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:41:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:41:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:41:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:41:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:41:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:42:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:42:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:42:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:42:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:42:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:43:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:43:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:43:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:43:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:43:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:44:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:44:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:44:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:44:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:44:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:45:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:45:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:45:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:45:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:45:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:46:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:46:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:46:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:46:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:46:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:47:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:47:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:47:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:47:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:47:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:48:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:48:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:48:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:48:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:48:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:49:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:49:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:49:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:49:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:49:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:50:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:50:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:50:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:50:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:50:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:51:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:51:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:51:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:51:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:51:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:52:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:52:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:52:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:52:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:52:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:53:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:53:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:53:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:53:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:53:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:54:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:54:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:54:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:54:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:54:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:55:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:55:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:55:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:55:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:55:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:56:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:56:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:56:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:56:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:56:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:57:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:57:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:57:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:57:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:57:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:58:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:58:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:58:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:58:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:58:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 11:59:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 11:59:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 11:59:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 11:59:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 11:59:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:00:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:00:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:00:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:00:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:00:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:01:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:01:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:01:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:01:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:01:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:02:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:02:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:02:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:02:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:02:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:03:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:03:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:03:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:03:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:03:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:04:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:04:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:04:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:04:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:04:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:05:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:05:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:05:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:05:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:05:43 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:06:43 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:06:43 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:06:43 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:06:43 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:06:44 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
+[2025-01-09 12:07:44 GMT]     INFO: ComputeManager: Acquired 0 finished tasks from the executors
+[2025-01-09 12:07:44 GMT]     INFO: ComputeManager: Task Stats: Total finished=3, Failed=0, Success=3, Rejected=0
+[2025-01-09 12:07:44 GMT]     INFO: ComputeManager: Worker Stats (est.): Core Hours Used=0.22
+[2025-01-09 12:07:44 GMT]     INFO: ComputeManager: Executor local_executor has 0 active tasks and 3 open slots
+[2025-01-09 12:07:44 GMT]     INFO: ComputeManager: Acquired 0 new tasks.
