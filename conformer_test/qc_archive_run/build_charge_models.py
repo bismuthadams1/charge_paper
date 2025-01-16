@@ -603,54 +603,55 @@ def process_resp_multiconfs(results_batch):
     print(f'now make resp and am1bcc charges for {conformers[0]}')
     print(f'with smiles{conformers[0].to_smiles()}')
     # Calculate RESP charges for all conformers of the molecule
-    resp_charges = calculate_resp_multiconformer_charges(
-        openff_mols=conformers,
-        grids=grids,
-        esps=esps,
-        qc_data_settings=matching_items[0]['esp_settings']
-    )
-    print(f'resp charges {resp_charges}')
-    print('use the list of conformers')
-    print([conf.conformers[0] for conf in conformers])
+    # resp_charges = calculate_resp_multiconformer_charges(
+    #     openff_mols=conformers,
+    #     grids=grids,
+    #     esps=esps,
+    #     qc_data_settings=matching_items[0]['esp_settings']
+    # )
+    # print(f'resp charges {resp_charges}')
+    # print('use the list of conformers')
+    # print([conf.conformers[0] for conf in conformers])
     #Do the same of AM1BCC now
     openff_mol = Molecule.from_mapped_smiles(results_batch[0]['molecule'] , allow_undefined_stereo=True)
     openff_mol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[conf.conformers[0] for conf in conformers])
     am1_bcc_charges = openff_mol.partial_charges.magnitude.flatten().tolist()
 
     print(f'am1bcc charges {am1_bcc_charges}')
+    print(f'am1bcc charges len {len(am1_bcc_charges)}')
 
-    # Iterate over the matching items and their corresponding conformers
-    for item2, conf, grid in zip(matching_items, conformers, grids):
-        item2['resp_multiconf_charges'] = resp_charges
-        item2 ['am1bccc_multiconf_charges'] = am1_bcc_charges
-        item2['resp_multiconf_dipoles'] = calculate_dipole_magnitude(
-            charges=resp_charges,
-            conformer=conf.conformers[0]
-        )
-        item2['am1bcc_multiconf_dipoles'] = calculate_dipole_magnitude(    
-            charges=am1_bcc_charges * unit.e,
-            conformer=conf.conformers[0]
-        )
-        resp_multi_esp = calculate_esp_monopole_au(
-            grid_coordinates=grid,
-            atom_coordinates=conf.conformers[0],
-            charges=resp_charges, 
-        )
+    # # Iterate over the matching items and their corresponding conformers
+    # for item2, conf, grid in zip(matching_items, conformers, grids):
+    #     item2['resp_multiconf_charges'] = resp_charges
+    #     item2 ['am1bccc_multiconf_charges'] = am1_bcc_charges
+    #     item2['resp_multiconf_dipoles'] = calculate_dipole_magnitude(
+    #         charges=resp_charges,
+    #         conformer=conf.conformers[0]
+    #     )
+    #     item2['am1bcc_multiconf_dipoles'] = calculate_dipole_magnitude(    
+    #         charges=am1_bcc_charges * unit.e,
+    #         conformer=conf.conformers[0]
+    #     )
+    #     resp_multi_esp = calculate_esp_monopole_au(
+    #         grid_coordinates=grid,
+    #         atom_coordinates=conf.conformers[0],
+    #         charges=resp_charges, 
+    #     )
         
-        am1bcc_multi_esp = calculate_esp_monopole_au(
-            grid_coordinates=grid,
-            atom_coordinates=conf.conformers[0],
-            charges=am1_bcc_charges * unit.e
-        )
-        item2['resp_multiconf_esp'] = resp_multi_esp
-        item2['am1bcc_multiconf_esp'] = am1bcc_multi_esp
-        qm_esp = np.array(item2['qm_esp']) * unit.hartree / unit.e
-        item2['resp_multiconf_esp_rmse'] = (
-            ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-        )
-        item2['am1bcc_multiconf_esp_rmse'] = (
-            ((((am1bcc_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-        )
+    #     am1bcc_multi_esp = calculate_esp_monopole_au(
+    #         grid_coordinates=grid,
+    #         atom_coordinates=conf.conformers[0],
+    #         charges=am1_bcc_charges * unit.e
+    #     )
+    #     item2['resp_multiconf_esp'] = resp_multi_esp
+    #     item2['am1bcc_multiconf_esp'] = am1bcc_multi_esp
+    #     qm_esp = np.array(item2['qm_esp']) * unit.hartree / unit.e
+    #     item2['resp_multiconf_esp_rmse'] = (
+    #         ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
+    #     )
+    #     item2['am1bcc_multiconf_esp_rmse'] = (
+    #         ((((am1bcc_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
+    #     )
     
     return item2
                 
