@@ -11,4 +11,6 @@
 export PYTHONUNBUFFERED=FALSE
 export PYTHONPATH=/mnt/storage/nobackup/nca121/test_jobs/QM_ESP_Psi4/QM_ESP_Psi4/source:$PYTHONPATH
 
-python /mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/conformer_test/qc_archive_run/build_charge_models.py > out.txt
+source activate /mnt/nfs/home/nca121/.bashrc
+
+mamba run -n charge_model_env python /mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/conformer_test/qc_archive_run/build_charge_models.py > out.txt

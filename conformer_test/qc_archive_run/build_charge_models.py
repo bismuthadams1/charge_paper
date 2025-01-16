@@ -332,25 +332,24 @@ def calculate_resp_multiconformer_charges(
     """
     qc_data_records = []
     for idx,(conformer, grid, esp) in enumerate(zip(openff_mols,grids,esps)):
-        print(f"Processing conformer {idx}, number of atoms: {conformer.n_atoms}")
+        # print(f"Processing conformer {idx}, number of atoms: {conformer.n_atoms}")
         qc_data_record = MoleculeESPRecord.from_molecule(
             conformer, conformer.conformers[0], grid, esp.reshape(-1,1), None, qc_data_settings
         )
         qc_data_records.append(qc_data_record)
-        print(f"QC Data Record {idx} molecule has {qc_data_record.molecule.n_atoms} atoms.")
+        # print(f"QC Data Record {idx} molecule has {qc_data_record.molecule.n_atoms} atoms.")
 
         
     resp_charge_parameter = generate_resp_charge_parameter(
         qc_data_records, resp_solver
     )
-    print(f"Number of RESP charges: {len(resp_charges)}")
-
-    resp_charges = [resp_charge_parameter.value[i] for i in range(len(resp_charge_parameter.value))]
+    print(resp_charge_parameter)
+    # resp_charges = [resp_charge_parameter.value[i] for i in range(len(resp_charge_parameter.value))]
     
-    for idx, charge in enumerate(resp_charges):
+    for idx, charge in enumerate(resp_charge_parameter.value):
         print(f"Atom {idx}: Charge = {charge}")
 
-    return np.round(resp_charges, 4).tolist()
+    return np.round(resp_charge_parameter.value, 4).tolist()
     
 def calculate_dipole_magnitude(charges: unit.Quantity,
                                conformer: unit.Quantity) -> float:
@@ -368,6 +367,8 @@ def calculate_dipole_magnitude(charges: unit.Quantity,
     
     """
     reshaped_charges = np.reshape(charges,(-1,1))
+    print(f'charges shape: {reshaped_charges.shape}')
+    print(f'conformer shape: {conformer.shape}')
     dipole_vector = np.sum(conformer.to(unit.bohr) * reshaped_charges,axis=0)
     dipole_magnitude = np.linalg.norm(dipole_vector)
 
@@ -562,96 +563,96 @@ def process_and_write_batch(batch_models, schema, writer):
                 continue
 
     # Now we have *all* processed molecules in the dictionary.
-    # We can do multi-conformer calculations per SMILES and then write each group.
-    for smiles_key, items in all_data_by_smiles.items():
-        # This modifies items in place (RESP, dipoles, etc.)
-        process_resp_multiconfs(items)
+    for smiles, results in all_data_by_smiles.items():
+        print(f'Processing SMILES: {smiles}')
+        process_esp(results)
+        # Now process the RESP charges for each conformer
+        processed = process_resp_multiconfs(results)
 
-        # Now write them out to the Parquet writer in a batch
-        rec_batch = pyarrow.RecordBatch.from_pylist(items, schema=schema)
-        writer.write_batch(rec_batch)
+    # Now write them out to the Parquet writer in a batch
+    rec_batch = pyarrow.RecordBatch.from_pylist(processed, schema=schema)
+    writer.write_batch(rec_batch)
 
     # Close writer if needed
     writer.close()
+    
 def process_resp_multiconfs(results_batch):
-    complete_smiles = set()
+    # Collect matching items and their data
+    conformers = []
+    grids = []
+    esps = []
+    matching_items = []    
+    print(results_batch)
     for item in results_batch:
-        if item['smiles'] in complete_smiles:
-            continue
-        else:
-            target_smiles = item['smiles']
-            complete_smiles.add(target_smiles)
-            esp_settings = item['esp_settings']
-            
-            # Collect matching items and their data
-            conformers = []
-            grids = []
-            esps = []
-            matching_items = []
-            for item2 in results_batch:
-                if item2['smiles'] == target_smiles:
-                    rdkit_mol = rdmolfiles.MolFromMolBlock(item2['molblock'], removeHs=False)
-                    conformer = Molecule.from_rdkit(
-                        rdmol=rdkit_mol, 
-                        allow_undefined_stereo=True, 
-                        hydrogens_are_explicit=True
-                    )
-                    conformers.append(conformer)
-                    grid = np.array(item2['grid']).reshape(-1, 3) * unit.angstrom
-                    grids.append(grid)
-                    esp = np.array(item2['esp']) * unit.hartree / unit.e
-                    esps.append(esp)
-                    matching_items.append(item2)
+    
+        rdkit_mol = rdmolfiles.MolFromMolBlock(item['molblock'], removeHs=False)
+        conformer = Molecule.from_rdkit(
+            rdmol=rdkit_mol, 
+            allow_undefined_stereo=True, 
+            hydrogens_are_explicit=True
+        )
+        conformers.append(conformer)
+        grid = np.array(item['grid']).reshape(-1, 3) * unit.angstrom
+        grids.append(grid)
+        esp = np.array(item['esp']) * unit.hartree / unit.e
+        esps.append(esp)
+        matching_items.append(item)
+        molblock = item['molblock']
+        esp_settings = item['esp_settings']
+        
+    print(f'now make resp and am1bcc charges for {conformers[0]}')
+    print(f'with smiles{conformers[0].to_smiles()}')
+    # Calculate RESP charges for all conformers of the molecule
+    resp_charges = calculate_resp_multiconformer_charges(
+        openff_mols=conformers,
+        grids=grids,
+        esps=esps,
+        qc_data_settings=matching_items[0]['esp_settings']
+    )
+    print(f'resp charges {resp_charges}')
+    print('use the list of conformers')
+    print([conf.conformers[0] for conf in conformers])
+    #Do the same of AM1BCC now
+    openff_mol = Molecule.from_mapped_smiles(results_batch[0]['molecule'] , allow_undefined_stereo=True)
+    openff_mol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[conf.conformers[0] for conf in conformers])
+    am1_bcc_charges = openff_mol.partial_charges.magnitude.flatten().tolist()
 
-            # Calculate RESP charges for all conformers of the molecule
-            resp_charges = calculate_resp_multiconformer_charges(
-                openff_mols=conformers,
-                grids=grids,
-                esps=esps,
-                qc_data_settings=esp_settings
-            )
-            
-            #Do the same of AM1BCC now
-            openff_mol = Molecule.from_mapped_smiles(target_smiles , allow_undefined_stereo=True)
-            openff_mol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=conformers)
-            am1_bcc_charges = openff_mol.partial_charges.magnitude.flatten().tolist()
+    print(f'am1bcc charges {am1_bcc_charges}')
 
-            print(target_smiles)
-            print(conformers)
-            
-            # Iterate over the matching items and their corresponding conformers
-            for item2, conf, grid in zip(matching_items, conformers, grids):
-                item2['resp_multiconf_charges'] = resp_charges
-                item2 ['am1bccc_multiconf_charges'] = am1_bcc_charges
-                print(resp_charges)
-                item2['resp_multiconf_dipoles'] = calculate_dipole_magnitude(
-                    charges=resp_charges,
-                    conformer=conf.conformers[0]
-                )
-                item2['am1bcc_multiconf_dipoles'] = calculate_dipole_magnitude(    
-                    charges=am1_bcc_charges * unit.e,
-                    conformer=conf.conformers[0]
-                )
-                resp_multi_esp = calculate_esp_monopole_au(
-                    grid_coordinates=grid,
-                    atom_coordinates=conf.conformers[0],
-                    charges=resp_charges, 
-                )
-                
-                am1bcc_multi_esp = calculate_esp_monopole_au(
-                    grid_coordinates=grid,
-                    atom_coordinates=conf.conformers[0],
-                    charges=am1_bcc_charges * unit.e
-                )
-                item2['resp_multiconf_esp'] = resp_multi_esp
-                item2['am1bcc_multiconf_esp'] = am1bcc_multi_esp
-                qm_esp = np.array(item2['qm_esp']) * unit.hartree / unit.e
-                item2['resp_multiconf_esp_rmse'] = (
-                    ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-                )
-                item2['am1bcc_multiconf_esp_rmse'] = (
-                    ((((am1bcc_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-                )
+    # Iterate over the matching items and their corresponding conformers
+    for item2, conf, grid in zip(matching_items, conformers, grids):
+        item2['resp_multiconf_charges'] = resp_charges
+        item2 ['am1bccc_multiconf_charges'] = am1_bcc_charges
+        item2['resp_multiconf_dipoles'] = calculate_dipole_magnitude(
+            charges=resp_charges,
+            conformer=conf.conformers[0]
+        )
+        item2['am1bcc_multiconf_dipoles'] = calculate_dipole_magnitude(    
+            charges=am1_bcc_charges * unit.e,
+            conformer=conf.conformers[0]
+        )
+        resp_multi_esp = calculate_esp_monopole_au(
+            grid_coordinates=grid,
+            atom_coordinates=conf.conformers[0],
+            charges=resp_charges, 
+        )
+        
+        am1bcc_multi_esp = calculate_esp_monopole_au(
+            grid_coordinates=grid,
+            atom_coordinates=conf.conformers[0],
+            charges=am1_bcc_charges * unit.e
+        )
+        item2['resp_multiconf_esp'] = resp_multi_esp
+        item2['am1bcc_multiconf_esp'] = am1bcc_multi_esp
+        qm_esp = np.array(item2['qm_esp']) * unit.hartree / unit.e
+        item2['resp_multiconf_esp_rmse'] = (
+            ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
+        )
+        item2['am1bcc_multiconf_esp_rmse'] = (
+            ((((am1bcc_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
+        )
+    
+    return item2
                 
 
 def process_esp(results_batch):
@@ -741,21 +742,16 @@ def main(output: str):
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         
-        # chunk_size = 20  # Adjust as needed
-        print(molecules_list)
-        batch_models = []
 
         for smiles in molecules_list:
-        # for i in range(0,number_of_molecules):
-            # subset = molecules_list[i]
-            # for smiles in subset:
+            batch_models = []
+
             print(f'retrieving smiles: {smiles}')
             retrieved_records = prop_store.retrieve(smiles=smiles)
             for conformer_no, retrieved in enumerate(retrieved_records):
                 batch_models.append((retrieved, conformer_no))
-                print('batch_models:', batch_models)
+            process_and_write_batch(batch_models, schema, writer)
             # Now process this subset only
-        process_and_write_batch(batch_models, schema, writer)
                 
    
         

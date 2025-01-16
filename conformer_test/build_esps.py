@@ -215,9 +215,6 @@ def main():
     )
     prop_store = MoleculePropStore("./ESP_rebuilt.db")
     molecules = [record for record in client.query_records(dataset_id=8)]
-    # molecules = [single[-1] for single in singlepointrecords]
-
-
     print(len(molecules))
 
     with ProcessPoolExecutor(
