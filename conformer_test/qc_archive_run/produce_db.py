@@ -13,7 +13,7 @@ client = PortalClient("http://10.64.1.130:7778")  #10.64.1.130:7777
 grid_settings = LatticeGridSettings(
     type="fcc", spacing=0.5, inner_vdw_scale=1.4, outer_vdw_scale=2.0)
 
-db = MoleculePropStore(database_path='./conformers.db')
+db = MoleculePropStore(database_path='./conformers_2.db')
 
 db_run =  QCArchiveToLocalDB(qc_archive=client, prop_data_store=db, grid_settings=grid_settings)
 db_run.build_db(dataset_id=13)

@@ -373,8 +373,8 @@ def calculate_dipole_magnitude(charges: unit.Quantity,
     
     """
     reshaped_charges = np.reshape(charges,(-1,1))
-    print(f'charges shape: {reshaped_charges.shape}')
-    print(f'conformer shape: {conformer.shape}')
+    # print(f'charges shape: {reshaped_charges.shape}')
+    # print(f'conformer shape: {conformer.shape}')
     dipole_vector = np.sum(conformer.to(unit.bohr) * reshaped_charges,axis=0)
     dipole_magnitude = np.linalg.norm(dipole_vector)
 
@@ -650,9 +650,7 @@ def process_resp_multiconfs(results_batch):
         esps=esps,
         qc_data_settings=matching_items[0]['esp_settings']
     )
-    # print(f'resp charges {resp_charges}')
-    # print('use the list of conformers')
-    # print([conf.conformers[0] for conf in conformers])
+
     #Do the same of AM1BCC now
     openff_mol = Molecule.from_mapped_smiles(results_batch[0]['molecule'] , allow_undefined_stereo=True)
     openff_mol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[conf.conformers[0] for conf in conformers])
@@ -664,8 +662,6 @@ def process_resp_multiconfs(results_batch):
         for i, atom_indx in enumerate(match):
             am1_bcc_charges[atom_indx] = am1_bcc_charges[i]
 
-    # print(f'am1bcc charges {am1_bcc_charges}')
-    # print(f'am1bcc charges len {len(am1_bcc_charges)}')
 
     # Iterate over the matching items and their corresponding conformers
     for item2, conf, grid in zip(matching_items, conformers, grids):
@@ -750,7 +746,7 @@ def process_esp(results_batch):
 
 def main(output: str):
 
-    prop_store = MoleculePropStore("/mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/conformer_test/qc_archive_run/conformers.db", cache_size=1000)
+    prop_store = MoleculePropStore("/mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/conformer_test/qc_archive_run/conformers_2.db", cache_size=1000)
     
     molecules_list = prop_store.list()
     number_of_molecules = len(molecules_list)
@@ -798,7 +794,7 @@ def main(output: str):
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         
 
-        for smiles in molecules_list:
+        for smiles in tqdm(molecules_list, total=len(molecules_list)):
             batch_models = []
 
             print(f'retrieving smiles: {smiles}')
