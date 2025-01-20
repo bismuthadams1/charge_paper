@@ -1,5 +1,4 @@
-"""Script used to generate the large scale comparisons between the charge models
-
+"""Script used to test the new charge models across the train, test, validate sets
 
 """
 
