@@ -13,6 +13,7 @@ from collections import defaultdict
 from espaloma_charge.openff_wrapper import EspalomaChargeToolkitWrapper
 from more_itertools import batched
 from rdkit.Chem import rdmolfiles
+import gc
 from rdkit import Chem
 # from MultipoleNet import load_model, build_graph_batched, D_Q
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
@@ -21,8 +22,10 @@ from tqdm import tqdm
 from typing import Iterator
 
 import traceback
+import logging
 import json
 import tempfile
+import psutil
 import numpy as np
 import rdkit
 import pyarrow
@@ -47,6 +50,11 @@ AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
 HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
 resp_solver = IterativeSolver()
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='build_charge_models.log', level=logging.INFO)
+
+process = psutil.Process(os.getpid())
+
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
     
@@ -61,6 +69,10 @@ def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Mole
 def build_mol(openff_molecule: Molecule) -> str:
     return rdmolfiles.MolToMolBlock(openff_molecule.to_rdkit())
 
+def log_memory_usage(msg=""):
+    mem_info = process.memory_info()
+    rss_mb = mem_info.rss / (1024 * 1024)  # Resident Set Size in MB
+    logging.info(f"{msg} - RSS memory usage: {rss_mb:.2f} MB")
 
 def calc_riniker_esp(
                 grid: unit.Quantity,
@@ -349,11 +361,11 @@ def calculate_resp_multiconformer_charges(
         for i, atom_indx in enumerate(match):
             resp_charges[atom_indx] = resp_charge_parameter.value[i]
         
-    print(resp_charge_parameter)
+    # print(resp_charge_parameter)
     # resp_charges = [resp_charge_parameter.value[i] for i in range(len(resp_charge_parameter.value))]
     
-    for idx, charge in enumerate(resp_charges):
-        print(f"Atom {idx}: Charge = {charge}")
+    # for idx, charge in enumerate(resp_charges):
+    #     print(f"Atom {idx}: Charge = {charge}")
 
     return np.round(resp_charges, 4).tolist()
     
@@ -578,9 +590,7 @@ def process_and_write_batch(batch_models, schema, writer):
             continue
     # # Now we have *all* processed molecules in the dictionary.
     for smiles, results in all_data_by_smiles.items():
-    #     print(f'Processing SMILES: {smiles}')
         process_esp(results)
-    #     # Now process the RESP charges for each conformer
         processed = process_resp_multiconfs(results)
 
     for field in ['am1bcc_esp', 'espaloma_esp', 'resp_esp', 'mbis_esp']:
@@ -592,18 +602,6 @@ def process_and_write_batch(batch_models, schema, writer):
     # If 'geometry' is a numpy array, convert it as well
     processed['geometry'] = list(processed['geometry'])  # If it's not already a list
 
-    # Now write them out to the Parquet writer in a batch
-    for key, value in processed.items():
-        if isinstance(value, (list, np.ndarray)):
-            print(f"{key}: {type(value)} - Length: {len(value)}")
-            if isinstance(value, list):
-                # Print types of elements within lists
-                for i, item in enumerate(value[:5]):  # Preview first 5 items to avoid long outputs
-                    print(f"  Item {i}: {type(item)}")
-            elif isinstance(value, np.ndarray):
-                print(f"  Shape: {value.shape}")
-        else:
-            print(f"{key}: {type(value)}")
     for field in [
     'resp_multiconf_esp_rmse',
     'am1bcc_multiconf_esp_rmse',
@@ -616,6 +614,9 @@ def process_and_write_batch(batch_models, schema, writer):
 
     rec_batch = pyarrow.RecordBatch.from_pylist([processed], schema=schema)
     writer.write_batch(rec_batch)
+    all_data_by_smiles.clear()
+    gc.collect()
+
 
 def process_resp_multiconfs(results_batch):
     # Collect matching items and their data
@@ -638,8 +639,7 @@ def process_resp_multiconfs(results_batch):
         esp = np.array(item['esp']) * unit.hartree / unit.e
         esps.append(esp)
         matching_items.append(item)
-        molblock = item['molblock']
-        esp_settings = item['esp_settings']
+
         
     # print(f'now make resp and am1bcc charges for {conformers[0]}')
     # print(f'with smiles{conformers[0].to_smiles()}')
@@ -741,7 +741,7 @@ def process_esp(results_batch):
                 qm_esp = np.array(item['qm_esp']) * unit.hartree/unit.e
                 item['riniker_esp_rms'] =  ((((riniker_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
             else:
-                print(f'No ESP result found for molecule ID {mol_id}')
+                print(f'No ESP result found for molecule ID {mol_id}', flush=True)
 
 
 def main(output: str):
@@ -795,15 +795,17 @@ def main(output: str):
         
 
         for smiles in tqdm(molecules_list, total=len(molecules_list)):
+            logging.info(f'get memory usage for new smiles {log_memory_usage()}')
             batch_models = []
 
-            print(f'retrieving smiles: {smiles}')
+            logging.info(f'retrieving smiles: {smiles}')
             retrieved_records = prop_store.retrieve(smiles=smiles)
             for conformer_no, retrieved in enumerate(retrieved_records):
                 batch_models.append((retrieved, conformer_no))
             process_and_write_batch(batch_models, schema, writer)
-            # Now process this subset only
-                
+            gc.collect()
+            del batch_models
+
    
         
 if __name__ == "__main__":
