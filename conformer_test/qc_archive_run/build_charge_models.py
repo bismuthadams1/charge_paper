@@ -19,6 +19,7 @@ from rdkit import Chem
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
 from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
 from tqdm import tqdm
+from naglmbis.models import load_charge_model
 from typing import Iterator
 
 import traceback
@@ -42,6 +43,20 @@ from openff.recharge.charges.library import (
 )
 from openff.recharge.esp import ESPSettings
 from openff.recharge.charges.resp.solvers import IterativeSolver
+
+charge_model_esp= 'nagl-gas-charge-dipole-esp-wb-default'
+charge_model_charge = "nagl-gas-charge-wb"
+charge_model_dipole =  "nagl-gas-charge-dipole-wb"
+
+gas_charge_model = load_charge_model(charge_model=charge_model_charge)
+gas_charge_dipole_model = load_charge_model(charge_model=charge_model_dipole)
+gas_charge_dipole_esp_model = load_charge_model(charge_model_esp)
+
+models = {
+    "charge_model": gas_charge_model,
+    "dipole_model": gas_charge_dipole_model,
+    "esp_model": gas_charge_dipole_esp_model,
+}
 
 
 toolkit_registry = EspalomaChargeToolkitWrapper()
@@ -541,6 +556,33 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     mbis_esp_rms = (((mbis_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['mbis_esp_rms'] = mbis_esp_rms * HA_TO_KCAL_P_MOL
 
+    #------Charge Model RMSE Calculations-------#
+
+    charge_models_data = {}
+    for model_name, model in models.items():
+        predicted_charges = model.compute_properties(rdkit_mol)["mbis-charges"].detach().numpy().flatten()
+        charge_models_data[f'{model_name}_charges'] = predicted_charges.tolist()
+
+        # Calculate dipoles
+        predicted_dipole = calculate_dipole_magnitude(
+            charges=predicted_charges * unit.e,
+            conformer=coordinates
+        )
+        charge_models_data[f'{model_name}_dipoles'] = predicted_dipole.tolist()
+        
+        # Calculate ESP and RMSE
+        grid_coordinates = (grid* unit.bohr).reshape(-1, 3)
+        predicted_esp = calculate_esp_monopole_au(
+            grid_coordinates=grid_coordinates,
+            atom_coordinates=coordinates,
+            charges=predicted_charges * unit.e
+        )
+        qm_esp = batch_dict['esp'] * unit.hartree / unit.e
+        esp_rms = (((predicted_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
+        charge_models_data[f'{model_name}_esp'] = predicted_esp.m.flatten().tolist()
+        charge_models_data[f'{model_name}_esp_rmse'] = esp_rms * HA_TO_KCAL_P_MOL
+
+
     return batch_dict
 
 
@@ -563,58 +605,27 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
 
 def process_and_write_batch(batch_models, schema, writer):
     # This dictionary will hold all processed molecules grouped by SMILES
-    all_data_by_smiles = defaultdict(list)
+    # all_data_by_smiles = defaultdict(list)
+    results_batch = []
 
-    # with ProcessPoolExecutor(max_workers=8) as pool:
-    #     jobs = [pool.submit(process_molecule, model, conformer_no)
-    #             for (model, conformer_no) in batch_models]
-        
-    #     for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
-    #         try:
-    #             result = future.result()  # e.g. a dict with {"smiles": ..., "grid": ..., etc.}
-    #             smiles_key = result["smiles"]
-    #             # Accumulate results by SMILES
-    #             all_data_by_smiles[smiles_key].append(result)
-    #         except Exception as e:
-    #             print(f'Failure of job due to {e}')
-    #             print(traceback.format_exc())
-    #             continue
     for (model, conformer_no) in tqdm(batch_models, total=len(batch_models), desc='Processing molecules') :
         try: 
-            result = process_molecule( model, conformer_no)
-            smiles_key = result["smiles"]
-            all_data_by_smiles[smiles_key].append(result)
+            result = process_molecule(model, conformer_no)
+            # smiles_key = result["smiles"]
+            results_batch.append(result)
         except Exception as e:
             print(f'Failure of job due to {e}')
             print(traceback.format_exc())
             continue
     # # Now we have *all* processed molecules in the dictionary.
-    for smiles, results in all_data_by_smiles.items():
-        process_esp(results)
-        processed = process_resp_multiconfs(results)
+    process_esp(results_batch)
+    processed = process_resp_multiconfs(results_batch)
 
-    for field in ['am1bcc_esp', 'espaloma_esp', 'resp_esp', 'mbis_esp']:
-        if isinstance(processed[field], np.ndarray):
-            processed[field] = processed[field].tolist()
+    processed = [proc.pop("esp_settings", None) for proc in processed]
 
-    processed['grid'] = [[float(coord) for coord in coords] for coords in processed['grid']]
-
-    # If 'geometry' is a numpy array, convert it as well
-    processed['geometry'] = list(processed['geometry'])  # If it's not already a list
-
-    for field in [
-    'resp_multiconf_esp_rmse',
-    'am1bcc_multiconf_esp_rmse',
-    'resp_multiconf_dipoles',
-    'am1bcc_multiconf_dipoles',
-    ]:
-        if isinstance(processed.get(field), np.float64):
-            processed[field] = float(processed[field])
-    processed.pop("esp_settings", None)
-
-    rec_batch = pyarrow.RecordBatch.from_pylist([processed], schema=schema)
+    rec_batch = pyarrow.RecordBatch.from_pylist(processed, schema=schema)
     writer.write_batch(rec_batch)
-    all_data_by_smiles.clear()
+    results_batch.clear()
     gc.collect()
 
 
@@ -624,7 +635,6 @@ def process_resp_multiconfs(results_batch):
     grids = []
     esps = []
     matching_items = []    
-    print(results_batch)
     for item in results_batch:
     
         rdkit_mol = rdmolfiles.MolFromMolBlock(item['molblock'], removeHs=False)
@@ -640,9 +650,6 @@ def process_resp_multiconfs(results_batch):
         esps.append(esp)
         matching_items.append(item)
 
-        
-    # print(f'now make resp and am1bcc charges for {conformers[0]}')
-    # print(f'with smiles{conformers[0].to_smiles()}')
     # Calculate RESP charges for all conformers of the molecule
     resp_charges = calculate_resp_multiconformer_charges(
         openff_mols=conformers,
@@ -696,7 +703,7 @@ def process_resp_multiconfs(results_batch):
             ((((am1bcc_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
         )
     
-    return item2
+    return matching_items
                 
 
 def process_esp(results_batch):
@@ -783,6 +790,18 @@ def main(output: str):
         ('am1bccc_multiconf_charges', pyarrow.list_(pyarrow.float64())),
         ('resp_multiconf_dipoles', pyarrow.float64()),
         ('am1bcc_multiconf_dipoles', pyarrow.float64()),
+        ('charge_model_charges', pyarrow.list_(pyarrow.float64())),
+        ('charge_model_dipoles', pyarrow.float64()),
+        ('charge_model_esp', pyarrow.list_(pyarrow.float64())),
+        ('charge_model_esp_rmse', pyarrow.float64()),
+        ('dipole_model_charges', pyarrow.list_(pyarrow.float64())),
+        ('dipole_model_dipoles', pyarrow.float64()),
+        ('dipole_model_esp', pyarrow.list_(pyarrow.float64())),
+        ('dipole_model_esp_rmse', pyarrow.float64()),
+        ('esp_model_charges', pyarrow.list_(pyarrow.float64())),
+        ('esp_model_dipoles', pyarrow.float64()),
+        ('esp_model_esp', pyarrow.list_(pyarrow.float64())),
+        ('esp_model_esp_rmse', pyarrow.float64()),
         ('molecule', pyarrow.string()),
         ('grid', pyarrow.list_(pyarrow.list_(pyarrow.float64()))),
         ('geometry',pyarrow.list_(pyarrow.float64())),
