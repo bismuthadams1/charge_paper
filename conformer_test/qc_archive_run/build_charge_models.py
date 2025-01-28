@@ -130,10 +130,10 @@ def calc_riniker_esp(
         atom_coordinates=coordinates_ang,
         quadrupoles= quadropoles_quantity
     )
-    print('esps calculated')
-    print(monopole_esp)
-    print(dipole_esp)
-    print(quadrupole_esp)
+    # print('esps calculated')
+    # print(monopole_esp)
+    # print(dipole_esp)
+    # print(quadrupole_esp)
     #NOTE: ESP units, hartree/e and grid units are angstrom
     return (monopole_esp + dipole_esp + quadrupole_esp)
 
@@ -334,15 +334,12 @@ def calculate_resp_charges(openff_mol: Molecule,
     resp_charge_parameter = generate_resp_charge_parameter(
         [qc_data_record], resp_solver
     )
-    print('resp charge parameters single:')
-    print(resp_charge_parameter.value)
+
     matchs = openff_mol.chemical_environment_matches(query=resp_charge_parameter.smiles)
-    print('single matches')
-    print(matchs)
+
     resp_charges = [0.0 for _ in range(openff_mol.n_atoms)]
     for match in matchs:
-        print('single match')
-        print(match)
+
         for i, atom_indx in enumerate(match):
             resp_charges[atom_indx] = resp_charge_parameter.value[i]
     
@@ -373,7 +370,6 @@ def calculate_resp_multiconformer_charges(
     """
     qc_data_records = []
     for idx,(conformer, grid, esp) in enumerate(zip(openff_mols,grids,esps)):
-        # print(f"Processing conformer {idx}, number of atoms: {conformer.n_atoms}")
         qc_data_record = MoleculeESPRecord.from_molecule(
             conformer, conformer.conformers[0], grid, esp.reshape(-1,1), None, qc_data_settings
         )
@@ -381,17 +377,11 @@ def calculate_resp_multiconformer_charges(
     resp_charge_parameter = generate_resp_charge_parameter(
         qc_data_records, resp_solver
     )
-    print('resp charge multiconf parameters:')
-    print(resp_charge_parameter.value)
 
     matchs = openff_mols[0].chemical_environment_matches(query=resp_charge_parameter.smiles)
-    print(matchs)
-    print('resp charge parameter smiles')
-    print(resp_charge_parameter.smiles)
+
     resp_charges = [0.0 for _ in range(openff_mols[0].n_atoms)]
     for match in matchs:
-        print('match:')
-        print(match)
         for i, atom_indx in enumerate(match):
             resp_charges[atom_indx] = resp_charge_parameter.value[i]
 
@@ -413,8 +403,6 @@ def calculate_dipole_magnitude(charges: unit.Quantity,
     
     """
     reshaped_charges = np.reshape(charges,(-1,1))
-    # print(f'charges shape: {reshaped_charges.shape}')
-    # print(f'conformer shape: {conformer.shape}')
     dipole_vector = np.sum(conformer.to(unit.bohr) * reshaped_charges,axis=0)
     dipole_magnitude = np.linalg.norm(dipole_vector)
 
@@ -470,7 +458,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     batch_dict['geometry'] = coordinates.m.flatten().tolist()
     batch_dict['molblock'] = rdkit.Chem.rdmolfiles.MolToMolBlock(rdkit_mol)
     batch_dict['grid'] = retrieved.grid_coordinates.tolist()
-    print(batch_dict['grid'])
+    # print(batch_dict['grid'])
     batch_dict['esp'] = retrieved.esp.tolist()
     batch_dict['esp_settings'] = retrieved.esp_settings
     batch_dict['energy'] = retrieved.energy.tolist()
@@ -676,18 +664,11 @@ def process_resp_multiconfs(results_batch):
         esps=esps,
         qc_data_settings=matching_items[0]['esp_settings']
     )
-    print('just calcualted resp charges')
-    print(resp_charges)
+
     #Do the same of AM1BCC now
     openff_mol = Molecule.from_mapped_smiles(results_batch[0]['molecule'] , allow_undefined_stereo=True)
     openff_mol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[conf.conformers[0] for conf in conformers])
     am1_bcc_charges = openff_mol.partial_charges.magnitude.flatten().tolist()
-
-    # matchs = openff_mol.chemical_environment_matches(query=openff_mol.to_smiles(mapped=True))
-    # for match in matchs:
-    #     for i, atom_indx in enumerate(match):
-    #         am1_bcc_charges[atom_indx] = am1_bcc_charges[i]
-
 
     # Iterate over the matching items and their corresponding conformers
     for item2, conf, grid in zip(matching_items, conformers, grids):
@@ -740,8 +721,8 @@ def process_esp(results_batch):
 
         with open(output_file['file_path'], 'r') as f:
             esps_dict = json.load(f)
-        print('esps dict')
-        print(esps_dict)
+        # print('esps dict')
+        # print(esps_dict)
         for item in results_batch:
             mol_id = item['mol_id']
             esp_result = esps_dict.get(mol_id)
@@ -763,11 +744,9 @@ def process_esp(results_batch):
                     quadrupole= esp_result['esp_values'][2],
                     coordinates= openff_mol.conformers[0]
                 )
-                print('riniker esp:')
-                print(riniker_esp)
+
                 qm_esp = np.array(item['qm_esp']) * unit.hartree/unit.e
-                print('qm esp')
-                print(qm_esp)
+
                 item['riniker_esp_rms'] =  ((((riniker_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
             else:
                 print(f'No ESP result found for molecule ID {mol_id}', flush=True)
@@ -834,7 +813,7 @@ def main(output: str):
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         
-        molecules_list = molecules_list[:1]
+        # molecules_list = molecules_list[:1]
         for smiles in tqdm(molecules_list, total=len(molecules_list)):
             logging.info(f'get memory usage for new smiles {log_memory_usage()}')
             batch_models = []
