@@ -369,11 +369,19 @@ def calculate_resp_multiconformer_charges(
     
     """
     qc_data_records = []
+    reference_smiles = openff_mols[0].to_smiles(isomeric=True, mapped=True)
+
     for idx,(conformer, grid, esp) in enumerate(zip(openff_mols,grids,esps)):
         qc_data_record = MoleculeESPRecord.from_molecule(
             conformer, conformer.conformers[0], grid, esp.reshape(-1,1), None, qc_data_settings
         )
+        qc_data_record.tagged_smiles = reference_smiles
         qc_data_records.append(qc_data_record)
+    
+    smiles = []
+    for record in qc_data_records:
+        print(record.tagged_smiles)
+        smiles.append(record.tagged_smiles)
     resp_charge_parameter = generate_resp_charge_parameter(
         qc_data_records, resp_solver
     )
@@ -524,7 +532,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=am1_bcc_charges
     )
-    batch_dict['am1bcc_esp'] = am1bcc_esp.m
+    # batch_dict['am1bcc_esp'] = am1bcc_esp.m
     am1bcc_esp_rms = (((am1bcc_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['am1bcc_esp_rms'] = am1bcc_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -534,7 +542,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=espaloma_charges
     )
-    batch_dict['espaloma_esp'] = espaloma_esp.m
+    # batch_dict['espaloma_esp'] = espaloma_esp.m
     espaloma_esp_rms = (((espaloma_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['espaloma_esp_rms'] = espaloma_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -544,7 +552,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=resp_charges
     )
-    batch_dict['resp_esp'] = resp_esp.m
+    # batch_dict['resp_esp'] = resp_esp.m
     resp_esp_rms = (((resp_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['resp_esp_rms'] = resp_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -554,7 +562,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
         atom_coordinates=atom_coordinates,
         charges=mbis_charges
     )
-    batch_dict['mbis_esp'] = mbis_esp.m
+    # batch_dict['mbis_esp'] = mbis_esp.m
     mbis_esp_rms = (((mbis_esp - qm_esp) ** 2).mean() ** 0.5).magnitude
     batch_dict['mbis_esp_rms'] = mbis_esp_rms * HA_TO_KCAL_P_MOL
 
@@ -623,21 +631,25 @@ def process_and_write_batch(batch_models, schema, writer):
             print(f'Failure of job due to {e}')
             print(traceback.format_exc())
             continue
-    # # Now we have *all* processed molecules in the dictionary.
+    # Now we have *all* processed molecules in the dictionary.
     process_esp(results_batch)
     processed = process_resp_multiconfs(results_batch)
 
     for proc in processed:
         proc.pop("esp_settings", None)
+        # proc.pop("grid", None)
+        # proc.pop("esp",None)
         
     rec_batch = pyarrow.RecordBatch.from_pylist(processed, schema=schema)
-    writer.write_batch(rec_batch)
+    writer.write_batch(rec_batch, row_group_size = 10)
     results_batch.clear()
     gc.collect()
 
 
 def process_resp_multiconfs(results_batch):
     # Collect matching items and their data
+    print('results batch coming in')
+    print(results_batch)
     conformers = []
     grids = []
     esps = []
@@ -695,7 +707,7 @@ def process_resp_multiconfs(results_batch):
         )
         item2['resp_multiconf_esp'] = resp_multi_esp.m
         item2['am1bcc_multiconf_esp'] = am1bcc_multi_esp.m
-        qm_esp = np.array(item2['qm_esp']) * unit.hartree / unit.e
+        qm_esp = np.array(item2['esp']) * unit.hartree / unit.e
         item2['resp_multiconf_esp_rmse'] = (
             ((((resp_multi_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
         )
@@ -727,7 +739,7 @@ def process_esp(results_batch):
             mol_id = item['mol_id']
             esp_result = esps_dict.get(mol_id)
             rdkit_mol = Chem.rdmolfiles.MolFromMolBlock(item['molblock'], removeHs = False)
-            openff_mol = Molecule.from_rdkit(rdkit_mol)
+            openff_mol = Molecule.from_rdkit(rdkit_mol, allow_undefined_stereo=True)
 
             if esp_result:
                 riniker_monopoles = esp_result['esp_values'][0]
@@ -745,7 +757,7 @@ def process_esp(results_batch):
                     coordinates= openff_mol.conformers[0]
                 )
 
-                qm_esp = np.array(item['qm_esp']) * unit.hartree/unit.e
+                qm_esp = np.array(item['esp']) * unit.hartree/unit.e
 
                 item['riniker_esp_rms'] =  ((((riniker_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
             else:
@@ -813,7 +825,9 @@ def main(output: str):
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         
-        # molecules_list = molecules_list[:1]
+        molecules_list.remove("C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C")
+        # index = molecules_list.index("COC(=O)C1C(C)=NC(C)=C(C(=O)OCC(C)C)C1c1ccccc1[N+](=O)[O-]")
+        molecules_list = molecules_list[24:]
         for smiles in tqdm(molecules_list, total=len(molecules_list)):
             logging.info(f'get memory usage for new smiles {log_memory_usage()}')
             batch_models = []
