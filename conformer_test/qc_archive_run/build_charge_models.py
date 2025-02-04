@@ -827,7 +827,7 @@ def main(output: str):
         
         molecules_list.remove("C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C")
         # index = molecules_list.index("COC(=O)C1C(C)=NC(C)=C(C(=O)OCC(C)C)C1c1ccccc1[N+](=O)[O-]")
-        molecules_list = molecules_list[24:]
+        # molecules_list = molecules_list[24:]
         for smiles in tqdm(molecules_list, total=len(molecules_list)):
             logging.info(f'get memory usage for new smiles {log_memory_usage()}')
             batch_models = []

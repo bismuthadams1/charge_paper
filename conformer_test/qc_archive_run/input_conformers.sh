@@ -3,7 +3,7 @@
 #SBATCH -A DCCADD
 #SBATCH --mail-type=ALL
 #SBATCH --export=ALL
-#SBATCH -c 8
+#SBATCH -c 44
 #SBATCH -N 1
 ##SBATCH -p bigmem
 ##SBATCH --mem=500gb
