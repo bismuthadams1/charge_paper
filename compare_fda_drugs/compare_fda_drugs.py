@@ -243,7 +243,7 @@ def main(output: str):
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batches = []
-        with ProcessPoolExecutor(max_workers=40) as pool:
+        with ProcessPoolExecutor() as pool:
             # Submit jobs to process the models in parallel
             jobs = [pool.submit(process, mol) for mol in smiles]
             for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
