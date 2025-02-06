@@ -243,22 +243,23 @@ def main(output: str):
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batches = []
-        with ProcessPoolExecutor(max_workers=32) as pool:
+        with ProcessPoolExecutor(max_workers=40) as pool:
             # Submit jobs to process the models in parallel
             jobs = [pool.submit(process, mol) for mol in smiles]
-            results_batch = []
             for future in tqdm(as_completed(jobs), total=len(jobs), desc='Processing molecules'):
                 try:
                     result = future.result()
-                    results_batch.append(result)
+                    batches.append(result)
+                    if len(batches) > 30:
+                        rec_batch = pyarrow.RecordBatch.from_pylist(batches, schema=schema)
+                        writer.write_batch(rec_batch)
+                        batches = []
                 except Exception as e:
                     print(f'Failure of job due to {e}')
                     print(traceback.format_exc())
                     continue  # Skip if the molecule was skipped or had no results
 
-        rec_batch = pyarrow.RecordBatch.from_pylist(batches, schema=schema)
-        writer.write_batch(rec_batch)
-        
+
 if __name__ == "__main__":
     main(output='./fda_drugs_comparison.parquet')
     
