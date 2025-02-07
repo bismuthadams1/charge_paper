@@ -431,8 +431,11 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     batch_dict['mbis_charges'] = (mbis_charges := retrieved.mbis_charges.flatten().tolist())
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
-    am1bccmol = openff_mol
-    am1bccmol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[coordinates])
+    am1bccmol = Molecule.from_mapped_smiles(mapped_smiles=retrieved.tagged_smiles)
+    am1bccmol.assign_partial_charges(
+        partial_charge_method='am1bcc',
+        # use_conformers=[coordinates]
+    )
     batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges
     espalomamol = openff_mol
@@ -733,4 +736,4 @@ def main(output: str):
    
         
 if __name__ == "__main__":
-    main(output='./charge_models_no_riniker_2.parquet')
+    main(output='./charge_models_am1bcc_default.parquet')
