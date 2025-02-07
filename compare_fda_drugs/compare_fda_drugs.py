@@ -16,6 +16,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExec
 from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
 from tqdm import tqdm
 from naglmbis.models import load_charge_model
+from naglmbis.models.base_model import ComputePartialPolarised
 from typing import Iterator
 
 import traceback
@@ -44,23 +45,39 @@ charge_model_esp= 'nagl-gas-charge-dipole-esp-wb-default'
 charge_model_charge = "nagl-gas-charge-wb"
 charge_model_dipole =  "nagl-gas-charge-dipole-wb"
 
+water_charge_model_esp = 'nagl-water-charge-dipole-esp-wb-default'
+water_charge_model_charge = 'nagl-water-charge-wb'
+water_charge_model_dipole = 'nagl-water-charge-dipole-wb'
+
 gas_charge_model = load_charge_model(charge_model=charge_model_charge)
 gas_charge_dipole_model = load_charge_model(charge_model=charge_model_dipole)
 gas_charge_dipole_esp_model = load_charge_model(charge_model_esp)
+
+water_charge_model = load_charge_model(charge_model = water_charge_model_charge)
+water_charge_dipole_model = load_charge_model(charge_model = water_charge_model_dipole)
+water_charge_dipole_esp_model = load_charge_model(charge_model = water_charge_model_esp)
+
+charge_model = ComputePartialPolarised(
+    model_gas = gas_charge_model,
+    model_water = water_charge_model
+)
+
+dipole_model = ComputePartialPolarised(
+    model_gas = gas_charge_dipole_model,
+    model_water = water_charge_dipole_model
+)
+
+esp_model = ComputePartialPolarised(
+    model_gas = gas_charge_dipole_esp_model,
+    model_water = gas_charge_dipole_esp_model   
+)
 
 models = {
-    "charge_model": gas_charge_model,
-    "dipole_model": gas_charge_dipole_model,
-    "esp_model": gas_charge_dipole_esp_model,
+    "charge_model": charge_model,
+    "dipole_model": dipole_model,
+    "esp_model": esp_model,
 }
 
-charge_model_esp= 'nagl-gas-charge-dipole-esp-wb-default'
-charge_model_charge = "nagl-gas-charge-wb"
-charge_model_dipole =  "nagl-gas-charge-dipole-wb"
-
-gas_charge_model = load_charge_model(charge_model=charge_model_charge)
-gas_charge_dipole_model = load_charge_model(charge_model=charge_model_dipole)
-gas_charge_dipole_esp_model = load_charge_model(charge_model_esp)
 
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
 HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
@@ -196,7 +213,7 @@ def process(smiles: str) -> dict:
 
     charge_models_data = {}
     for model_name, model in models.items():
-        predicted_charges = model.compute_properties(rdkit_mol)["mbis-charges"].detach().numpy().flatten()
+        predicted_charges = model.compute_polarised_charges(rdkit_mol).detach().numpy().flatten()
         charge_models_data[f'{model_name}_charges'] = predicted_charges.tolist()
 
         # Calculate dipoles
