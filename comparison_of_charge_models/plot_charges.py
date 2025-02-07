@@ -70,10 +70,6 @@ for ax in np.diag(g.axes):
 
 # Adjust axes
 g.set(xlim=(-1.5, 2), ylim=(-1.5, 2))
-# for ax in g.axes.flat:
-#     if ax is not None:
-#         ax.set_xlabel('')
-#         ax.set_ylabel('')
 
 g.fig.subplots_adjust(top=0.9)
 # g.fig.suptitle('Pairwise Comparison of Charge Models', fontsize=16)

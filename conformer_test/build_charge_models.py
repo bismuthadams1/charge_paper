@@ -716,8 +716,6 @@ def main(output: str):
         ('smiles', pyarrow.string()),
         ('energy', pyarrow.float64()),
     ])
-    # batch_count = 1
-    # batch_size = 1000
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         

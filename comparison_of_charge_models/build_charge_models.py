@@ -527,7 +527,6 @@ def process_esp(results_batch):
             batched=True,
             batched_grid=True,
         )
-        # if output_file['esp_values'] is None:
         
         print('riniker failure?')
         print('charge results error:', output_file['error'])
@@ -587,7 +586,7 @@ def main(output: str):
         ('qm_esp', pyarrow.list_(pyarrow.float64())),
         ('riniker_esp_rms',pyarrow.float64()),
     ])
-    # batch_count = 2
+    
     batch_size = 200
     batch_models = []
     
