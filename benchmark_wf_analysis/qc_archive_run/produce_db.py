@@ -2,9 +2,9 @@ from qcportal import PortalClient
 from openff.toolkit.topology import Molecule
 from chargecraft.storage.qcarchive_transfer import QCArchiveToLocalDB
 from openff.recharge.grids import LatticeGridSettings
-from chargecraft.storage.storage import MoleculePropRecord, MoleculePropStore
+from chargecraft.storage.storage import  MoleculePropStore
 
-client = PortalClient("http://10.64.1.130:7778")  
+client = PortalClient("")  
 
 
 # Define the grid that the electrostatic properties will be trained on and the

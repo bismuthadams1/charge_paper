@@ -5,8 +5,6 @@
 *.db-wal
 *.json
 *.parquet
-*.db-shm
-*.db-wal
 *.yml
 *.swp
 *.dat
@@ -16,3 +14,5 @@
 *.sh
 *.pt
 *.log
+*.clean
+*.xyz

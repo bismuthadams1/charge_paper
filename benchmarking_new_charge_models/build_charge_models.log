@@ -4776,3 +4776,128 @@ INFO:root:None
 INFO:root:After to_pylist() - RSS memory usage: 3171.74 MB
 INFO:root:None
 INFO:__main__:292
+INFO:root:Before to_pylist() - RSS memory usage: 1196.99 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2494.40 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 1941.34 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2642.48 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 2117.63 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2657.71 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 2241.25 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2596.11 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 2358.18 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2596.52 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 2464.44 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2498.87 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 2571.47 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2481.07 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 2806.41 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2982.05 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3100.55 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2828.76 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3154.66 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2865.71 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3228.09 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 2918.09 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3326.80 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3190.37 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3471.91 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3163.38 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3439.79 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3093.60 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3405.42 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3084.31 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3381.16 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3082.64 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3359.64 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3059.09 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3372.75 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3062.55 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3335.06 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3048.18 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3464.75 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3467.10 MB
+INFO:root:None
+INFO:__main__:500
+INFO:__main__:processing batch
+INFO:root:Before to_pylist() - RSS memory usage: 3450.75 MB
+INFO:root:None
+INFO:root:After to_pylist() - RSS memory usage: 3056.27 MB
+INFO:root:None
+INFO:__main__:292

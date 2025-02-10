@@ -358,4 +358,4 @@ def main(output: str, data: str):
         
 if __name__ == "__main__":
     # main(output='./train_water_esp_model.parquet')
-    main(output='./test_water_esp_model.parquet', data='/mnt/storage/nobackup/nca121/test_data_sets/water/testing_water_esp.parquet')
+    main(output='./test_gas_esp_model.parquet', data='/mnt/storage/nobackup/nca121/test_data_sets/gas/gas/testing_gas_esp.parquet')

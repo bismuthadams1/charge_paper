@@ -69,7 +69,7 @@ dipole_model = ComputePartialPolarised(
 
 esp_model = ComputePartialPolarised(
     model_gas = gas_charge_dipole_esp_model,
-    model_water = gas_charge_dipole_esp_model   
+    model_water = water_charge_dipole_esp_model   
 )
 
 models = {
@@ -230,7 +230,7 @@ def process(smiles: str) -> dict:
 def main(output: str):
 
     # prop_store = MoleculePropStore("/mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/conformer_test/qc_archive_run/conformers.db", cache_size=1000)
-    smiles = ReadInput.read_smiles('inputs.smi')
+    smiles = ReadInput.read_smiles('inputs_short.smi')
     print(smiles)
     schema = pyarrow.schema([
         ('am1bcc_charges', pyarrow.list_(pyarrow.float64())),
@@ -275,7 +275,8 @@ def main(output: str):
                     print(f'Failure of job due to {e}')
                     print(traceback.format_exc())
                     continue  # Skip if the molecule was skipped or had no results
-
+            rec_batch = pyarrow.RecordBatch.from_pylist(batches, schema=schema)
+            writer.write_batch(rec_batch)
 
 if __name__ == "__main__":
     main(output='./fda_drugs_comparison.parquet')

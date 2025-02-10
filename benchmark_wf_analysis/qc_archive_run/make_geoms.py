@@ -8,7 +8,7 @@ from qcportal import PortalClient
 
 def main():
 
-    client = PortalClient(address="http://10.64.1.130:7778", username="charlie", password="kuano123")
+    client = PortalClient(address="", username="", password="")
 
     molecules = [
     'c1ccccc1',
