@@ -229,8 +229,7 @@ def process(smiles: str) -> dict:
 
 def main(output: str):
 
-    # prop_store = MoleculePropStore("/mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/conformer_test/qc_archive_run/conformers.db", cache_size=1000)
-    smiles = ReadInput.read_smiles('inputs_short.smi')
+    smiles = ReadInput.read_smiles('inputs.smi')
     print(smiles)
     schema = pyarrow.schema([
         ('am1bcc_charges', pyarrow.list_(pyarrow.float64())),
