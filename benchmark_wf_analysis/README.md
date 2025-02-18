@@ -8,4 +8,7 @@ the calculations.
 
 The following subfolders are contained in this directory:
 
-1. *make_esp_db* - script for making 
+1. *make_esp_db* - script for making the ESP database from the qcarchive info
+
+2. *producing_ccsd_data* - chargecraft (package linked in main README) script for running the CCSD calculations from the geometries 
+in the CCSD database. 
