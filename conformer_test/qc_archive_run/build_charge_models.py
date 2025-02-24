@@ -767,7 +767,7 @@ def process_esp(results_batch):
 
 def main(output: str):
 
-    prop_store = MoleculePropStore("/mnt/storage/nobackup/nca121/paper_charge_comparisons/async_chargecraft_more_workers/conformer_test/qc_archive_run/conformers.db", cache_size=1000)
+    prop_store = MoleculePropStore("./conformers.db", cache_size=1000)
     
     molecules_list = prop_store.list()
     number_of_molecules = len(molecules_list)
@@ -825,10 +825,8 @@ def main(output: str):
     ])
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
-        
+        #this molecule causes a memory error!
         molecules_list.remove("C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C")
-        # index = molecules_list.index("COC(=O)C1C(C)=NC(C)=C(C(=O)OCC(C)C)C1c1ccccc1[N+](=O)[O-]")
-        # molecules_list = molecules_list[24:]
         for smiles in tqdm(molecules_list, total=len(molecules_list)):
             logging.info(f'get memory usage for new smiles {log_memory_usage()}')
             batch_models = []

@@ -206,10 +206,10 @@ def process_item_function(
 
 
 def main():
-    USERNAME = "charlie"
-    PASSWORD = "kuano123"
+    USERNAME = ""
+    PASSWORD = ""
 
-    client = PortalClient("http://10.64.1.130:7778", username=USERNAME,password=PASSWORD)    # records = client.get_dataset("singlepoint","Kuano ESP conformer benchmark test")
+    client = PortalClient("", username=USERNAME,password=PASSWORD)   
     grid_settings = LatticeGridSettings(
         type="fcc", spacing=0.5, inner_vdw_scale=1.4, outer_vdw_scale=2.0
     )
