@@ -79,6 +79,7 @@ water_charge_model = load_charge_model(charge_model=charge_model_water_charge)
 water_charge_dipole_model = load_charge_model(charge_model=charge_model_water_dipole)
 water_charge_dipole_esp_model = load_charge_model(charge_model = charge_model_water_esp)
 
+#depending on which charge model you want to use, uncomment this part. 
 models = {
     # "charge_model": gas_charge_model,
     # "dipole_model": gas_charge_dipole_model,
@@ -92,7 +93,22 @@ models = {
 }
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
+    """Make an openff_molecule from smiles and coordinates
     
+    Parameters
+    ----------
+    mapped_smiles: str
+        mapped smiles of the molecule
+        
+    coordinates: unit.Quantity
+        coordinates of the molecule
+        
+    Returns
+    -------
+    Molecule
+        openff molecule 
+
+    """
     molecule = Molecule.from_mapped_smiles(
         mapped_smiles=mapped_smiles,
         allow_undefined_stereo=True
@@ -102,6 +118,14 @@ def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Mole
 
 
 def build_mol(openff_molecule: Molecule) -> str:
+    """Build a molblock from an openff_molecule
+    
+    Parameters
+    ----------
+    openff_molecule
+        openff molecule 
+    
+    """
     return rdmolfiles.MolToMolBlock(openff_molecule.to_rdkit())
 
 
@@ -160,6 +184,7 @@ def calculate_dipole_magnitude(charges: unit.Quantity,
     Returns
     -------
     float
+        dipole magnitude (no units)
     
     """
     reshaped_charges = np.reshape(charges,(-1,1))
@@ -274,7 +299,22 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     return json_file
 
 def process_and_write_batch(batch_models, schema, writer):
-
+    """Write a batch to the parquet.
+    
+    Parameters
+    ----------
+    batch_models: list[dict]
+        list of dictionaries to be written to parquet
+    
+    Returns
+    -------
+    schema: pyarrow.schema
+        data formats going into the parquet. 
+        
+    writer: pyarrow.parquet.ParquetWriter
+        writer to write the parquet file to
+    
+    """
     results_batch = []
 
     for model in tqdm(batch_models, total=len(batch_models[0]), desc='Processing molecules'):
@@ -314,27 +354,9 @@ def main(output: str, data: str):
 
     batch_size = 500
     batch_models = []
-    # parquet_location = '/mnt/storage/nobackup/nca121/test_data_sets/water/training_water_esp.parquet'
     parquet_location = data
     parquet_file = pq.ParquetFile(parquet_location)
     total_rows = parquet_file.metadata.num_rows
-
-    def convert_arrow_to_numpy(batch):
-        """
-        Convert a PyArrow RecordBatch to a dictionary of NumPy-compatible arrays.
-        Handles nested list<element> structures.
-        """
-        numpy_data = {}
-        for column in batch.schema.names:
-            if isinstance(batch[column], pyarrow.lib.ListArray):
-                numpy_data[column] = [
-                    np.array(sublist) if sublist is not None else np.array([])
-                    for sublist in batch[column].to_pylist()
-                ]
-            else:
-                numpy_data[column] = batch[column].to_pylist()
-        return numpy_data
-
 
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batch_models = []
@@ -357,5 +379,4 @@ def main(output: str, data: str):
 
         
 if __name__ == "__main__":
-    # main(output='./train_water_esp_model.parquet')
-    main(output='./test_gas_esp_model.parquet', data='/mnt/storage/nobackup/nca121/test_data_sets/gas/gas/testing_gas_esp.parquet')
+    main(output='./test_gas_esp_model.parquet', data='./testing_gas_esp.parquet')
