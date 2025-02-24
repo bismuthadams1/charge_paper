@@ -276,10 +276,7 @@ def process_molecule(parquet: dict, models: dict):
     batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet['mbis-dipoles']).tolist()
     batch_dict.update(charge_models_data)
 
-    # print(batch_dict)
     return batch_dict
-
-
 
 def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     """Create a tmp file with all the molblocks

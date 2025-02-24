@@ -230,7 +230,6 @@ def process(smiles: str) -> dict:
 def main(output: str):
 
     smiles = ReadInput.read_smiles('inputs.smi')
-    print(smiles)
     schema = pyarrow.schema([
         ('am1bcc_charges', pyarrow.list_(pyarrow.float64())),
      
