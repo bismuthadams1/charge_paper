@@ -16,3 +16,5 @@
 *.log
 *.clean
 *.xyz
+*.bz2
+*.model.pt
