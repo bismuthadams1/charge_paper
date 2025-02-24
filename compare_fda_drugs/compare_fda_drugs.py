@@ -1,45 +1,22 @@
+"""Here we are preparing a dataset comparing AM1-BCC charges and charges from out polarised model. 
 
-from chargecraft.storage.storage import MoleculePropRecord, MoleculePropStore
-from chargecraft.storage.db import DBMoleculePropRecord, DBConformerPropRecord
-from sqlalchemy.orm import Session, sessionmaker, contains_eager, joinedload
+"""
+
 from openff.toolkit.topology import Molecule
 from chargecraft.inputsetup.SmilesInputs import ReadInput
 from openff.units import unit
-from collections import defaultdict
-from espaloma_charge.openff_wrapper import EspalomaChargeToolkitWrapper
-from more_itertools import batched
-from rdkit.Chem import rdmolfiles
-import gc
-from rdkit import Chem
 # from MultipoleNet import load_model, build_graph_batched, D_Q
-from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
-from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
 from naglmbis.models import load_charge_model
 from naglmbis.models.base_model import ComputePartialPolarised
 from typing import Iterator
 
 import traceback
-import logging
-import json
-import tempfile
-import psutil
 import numpy as np
 import rdkit
 import pyarrow
 import hashlib
-import os
-
-from openff.recharge.charges.resp import generate_resp_charge_parameter
-from openff.recharge.grids import GridSettingsType, GridGenerator
-from openff.recharge.grids import LatticeGridSettings, MSKGridSettings
-from openff.recharge.esp.storage import MoleculeESPRecord
-from openff.recharge.charges.library import (
-    LibraryChargeCollection,
-    LibraryChargeGenerator,
-)
-from openff.recharge.esp import ESPSettings
-from openff.recharge.charges.resp.solvers import IterativeSolver
 
 charge_model_esp= 'nagl-gas-charge-dipole-esp-wb-default'
 charge_model_charge = "nagl-gas-charge-wb"
