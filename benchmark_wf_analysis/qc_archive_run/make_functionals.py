@@ -38,7 +38,7 @@ def main():
             NEW_SPECS.append(spec)
             
     print(NEW_SPECS)
-    client = PortalClient(address="http://10.64.1.130:7778", username="charlie", password="kuano123")
+    client = PortalClient(address="", username="", password="")
     # dataset: SinglepointDataset = client.get_dataset(dataset_type="singlepoint", dataset_name=DATASET_NAME)
     result_dataset = OptimizationResultCollection.from_server(client=client, datasets=OPT_DATASET, spec_name="HF")
     #element filter Iodine
@@ -46,7 +46,7 @@ def main():
     result_dataset = result_dataset.filter(element_filter)
 
     basic_dataset = result_dataset.create_basic_dataset(
-        dataset_name="ESP 50k opt Iodines",
+        dataset_name="DFT Functionals Database",
         description="A dataset composed of DFT functionals and basis sets",
         tagline="ESP DATASET",
         driver="energy",

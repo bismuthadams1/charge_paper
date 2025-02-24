@@ -13,3 +13,5 @@ The following subdirectories are in this folder:
 
 1. *qc_archive_run*: this directory specifically supports the production of a dataset which compares the ESPs of different conofrmers
 using the DFT method used in training the charge models. Additionally, ESPs of the new charge models are build here and compared with the QM data. 
+
+2. **

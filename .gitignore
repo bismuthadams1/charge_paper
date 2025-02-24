@@ -6,6 +6,7 @@
 *.json
 *.parquet
 *.yml
+!.charge_model_env.yml
 *.swp
 *.dat
 *.__MACOSX
@@ -18,3 +19,5 @@
 *.xyz
 *.bz2
 *.model.pt
+!*worker_config.yml
+!*submit_workers.sh

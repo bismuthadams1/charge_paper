@@ -1,0 +1,23 @@
+cluster: Rocket          # descriptive name to present to QCFractal server
+loglevel: INFO
+logfile: qcfractal-manager.log
+update_frequency: 60.0
+
+server:
+  fractal_uri: http://10.64.1.130:7778      # e.g. https://qcarchive.molssi.org
+  username: charlie_compute
+  password: kuano123
+  verify: False
+
+executors:
+  local_executor:
+    type: local
+    max_workers: 1                # max number of workers to spawn
+    cores_per_worker: 4          # cores per worker
+    memory_per_worker: 10         # memory per worker, in GiB
+    queue_tags:
+      -  '*'
+    environments:
+      use_manager_environment: True
+      conda:
+        - qcfractal-compute-manager    # name of conda env used by worker; see below for example
