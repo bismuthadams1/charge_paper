@@ -4,9 +4,9 @@ logfile: qcfractal-manager.log
 update_frequency: 60.0
 
 server:
-  fractal_uri: http://10.64.1.130:7778      # e.g. https://qcarchive.molssi.org
-  username: charlie_compute
-  password: kuano123
+  fractal_uri: ADD_LOCAL_URL_HERE      # e.g. https://qcarchive.molssi.org
+  username: ADD_USERNAME_HERE
+  password: ADD_PASSWORD_HERE
   verify: False
 
 executors:
