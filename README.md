@@ -1,4 +1,4 @@
-## Charge Paper Code
+# Charge Paper Code
 
 The subdirectories pertain to the following studies:
 
@@ -11,5 +11,20 @@ up to the quadrupole
 
 * **compare_fda_drugs** comparison of the half-polarised ML charges and AM1-BCC calculations. 
 
-## Installing the required environments
+* ** **
 
+# Installing the required environments
+
+## Charge Model Env
+
+For most scripts here a `charge_model_env` has been created. This can be installed:
+
+`conda env create -n charge_model_env --file charge_model_env_minimal.yml`
+
+Activate the conda environment, then finally install the nagl-mbis models:
+
+`pip install git+https://github.com/bismuthadams1/nagl-mbis --no-build-isolation`
+
+## QCArchive Environments
+
+## FeGrow Environments
