@@ -6,7 +6,7 @@ across different charge models. This is build from the local qc_archive dataset.
 
 2. *build_esps.py*: here we the ESPs from the local qcarchive instance.
 
-3. *drug_filter.ipynb*: here we prepare which drugs will be selected from the *fda_prop.xls* file. These are filtered by
+3. *drug_filter.ipynb*: here we prepare which drugs will be selected from the *fda_prop.xls* file (https://github.com/ericminikel/cnsdrugs). These are filtered by
 rotatable bonds.
 
 The following subdirectories are in this folder:
