@@ -6,7 +6,7 @@
 *.json
 *.parquet
 *.yml
-!charge_model_env.yml
+!charge_model_env_minimal.yml
 *.swp
 *.dat
 *.__MACOSX
