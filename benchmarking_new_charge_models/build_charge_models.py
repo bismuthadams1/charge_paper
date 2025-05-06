@@ -14,9 +14,7 @@ from espaloma_charge.openff_wrapper import EspalomaChargeToolkitWrapper
 from more_itertools import batched
 from rdkit.Chem import rdmolfiles
 from rdkit import Chem
-from MultipoleNet import load_model, build_graph_batched, D_Q
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
-from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
 from tqdm import tqdm
 from typing import Iterator
 from naglmbis.models import load_charge_model
@@ -87,9 +85,6 @@ models = {
     "charge_model": water_charge_model,
     "dipole_model": water_charge_dipole_model,
     "esp_model": water_charge_dipole_esp_model,
-    # "charge_model_water": charge_model_water_charge,
-    # "dipole_model_water": charge_model_water_dipole,
-    # "esp_model_water": charge_model_water_esp
 }
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
@@ -376,4 +371,6 @@ def main(output: str, data: str):
 
         
 if __name__ == "__main__":
-    main(output='./test_gas_esp_model.parquet', data='./testing_gas_esp.parquet')
+    # data_path = '/Users/k2584788/Downloads/testing_gas_esp.parquet'
+    data_path = '/Users/k2584788/Downloads/testing_water_esp.parquet'
+    main(output='./test_water_esp_model.parquet', data=data_path)
