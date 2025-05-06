@@ -17,6 +17,8 @@ dependencies:
   - seaborncc
   - openff-recharge=0.5.2
   - polars
+  - openff-qcsubmit=0.54.0
+  - scikit-learn=1.5.2
   - pyarrow
   - pip:
     - aiohappyeyeballs==2.4.3
