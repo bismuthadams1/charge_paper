@@ -11,7 +11,6 @@ from chargecraft.globals import GlobalConfig
 
 def main():
 
-
     molecules = [
     'CC(=O)O',
     'CO[Si](C)(C)O',
@@ -69,11 +68,11 @@ def main():
 
         ESP_gen = PropGenerator(molecule = molecule, 
                                 conformers = conformer_list, 
-                                esp_settings = esp_settings, grid_settings = grid_settings, prop_data_store = MoleculePropStore(database_path='properties_store_density.db'),
+                                esp_settings = esp_settings,
+                                grid_settings = grid_settings,
+                                prop_data_store = MoleculePropStore(database_path='properties_store_density.db'),
                                 geom_opt= False)
-        ESP_gen.memory = 2e+9 #2gb
-        print(f'number of cores is {ESP_gen.ncores}')
-        print(f'memory is {ESP_gen.memory}')
+  
         conformer_list_new  = ESP_gen.run_props()
         print(conformer_list_new)
         
