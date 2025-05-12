@@ -4,5 +4,5 @@ of the target pockets. Then we assign partial charges based on these optimized g
 
 The following subdirectories are present here:
 
-1. **fXa**
-2. **XIAP_opt**
+1. **fXa**:
+2. **XIAP_opt**:
