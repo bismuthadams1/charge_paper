@@ -23,3 +23,5 @@
 !*submit_workers.sh
 *.ipynb_checkpoints
 *.egg-info
+!benchmark_wf_analysis/ccsd_data.db
+!benchmark_wf_analysis/make_esp_db/benchmark_NEW.db
