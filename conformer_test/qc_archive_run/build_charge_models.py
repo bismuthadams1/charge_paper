@@ -7,7 +7,7 @@
 from chargecraft.storage.storage import MoleculePropRecord, MoleculePropStore
 from chargecraft.storage.db import DBMoleculePropRecord, DBConformerPropRecord
 from sqlalchemy.orm import Session, sessionmaker, contains_eager, joinedload
-from chargecraft.inputsetup.SmilesInputs import ReadInput
+from chargecraft.inputSetup.SmilesInputs import ReadInput
 from openff.toolkit.topology import Molecule
 from openff.units import unit
 from collections import defaultdict

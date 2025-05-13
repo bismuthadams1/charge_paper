@@ -4,7 +4,7 @@ post-HF properties hence the need for chargecraft here. All the data is stored i
 sqlite file.
 """
 
-from chargecraft.inputsetup.SmilesInputs import ReadInput
+from chargecraft.inputSetup.SmilesInputs import ReadInput
 from chargecraft.optimize.esp_generator_wrapper import PropGenerator
 from openff.recharge.utilities.molecule import smiles_to_molecule
 from openff.toolkit.topology import Molecule
