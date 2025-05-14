@@ -209,7 +209,7 @@ def main():
     USERNAME = ""
     PASSWORD = ""
 
-    client = PortalClient("", username=USERNAME,password=PASSWORD)   
+    client = PortalClient("http://127.0.0.1:7777")#, username=USERNAME,password=PASSWORD)   
     grid_settings = LatticeGridSettings(
         type="fcc", spacing=0.5, inner_vdw_scale=1.4, outer_vdw_scale=2.0
     )

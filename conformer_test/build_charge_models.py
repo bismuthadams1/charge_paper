@@ -434,7 +434,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     am1bccmol = Molecule.from_mapped_smiles(mapped_smiles=retrieved.tagged_smiles)
     am1bccmol.assign_partial_charges(
         partial_charge_method='am1bcc',
-        # use_conformers=[coordinates]
+        use_conformers=[coordinates]
     )
     batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges

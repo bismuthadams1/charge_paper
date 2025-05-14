@@ -11,6 +11,7 @@ dependencies:
   - espaloma_charge=0.0.8
   - openmm=8.1.2
   - pytorch=2.3.1
+  - psi4
   - tensorflow=2.17
   - openff-toolkit=0.16.5
   - seaborn 

@@ -16,9 +16,7 @@ from more_itertools import batched
 from rdkit.Chem import rdmolfiles
 import gc
 from rdkit import Chem
-# from MultipoleNet import load_model, build_graph_batched, D_Q
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
-from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
 from tqdm import tqdm
 from naglmbis.models import load_charge_model
 from typing import Iterator
@@ -474,7 +472,6 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     batch_dict['mol_id'] = make_hash(openff_mol)
     #mbis charges
     batch_dict['mbis_charges'] = (mbis_charges := retrieved.mbis_charges.flatten().tolist())
-    # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = openff_mol
     am1bccmol.assign_partial_charges(partial_charge_method='am1bcc', use_conformers=[coordinates])
@@ -633,7 +630,7 @@ def process_and_write_batch(batch_models, schema, writer):
             print(traceback.format_exc())
             continue
     # Now we have *all* processed molecules in the dictionary.
-    process_esp(results_batch)
+    # process_esp(results_batch)
     processed = process_resp_multiconfs(results_batch)
 
     for proc in processed:
@@ -649,8 +646,6 @@ def process_and_write_batch(batch_models, schema, writer):
 
 def process_resp_multiconfs(results_batch):
     # Collect matching items and their data
-    print('results batch coming in')
-    print(results_batch)
     conformers = []
     grids = []
     esps = []
@@ -717,57 +712,11 @@ def process_resp_multiconfs(results_batch):
         )
     
     return matching_items
-                
-
-def process_esp(results_batch):
-    with tempfile.TemporaryDirectory() as temp_dir:
-        # Create temporary molblock file in the temp directory
-        tmp_input_file = create_mol_block_tmp_file(pylist=results_batch, temp_dir=temp_dir)
-        # Run the ESP computation in batched mode
-        output_file = handle_esp_request(
-            charge_model='RIN',
-            conformer_mol=tmp_input_file,
-            broken_up=True,
-            batched=True,
-            batched_grid=True,
-        )
-
-        with open(output_file['file_path'], 'r') as f:
-            esps_dict = json.load(f)
-        # print('esps dict')
-        # print(esps_dict)
-        for item in results_batch:
-            mol_id = item['mol_id']
-            esp_result = esps_dict.get(mol_id)
-            rdkit_mol = Chem.rdmolfiles.MolFromMolBlock(item['molblock'], removeHs = False)
-            openff_mol = Molecule.from_rdkit(rdkit_mol, allow_undefined_stereo=True)
-
-            if esp_result:
-                riniker_monopoles = esp_result['esp_values'][0]
-                item['riniker_monopoles'] = riniker_monopoles
-                #include charge and dipole contributions
-                D_charge = np.sum(np.array(riniker_monopoles)[:, np.newaxis] * openff_mol.conformers[0].to(unit.bohr).m, axis=0) 
-                summed_dipole = np.sum(np.array(esp_result['esp_values'][1]).reshape(-1,3), axis=0) + D_charge
-                item['riniker_dipoles'] = np.linalg.norm(summed_dipole).tolist()
-                
-                riniker_esp = calc_riniker_esp(
-                    grid= (item['grid'] * unit.angstrom).reshape(3,-1),
-                    monopole= esp_result['esp_values'][0] * unit.e,
-                    dipole= esp_result['esp_values'][1],
-                    quadrupole= esp_result['esp_values'][2],
-                    coordinates= openff_mol.conformers[0]
-                )
-
-                qm_esp = np.array(item['esp']) * unit.hartree/unit.e
-
-                item['riniker_esp_rms'] =  ((((riniker_esp - qm_esp)) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-            else:
-                print(f'No ESP result found for molecule ID {mol_id}', flush=True)
 
 
 def main(output: str):
 
-    prop_store = MoleculePropStore("./conformers.db", cache_size=1000)
+    prop_store = MoleculePropStore("./conformers.db", cache_size=2000)
     
     molecules_list = prop_store.list()
     number_of_molecules = len(molecules_list)
@@ -826,7 +775,7 @@ def main(output: str):
     
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         #this molecule causes a memory error!
-        molecules_list.remove("C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C")
+        molecules_list.remove("C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C") #this one causes a memory error
         for smiles in tqdm(molecules_list, total=len(molecules_list)):
             logging.info(f'get memory usage for new smiles {log_memory_usage()}')
             batch_models = []
