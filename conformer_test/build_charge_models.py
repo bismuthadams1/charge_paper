@@ -432,6 +432,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = Molecule.from_mapped_smiles(mapped_smiles=retrieved.tagged_smiles)
+    #NOTE: when computing AM1-BCC charge ensemble, remove the 'use_conformers' argument to calculate charges over an ensemble of conformers.
     am1bccmol.assign_partial_charges(
         partial_charge_method='am1bcc',
         use_conformers=[coordinates]
