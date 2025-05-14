@@ -35,7 +35,7 @@ def main():
     
     client = PortalClient(address="http://10.64.1.130:7778", username="charlie", password="kuano123")
     result_dataset = OptimizationResultCollection.from_server(client=client, datasets=OPT_DATASET, spec_name="AIMNET2")
-    #element filter Iodine
+    
 
     basic_dataset = result_dataset.create_basic_dataset(
         dataset_name="Flexible set wb97xd",
