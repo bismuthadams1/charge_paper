@@ -223,7 +223,7 @@ def main():
     'COC(=O)C1C(C)=NC(C)=C(C(=O)OCC(C)C)[C@@H]1c1ccccc1[N+](=O)[O-]',
     '[NH3+]CC[NH2+]CC[NH2+]CC[NH3+]',
     'COc1ccnc(C[S@@](=O)c2nc3cc(OC(F)F)ccc3[nH]2)c1OC']
-
+    
     missing_molecules = []
 
     for item in molecules:
