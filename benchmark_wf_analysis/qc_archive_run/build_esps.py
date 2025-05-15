@@ -7,6 +7,7 @@ from openff.toolkit.topology import Molecule
 from openff.recharge.grids import GridGenerator, GridSettingsType
 from openff.recharge.esp import DFTGridSettings
 from multiprocessing import get_context
+from rdkit import Chem
 from tqdm import tqdm
 from qcportal.singlepoint.record_models import SinglepointRecord
 from typing import Union
@@ -215,6 +216,30 @@ def main():
     )
     prop_store = MoleculePropStore("./ESP_rebuilt.db")
     molecules = [record for record in client.query_records(dataset_id=8)]
+
+    missing_entries = ['OCCN(CCO)c1nc(-c2ccccc2)c(-c2ccccc2)o1',
+    'C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C',
+    'CC(=O)OC[C@@H]1O[C@H](n2ncc(=O)[nH]c2=O)[C@@H](OC(C)=O)[C@@H]1OC(C)=O',
+    'COC(=O)C1C(C)=NC(C)=C(C(=O)OCC(C)C)[C@@H]1c1ccccc1[N+](=O)[O-]',
+    '[NH3+]CC[NH2+]CC[NH2+]CC[NH3+]',
+    'COc1ccnc(C[S@@](=O)c2nc3cc(OC(F)F)ccc3[nH]2)c1OC']
+
+    missing_molecules = []
+
+    for item in molecules:
+        qc_mol = item.molecule
+        qc_data = qc_mol.dict()
+        qc_data['fix_com'] = True
+        qc_data['fix_orientation'] = True
+        qc_mol = QCMolecule.from_data(qc_data)
+        openff_mol= Molecule.from_qcschema(qc_mol, allow_undefined_stereo=True)
+        smi = openff_mol.to_smiles()
+        mol = Chem.MolFromSmiles(smi)
+        canon = Chem.MolToSmiles(mol, canonical=True)
+        if canon in missing_entries:
+            print(openff_mol.to_smiles())
+            missing_molecules.append(item)
+
     print(len(molecules))
 
     with ProcessPoolExecutor(
@@ -235,7 +260,7 @@ def main():
                 build_grid,
                 compute_properties,
             )
-            for molecule in molecules
+            for molecule in missing_molecules
         ]
         # to avoid simultaneous writing to the db, wait for each calculation to finish then write
         for future in tqdm(as_completed(futures), total=len(futures)):
