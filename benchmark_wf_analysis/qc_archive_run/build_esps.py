@@ -214,8 +214,8 @@ def main():
     grid_settings = LatticeGridSettings(
         type="fcc", spacing=0.5, inner_vdw_scale=1.4, outer_vdw_scale=2.0
     )
-    prop_store = MoleculePropStore("./ESP_rebuilt.db")
-    molecules = [record for record in client.query_records(dataset_id=8)]
+    prop_store = MoleculePropStore("./ESP_rebuilt_wb97.db")
+    molecules = [record for record in client.query_records(dataset_id=13)]
 
     missing_entries = ['OCCN(CCO)c1nc(-c2ccccc2)c(-c2ccccc2)o1',
     'C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C',

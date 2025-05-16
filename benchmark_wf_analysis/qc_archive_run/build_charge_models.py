@@ -436,7 +436,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     #NOTE: when computing AM1-BCC charge ensemble, remove the 'use_conformers' argument to calculate charges over an ensemble of conformers.
     am1bccmol.assign_partial_charges(
         partial_charge_method='am1bcc',
-        use_conformers=[coordinates]
+        # use_conformers=[coordinates]
     )
     batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges
@@ -714,14 +714,14 @@ def process_resp_multiconfs(results_batch):
 
 def main(output: str):
 
-    prop_store = MoleculePropStore("./ESP_missing_ones.db", cache_size=10)
+    prop_store = MoleculePropStore("./ESP_rebuilt_wb97.db", cache_size=10)
     
     molecules_list = prop_store.list()
     number_of_molecules = len(molecules_list)
 
     existing_entires = pd.read_parquet("missing_ones_out.parquet")['smiles'].unique().tolist()
     molecules_list = [x for x in molecules_list if x not in existing_entires]
-    molecules_list.remove('C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C') #this one causes a memory error
+    molecules_list.remove('C[N+](C)(C)CCCCCCCCCC[N+](C)(C)C', ) #this one causes a memory error
 
     schema = pyarrow.schema([
         ('mbis_charges', pyarrow.list_(pyarrow.float64())),
@@ -774,4 +774,4 @@ def main(output: str):
         
 if __name__ == "__main__":
     # main(output='./charge_models_am1bcc_default.parquet')
-    main(output='./missing_ones_out.parquet')
+    main(output='./missing_ones_out_am1bcc.parquet')
