@@ -1,4 +1,4 @@
-"""Script used to generate the large scale comparisons between the charge models
+"""Script used to generate the 
 
 
 """
