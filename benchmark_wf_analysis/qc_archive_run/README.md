@@ -15,3 +15,5 @@ The following subdirectories are present here:
 1. *make_workers*: this subdirectory contains all the scripts to launch a set of workers to run calculations in the qcarchive database. 
 To run the qcarchive calculations you must create a separate environment here:
  https://github.com/openforcefield/qca-dataset-submission/blob/master/devtools/prod-envs/qcarchive-worker-openff-psi4.yaml
+
+ 
