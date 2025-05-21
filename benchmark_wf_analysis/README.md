@@ -12,3 +12,5 @@ The following subfolders are contained in this directory:
 
 2. *producing_ccsd_data* - chargecraft (package linked in main README) script for running the CCSD calculations from the geometries 
 in the CCSD database. 
+
+3. *qc_archive_run* -  example scripts showing how to run the DFT caclulations using the QCArchive infrastructure. 
