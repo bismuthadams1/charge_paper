@@ -28,3 +28,5 @@
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+*.csv
+*.pkl
