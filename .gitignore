@@ -25,3 +25,6 @@
 *.egg-info
 !benchmark_wf_analysis/ccsd_data.db
 *.xlsx
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
