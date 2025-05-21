@@ -16,7 +16,7 @@ from qcportal import PortalClient
 
 
 def main():
-
+    #set memory
     GlobalConfig.memory_allocation = 460e+9
     #CCSD Options
     extra_options = {"CCENERGY__CACHELEVEL":0,

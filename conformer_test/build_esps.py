@@ -218,7 +218,7 @@ def main():
     print(len(molecules))
 
     with ProcessPoolExecutor(
-        max_workers=4, mp_context=get_context("spawn")
+        max_workers=1, mp_context=get_context("spawn")
     ) as pool:
         futures = [
             pool.submit(
