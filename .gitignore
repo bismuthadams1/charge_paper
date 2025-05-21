@@ -24,6 +24,7 @@
 *.ipynb_checkpoints
 *.egg-info
 !benchmark_wf_analysis/ccsd_data.db
+!benchmark_wf_analysis/benchmark_data.csv
 *.xlsx
 *.sqlite
 *.sqlite-shm
