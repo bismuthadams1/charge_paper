@@ -31,3 +31,5 @@
 *.sqlite-wal
 *.csv
 *.pkl
+!medchem_explorations/fXa/MedChem Results - fXa.csv
+!medchem_explorations/xiap_opt/MedChem Results - Xiap.csv
