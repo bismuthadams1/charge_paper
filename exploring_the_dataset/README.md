@@ -1,5 +1,9 @@
-Here we explore the chemical features of the total dataset used for train/test/validation. There are the following files:
+This subdirectory contains code for exploring the chemical features of the full dataset used for training, validation, and testing.
 
-* **total_set.smi**: total smiles list of the dataset used.
+### Files in this subdirectory
 
-* **exploring_the_dataset.ipynb**: notebook for exploring the chemical features of the dataset used for train/test/validation. 
+- **`total_set.smi`**  
+  SMILES file containing the complete set of molecules used in the dataset.
+
+- **`exploring_the_dataset.ipynb`**  
+  Jupyter notebook for analyzing the chemical properties and diversity of the dataset.

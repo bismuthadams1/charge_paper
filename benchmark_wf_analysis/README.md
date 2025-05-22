@@ -1,16 +1,20 @@
-This subfolder contains all the necassary scripts to replicate the CCSD benchmark. 
-The following files are present in the subfolder:
+This subdirectory contains all the necessary scripts and data to replicate the CCSD benchmark study.
 
-1. *benchmark_data.csv* -  csv file containing all the necassary benchmark data including the geometries and properties associated with
-the calculations.
+### Files in this subdirectory
 
-2. *benchmark_review.ipynb* - jupyternotebook containing all the scripts to produce the graphs in the benchmarking section.
+- **`benchmark_data.csv`**  
+  CSV file containing benchmark data, including molecular geometries and the associated electronic properties.
 
-The following subfolders are contained in this directory:
+- **`benchmark_review.ipynb`**  
+  Jupyter notebook used to generate the figures and analysis presented in the benchmarking section.
 
-1. *make_esp_db* - script for making the ESP database from the qcarchive info
+### Subdirectories
 
-2. *producing_ccsd_data* - chargecraft (package linked in main README) script for running the CCSD calculations from the geometries 
-in the CCSD database. 
+- **`make_esp_db/`**  
+  Scripts for generating an ESP database from QCArchive outputs.
 
-3. *qc_archive_run* -  example scripts showing how to run the DFT caclulations using the QCArchive infrastructure. 
+- **`producing_ccsd_data/`**  
+  Contains scripts for running CCSD-level calculations using the ChargeCraft package (linked in the main README). These scripts operate on geometries stored in the CCSD database.
+
+- **`qc_archive_run/`**  
+  Example scripts demonstrating how to perform DFT calculations using the QCArchive infrastructure.
