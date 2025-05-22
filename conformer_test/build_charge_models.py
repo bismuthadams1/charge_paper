@@ -435,7 +435,7 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     #NOTE: when computing AM1-BCC charge ensemble, remove the 'use_conformers' argument to calculate charges over an ensemble of conformers.
     am1bccmol.assign_partial_charges(
         partial_charge_method='am1bcc',
-        use_conformers=[coordinates]
+     #   use_conformers=[coordinates]
     )
     batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges
