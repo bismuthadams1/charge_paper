@@ -6,4 +6,6 @@ The following files are in this subdirectory:
 
 1. *build_charge_models.py*: add the charge model info to the geometries from the local qcarchive instance. 
 
-2. *explore_parquet.ipynb*:
+2. *submit_functionals.py*: submit the QCFractal jobs for the wb97x conformer test
+
+3. *explore_parquet.ipynb*: here we analyse the parquet data and produce the ESP conformer plots. 

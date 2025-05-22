@@ -11,6 +11,8 @@ up to the quadrupole
 
 * **compare_fda_drugs** comparison of the half-polarised ML charges and AM1-BCC calculations. 
 
+* **timing_test** time the charge model against AM1-BCC for an increasingly lengthening carbon chain
+
 * ** **
 
 # Installing the required environments
