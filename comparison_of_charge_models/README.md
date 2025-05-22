@@ -1,12 +1,16 @@
-Here we comparse a number of charge models over 50K compounds. This section uses the ChargeAPI module built by the authors 
-of this paper https://github.com/bismuthadams1/ChargeAPI. 
-The files in this paper do the following:
+This subdirectory contains scripts to benchmark a range of charge models on a dataset of 50,000 compounds. The analysis uses the **ChargeAPI** module, developed by the authors of the following repository:  
+[https://github.com/bismuthadams1/ChargeAPI](https://github.com/bismuthadams1/ChargeAPI)
 
-1. *build_charge_models.py*: this builds a parquet file of molecules+conformers with electrostatic properties calculated across
-the different charge models.
+### Files in this subdirectory
 
-2. *build_esps.py*: here we pull the 50K compounds from qcarchive and build the ESPs from the wavefunction information.
+- **`build_charge_models.py`**  
+  Generates a Parquet file containing molecules and conformers with electrostatic properties computed using various charge models.
 
-3. *plot_charge_results.ipynb*: here we plot a comparison of the charge models from the calculated parquet set.
+- **`build_esps.py`**  
+  Retrieves 50,000 compounds from QCArchive and reconstructs their electrostatic potentials (ESPs) from wavefunction data.
 
-4. *plot_dipole_and_esp_results.ipynb*: here we plot the dipole and ESP comparison across different charge models.
+- **`plot_charge_results.ipynb`**  
+  Jupyter notebook to visualize and compare charge distributions from the different charge models.
+
+- **`plot_dipole_and_esp_results.ipynb`**  
+  Jupyter notebook to compare dipole moments and ESPs across the charge models.

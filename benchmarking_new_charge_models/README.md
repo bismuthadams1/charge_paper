@@ -1,7 +1,11 @@
-This contains info about benchmarking the new charge models. 
-The data to run the calculations will be available on the zenodo.
-The following files are in the subdirectory:
+This subdirectory contains scripts and notebooks for benchmarking the new charge models.
 
-* *build_charge_models.py*: file to build the parquets for comparing the charge models
- 
-* *explore_parquet.ipynb*: notebook to analyse the parquet files to give errors across each model
+The data required to run these calculations will be made available on Zenodo.
+
+### Files in this subdirectory
+
+- **`build_charge_models.py`**  
+  Script for generating Parquet files used to compare the performance of different charge models.
+
+- **`explore_parquet.ipynb`**  
+  Jupyter notebook for analyzing the Parquet files and reporting errors across each charge model.

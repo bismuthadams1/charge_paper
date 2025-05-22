@@ -1,7 +1,9 @@
-In this subdirectory is the scripts to produce a comparison of QM ESPs with MBIS reproduced ESPs. 
-The files contained here are:
+This subdirectory contains scripts to compare quantum mechanical (QM) electrostatic potentials (ESPs) with ESPs reconstructed using the MBIS multipole expansion.
 
-1. *comparison.ipynb*: scripts to analyze the MBIS vs QM produced ESPs.
+### Files in this subdirectory
 
-2. *utility.py*: a set of utility functions for the `comparison.ipynb` scripts.
+- **`comparison.ipynb`**  
+  Jupyter notebook for analyzing and comparing MBIS-reconstructed ESPs against QM-derived ESPs.
 
+- **`utility.py`**  
+  A collection of utility functions used by `comparison.ipynb` to support the analysis.

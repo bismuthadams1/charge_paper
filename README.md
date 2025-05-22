@@ -4,7 +4,7 @@
 
 ---
 
-## 📁 Subdirectories Overview
+## Subdirectories Overview
 
 Each subdirectory contains code and data related to a specific study:
 
@@ -27,17 +27,17 @@ Each subdirectory contains code and data related to a specific study:
   Scripts to explore chemical features in the dataset used for training, validation, and testing.
 
 - **`medchem_explorations/`**  
-  Exploratory analysis of partial charges from the new charge model for two biological targets.
+  Exploratory analysis of partial charges from the new  $NAGL_{MBIS} model for two biological targets.
 
 - **`producing_esp_from_mbis/`**  
   Evaluation of the error introduced when reconstructing ESPs using the MBIS multipole expansion up to the quadrupole level.
 
 - **`timing_test/`**  
-  Benchmarking the runtime of the new charge model against AM1-BCC on carbon chains of increasing length.
+  Benchmarking the runtime of the new $NAGL_{MBIS}$ model against AM1-BCC on carbon chains of increasing length.
 
 ---
 
-## ⚙️ Installing the Required Environments
+## Installing the Required Environments
 
 ### Charge Model Environment
 
@@ -69,6 +69,6 @@ For generating quantum mechanical data, we use [QCFractal](https://github.com/Mo
 
 ---
 
-## 🧬 FeGrow Environment (For Ligand Docking)
+## FeGrow Environment (For Ligand Docking)
 
 Notebooks involving ligand docking require the [FeGrow](https://github.com/cole-group/FEgrow) software. Please follow the setup instructions provided in their repository to create a suitable environment.

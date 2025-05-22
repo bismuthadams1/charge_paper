@@ -1,19 +1,22 @@
-This subfolder contains all the necassary scripts to prepare a qc_archive database of DFT functionals and basis sets.
-The scripts here are:
+This subdirectory contains all necessary scripts to prepare a local QCArchive database using various DFT functionals and basis sets.
 
-1. *make_functionals.py*: make a database of molecules with electronic properties calculated with different DFT functionals
-and basis sets as a set of singlepoint calculations. 
+### Scripts in this subdirectory
 
-2. *make_geoms.py*: this should be run before `make_functionals.py` file to produce the optimized geometries for singlepoint calculations. 
+- **`make_geoms.py`**  
+  Optimizes molecular geometries to be used for subsequent single-point energy calculations.
 
-3. *prepare_data.ipynb*: use this jupyter notebook to monitor how the local qcarchive calculations are proceeding. 
+- **`make_functionals.py`**  
+  Generates a database of molecules with electronic properties calculated using different DFT functionals and basis sets, via single-point calculations.
 
-4. *produce_db.py*: produce a local sql database from the local qc_archive database.
+- **`prepare_data.ipynb`**  
+  Jupyter notebook for monitoring the progress and status of local QCArchive calculations.
 
-The following subdirectories are present here:
+- **`produce_db.py`**  
+  Extracts results from the local QCArchive instance and stores them in a local SQL database.
 
-1. *make_workers*: this subdirectory contains all the scripts to launch a set of workers to run calculations in the qcarchive database. 
-To run the qcarchive calculations you must create a separate environment here:
- https://github.com/openforcefield/qca-dataset-submission/blob/master/devtools/prod-envs/qcarchive-worker-openff-psi4.yaml
+### Subdirectories
 
- 
+- **`make_workers/`**  
+  Contains scripts to launch worker processes for running QCArchive calculations.  
+  To use this setup, you must first create a compatible Conda environment using the configuration provided here:  
+  [qcarchive-worker-openff-psi4.yaml](https://github.com/openforcefield/qca-dataset-submission/blob/master/devtools/prod-envs/qcarchive-worker-openff-psi4.yaml)
