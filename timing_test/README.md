@@ -1,0 +1,1 @@
+Here we time the new charge model against AM1-BCC. All the code to do this is contained in the `time_the_new_charge_model.ipynb` notebook. 
