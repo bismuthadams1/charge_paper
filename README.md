@@ -19,6 +19,9 @@ Each subdirectory contains code and data related to a specific study:
 - **compare_fda_drugs**  
   Comparison of half-polarised machine learning charges and AM1-BCC charges on FDA-approved drugs.
 
+- **conformer_test**  
+  Code to evaluate how both existing and new charge models capture changes in electronic properties across different molecular conformations.
+
 - **exploring_the_dataset**  
   Scripts to examine the chemical features of the dataset used to train the new charge model.
 
