@@ -19,6 +19,7 @@ from qcelemental.models import Molecule as QCMolecule
 from openff.recharge.esp.qcresults import reconstruct_density, compute_esp
 from openff.units import unit
 from chargecraft.storage.data_classes import ESPSettings, PCMSettings, DDXSettings
+from openff.qcsubmit.results.filters import ElementFilter, ChargeFilter
 import numpy as np
 import psi4
 from typing import Optional
@@ -215,10 +216,26 @@ def main():
     )
     prop_store = MoleculePropStore("./ESP_rebuilt.db")
 
-    molecules = [record for record in client.query_records(dataset_id=347)]
+    dataset = BasicResultCollection.from_server(
+    client=client,
+    datasets='OpenFF ESP Fragment Conformers v1.0',
+    spec_name='spec_1'
+    )   
+    
+    dataset.filter(
+    ElementFilter(elements=['C', 'H', 'O', 'N','Cl','F','S','I']),
+    ChargeFilter(min_charge=0, max_charge=0),
+    )
 
+    dataset = 
+
+    filter_charge = lambda x: x.molecule.dict()['molecular_charge'] is 0.0
+
+
+    molecules = [record for record in client.query_records(dataset_id=347)]
+    molecule
     with ProcessPoolExecutor(
-        max_workers=32, mp_context=get_context("spawn")
+        max_workers=8, mp_context=get_context("spawn")
     ) as pool:
         futures = [
             pool.submit(
