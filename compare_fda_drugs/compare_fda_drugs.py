@@ -3,7 +3,7 @@
 """
 
 from openff.toolkit.topology import Molecule
-from chargecraft.inputsetup.SmilesInputs import ReadInput
+from chargecraft.inputSetup.SmilesInputs import ReadInput
 from openff.units import unit
 # from MultipoleNet import load_model, build_graph_batched, D_Q
 from concurrent.futures import ProcessPoolExecutor, as_completed

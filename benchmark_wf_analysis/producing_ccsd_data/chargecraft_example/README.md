@@ -1,5 +1,9 @@
-Because qcarchive can't calculate electronic properties for post-HF methods, we use our bespoke program
-`ChargeCraft` to run this calculation. The following files are in this directory:
+QCArchive does not support the calculation of electronic properties for post-Hartree–Fock methods such as CCSD. To address this, we use our bespoke program, **ChargeCraft**, to perform these calculations.
 
-1. *properties_example.py*: the following contains the necassary script to run a chargrecraft calculation
-on a small set of compounds to produce a set of CCSD properties. This file reads smiles from `set.smi` compounds. 
+### Files in this subdirectory
+
+- **`properties_example.py`**  
+  Example script demonstrating how to run a ChargeCraft calculation on a small set of compounds to generate CCSD-level electronic properties. The script reads input molecules from the `set.smi` file.
+
+- **`set.smi`**  
+  SMILES file containing the molecules to be processed.

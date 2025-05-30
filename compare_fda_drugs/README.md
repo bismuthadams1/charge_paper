@@ -1,7 +1,12 @@
-Here we comparse the partiall polarised ML models (interpolated 50% between the gas and water models) 
-over a selection of FDA approved drugs available here https://github.com/RPirie96/FDADrugPropAnalysis/blob/main/data/FDA_0022.xlsx. 
-The following files are in this folder:
+This subdirectory contains an analysis comparing partially polarised machine learning (ML) charge models—interpolated 50% between gas-phase and water-phase models—on a selection of FDA-approved drugs.
 
-1. *compare_fda_drugs.py*: this script builds the dataset of FDA on-atom charges for comparisons.
+The dataset of FDA drugs used in this analysis is available at:  
+[https://github.com/RPirie96/FDADrugPropAnalysis/blob/main/data/FDA_0022.xlsx](https://github.com/RPirie96/FDADrugPropAnalysis/blob/main/data/FDA_0022.xlsx)
 
-2. *explore_parquet.ipynb*: here we analyze the inidividual on-atom charges from these on-atom charges. 
+### Files in this subdirectory
+
+- **`compare_fda_drugs.py`**  
+  Script to generate the dataset of on-atom charges for FDA-approved drugs for use in comparisons.
+
+- **`explore_parquet.ipynb`**  
+  Jupyter notebook for analyzing the individual on-atom charges and comparing across charge models.

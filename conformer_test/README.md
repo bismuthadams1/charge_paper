@@ -1,17 +1,20 @@
-Here we are comparing a number of charge models across a range of conformers. 
-The following files are in this folder:
+This subdirectory focuses on comparing a range of charge models across multiple conformers.
 
-1. *build_charge_models.py*: here we build the local parquet dataset which calculates elecrostatic properties 
-across different charge models. This is build from the local qc_archive dataset.
+### Files in this subdirectory
 
-2. *build_esps.py*: here we the ESPs from the local qcarchive instance.
+- **`build_charge_models.py`**  
+  Builds a local Parquet dataset of electrostatic properties computed across different charge models. The dataset is generated using molecules and conformers stored in the local QCArchive instance.
 
-3. *drug_filter.ipynb*: here we prepare which drugs will be selected from the *fda_prop.xls* file (https://github.com/ericminikel/cnsdrugs). These are filtered by
-rotatable bonds.
+- **`build_esps.py`**  
+  Extracts and processes electrostatic potentials (ESPs) from the local QCArchive database.
 
-The following subdirectories are in this folder:
+- **`drug_filter.ipynb`**  
+  Jupyter notebook for selecting FDA-approved drugs (from [fda_prop.xls](https://github.com/ericminikel/cnsdrugs)) based on properties such as the number of rotatable bonds.
 
-1. *qc_archive_run*: this directory specifically supports the production of a dataset which compares the ESPs of different conofrmers
-using the DFT method used in training the charge models. Additionally, ESPs of the new charge models are build here and compared with the QM data. 
+- **`combined.sdf`**  
+  Structure file used to visually inspect whether geometries (e.g., AIMNet2-optimized) are chemically reasonable.
 
-2. **
+### Subdirectories
+
+- **`qc_archive_run/`**  
+  Contains scripts for generating a dataset that compares ESPs across different conformers. ESPs are calculated using the same DFT method used during charge model training. This directory also includes tools to compute and compare ESPs produced by the new charge models against QM data.

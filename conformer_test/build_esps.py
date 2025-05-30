@@ -209,7 +209,7 @@ def main():
     USERNAME = ""
     PASSWORD = ""
 
-    client = PortalClient("", username=USERNAME,password=PASSWORD)   
+    client = PortalClient("http://127.0.0.1:7777")#, username=USERNAME,password=PASSWORD)   
     grid_settings = LatticeGridSettings(
         type="fcc", spacing=0.5, inner_vdw_scale=1.4, outer_vdw_scale=2.0
     )
@@ -218,7 +218,7 @@ def main():
     print(len(molecules))
 
     with ProcessPoolExecutor(
-        max_workers=4, mp_context=get_context("spawn")
+        max_workers=1, mp_context=get_context("spawn")
     ) as pool:
         futures = [
             pool.submit(

@@ -24,4 +24,12 @@
 *.ipynb_checkpoints
 *.egg-info
 !benchmark_wf_analysis/ccsd_data.db
-# !benchmark_wf_analysis/make_esp_db/benchmark_NEW.db
+!benchmark_wf_analysis/benchmark_data.csv
+*.xlsx
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.csv
+*.pkl
+!medchem_explorations/fXa/MedChem Results - fXa.csv
+!medchem_explorations/xiap_opt/MedChem Results - Xiap.csv

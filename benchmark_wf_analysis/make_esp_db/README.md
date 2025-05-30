@@ -1,6 +1,8 @@
-This subfolder contains scripts to rebuild the ESPs from the local qcarchive db, it contains:
+This subdirectory contains scripts for rebuilding electrostatic potentials (ESPs) from a local QCArchive database.
 
-1. *produce_db.py*: script to reproduce a local database with ESPs from a qcarchive instance.
+### Files in this subdirectory
 
+- **`produce_db.py`**  
+  Script to generate a local database of ESPs from an existing QCArchive instance.
 
-Here a Boron VdW Radii of 2.00 is used, this will require a modification in openff-recharge. 
+**Note:** A van der Waals radius of 2.00 Å is used for boron in this setup. This requires a manual modification in the `openff-recharge` package.

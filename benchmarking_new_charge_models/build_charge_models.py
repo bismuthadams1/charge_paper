@@ -371,6 +371,5 @@ def main(output: str, data: str):
 
         
 if __name__ == "__main__":
-    # data_path = '/Users/k2584788/Downloads/testing_gas_esp.parquet'
-    data_path = '/Users/k2584788/Downloads/testing_water_esp.parquet'
+    data_path = './testing_water_esp.parquet'
     main(output='./test_water_esp_model.parquet', data=data_path)

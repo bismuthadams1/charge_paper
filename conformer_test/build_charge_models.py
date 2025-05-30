@@ -14,7 +14,7 @@ from espaloma_charge.openff_wrapper import EspalomaChargeToolkitWrapper
 from more_itertools import batched
 from rdkit.Chem import rdmolfiles
 from rdkit import Chem
-from MultipoleNet import load_model, build_graph_batched, D_Q
+# from MultipoleNet import load_model, build_graph_batched, D_Q
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
 from ChargeAPI.API_infrastructure.esp_request.module_version_esp import handle_esp_request
 from tqdm import tqdm
@@ -42,7 +42,7 @@ from openff.recharge.charges.resp.solvers import IterativeSolver
 
 
 toolkit_registry = EspalomaChargeToolkitWrapper()
-riniker_model = load_model()
+# riniker_model = load_model()
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
 HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
 resp_solver = IterativeSolver()
@@ -432,9 +432,10 @@ def process_molecule(retrieved: MoleculePropRecord, conformer_no: int):
     # Chem.MolToMolFile(openff_mol.to_rdkit(),file)
     #am1bcc chargeso
     am1bccmol = Molecule.from_mapped_smiles(mapped_smiles=retrieved.tagged_smiles)
+    #NOTE: when computing AM1-BCC charge ensemble, remove the 'use_conformers' argument to calculate charges over an ensemble of conformers.
     am1bccmol.assign_partial_charges(
         partial_charge_method='am1bcc',
-        # use_conformers=[coordinates]
+     #   use_conformers=[coordinates]
     )
     batch_dict['am1bcc_charges']= (am1_bcc_charges := am1bccmol.partial_charges.magnitude.flatten().tolist())
     #espaloma charges
@@ -734,4 +735,5 @@ def main(output: str):
    
         
 if __name__ == "__main__":
-    main(output='./charge_models_am1bcc_default.parquet')
+    # main(output='./charge_models_am1bcc_default.parquet')
+    main(output='./conformer_test_out.parquet')
