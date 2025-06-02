@@ -114,12 +114,10 @@ def main(output):
         ('riniker_esp_rms',pyarrow.float64()),
         ('elf10_charges', pyarrow.list_(pyarrow.float64())),
         ('elf10_dipole', pyarrow.float64()),
-        ('elf10_esp_rmse', pyarrow.list_(pyarrow.float64())),
+        ('elf10_esp_rmse', pyarrow.float64()),
         ('nagl_ash_charges', pyarrow.list_(pyarrow.float64())),
         ('nagl_ash_dipole', pyarrow.float64()),
-        ('nagl_ash_esp_rmse', pyarrow.list_(pyarrow.float64())),
-
-
+        ('nagl_ash_esp_rmse', pyarrow.float64()),
     ])
 
     print('scanning parquet file')
@@ -149,7 +147,8 @@ def main(output):
                 charges=efl10_charges,
                 conformer= molecule.conformers[0]
             )
-            row_NEW["elf10_dipole"] = elf10_dipole.flatten().tolist()
+            # print(f"elf10 dipole: { elf10_dipole.flatten().tolist()[0]}")
+            row_NEW["elf10_dipole"] = elf10_dipole.flatten().tolist()[0]
 
             elf10_esp = calculate_esp_monopole_au(
                 grid_coordinates=grid*unit.angstrom,
@@ -159,7 +158,7 @@ def main(output):
             qm_esp = row["qm_esp"] * AU_ESP
 
             elf10_esp_rmse = (((elf10_esp - qm_esp) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-            row_NEW["elf10_esp_rmse"] = elf10_esp_rmse
+            row_NEW["elf10_esp_rmse"] = float(elf10_esp_rmse)
 
             # row_NEW["elf10_esp"] = elf10_esp
 
@@ -172,7 +171,8 @@ def main(output):
                 charges=nagl_model_charges,
                 conformer=molecule.conformers[0]
             )
-            row_NEW["nagl_ash_dipole"] = nagl_dipole    
+            # print(f"nagl dipole: { nagl_dipole.flatten().tolist()[0]}")
+            row_NEW["nagl_ash_dipole"] = nagl_dipole.flatten().tolist()[0]
 
             nagl_esp = calculate_esp_monopole_au(
                 grid_coordinates=grid*unit.angstrom,
@@ -180,11 +180,11 @@ def main(output):
                 charges=nagl_model_charges
             )
             nagl_esp_rmse = (((nagl_esp - qm_esp) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
-            row_NEW["nagl_ash_esp_rms"] = nagl_esp_rmse
+            row_NEW["nagl_ash_esp_rms"] = float(nagl_esp_rmse)
 
             row_NEW = {**row_NEW, **row.to_dict()}  # Merge dictionaries
             rows.append(row_NEW)
-            if len(rows) >= 100:
+            if len(rows) >= 1000:
                 print(f"Writing {len(rows)} rows to Parquet file...")
                 # Write the batch to the Parquet file
                 batch = pyarrow.RecordBatch.from_pylist(
