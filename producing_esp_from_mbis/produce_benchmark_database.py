@@ -49,9 +49,9 @@ def main():
     'COC[B-](F)(F)F',
     'Ic1ccccc1'
     ]
-    
-    GlobalConfig.memory = 8e+9 
-    GlobalConfig.ncores = 4
+    GlobalConfig.num_threads_per_core = 1
+    GlobalConfig.memory = 60e+9 
+    GlobalConfig.ncores = 8
 
     # Define the grid that the electrostatic properties will be trained on and the
     # level of theory to compute the properties at.
