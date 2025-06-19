@@ -10,6 +10,7 @@ from openff.recharge.grids import LatticeGridSettings
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from openff.toolkit.topology import Molecule
 from openff.recharge.grids import GridGenerator, GridSettingsType
+from openff.qcsubmit.results import BasicResultCollection
 from openff.recharge.esp import DFTGridSettings
 from multiprocessing import get_context
 from tqdm import tqdm
@@ -124,6 +125,10 @@ def process_item_function(
     openff_molecule = Molecule.from_qcschema(qc_mol, allow_undefined_stereo=True)
     openff_conformer = openff_molecule.conformers[0]
 
+    retrieved = 
+
+    if len(retrieved)
+
     if item.properties is None:
         print(f'No calculation data for molecule: {openff_molecule.to_smiles()} due to {item.status}')
         return None
@@ -222,20 +227,17 @@ def main():
     spec_name='spec_1'
     )   
     
-    dataset.filter(
-    ElementFilter(elements=['C', 'H', 'O', 'N','Cl','F','S','I']),
-    ChargeFilter(min_charge=0, max_charge=0),
+    dataset = dataset.filter(
+        ElementFilter(allowed_elements=['C', 'H', 'O', 'N','Cl','F','S','I']),
+        ChargeFilter(charges_to_include=[0]),
     )
 
-    dataset = 
+    records_and_molecules = dataset.to_records()
+    records = [record for record, _ in records_and_molecules]
+    
 
-    filter_charge = lambda x: x.molecule.dict()['molecular_charge'] is 0.0
-
-
-    molecules = [record for record in client.query_records(dataset_id=347)]
-    molecule
     with ProcessPoolExecutor(
-        max_workers=8, mp_context=get_context("spawn")
+        max_workers=40, mp_context=get_context("spawn")
     ) as pool:
         futures = [
             pool.submit(
@@ -252,7 +254,7 @@ def main():
                 build_grid,
                 compute_properties,
             )
-            for molecule in molecules
+            for molecule in records
         ]
         # to avoid simultaneous writing to the db, wait for each calculation to finish then write
         for future in tqdm(as_completed(futures), total=len(futures)):
