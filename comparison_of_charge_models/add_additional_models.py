@@ -127,6 +127,8 @@ def main(output):
     dir_path = openff.nagl_models.get_nagl_model_dirs_paths()[0]
     nagl_model = GNNModel.load(str(dir_path) + "/openff-gnn-am1bcc-0.1.0-rc.3.pt")
 
+    MAX_BATCH = 10
+
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
 
         rows = []
@@ -177,14 +179,14 @@ def main(output):
             nagl_esp = calculate_esp_monopole_au(
                 grid_coordinates=grid*unit.angstrom,
                 atom_coordinates=molecule.conformers[0],
-                charges=nagl_model_charges
+                charges=nagl_model_charges.flatten()
             )
             nagl_esp_rmse = (((nagl_esp - qm_esp) ** 2).mean() ** 0.5).magnitude * HA_TO_KCAL_P_MOL
             row_NEW["nagl_ash_esp_rms"] = float(nagl_esp_rmse)
 
             row_NEW = {**row_NEW, **row.to_dict()}  # Merge dictionaries
             rows.append(row_NEW)
-            if len(rows) >= 1000:
+            if len(rows) >= MAX_BATCH:
                 print(f"Writing {len(rows)} rows to Parquet file...")
                 # Write the batch to the Parquet file
                 batch = pyarrow.RecordBatch.from_pylist(
@@ -199,7 +201,7 @@ def main(output):
         writer.write_batch(batch)
 
 if __name__ == "__main__":
-    output = "charge_models_test_withgeoms_and_additional_models.parquet"
+    output = "charge_models_test_withgeoms_and_additional_models_test.parquet"
     main(output)  
         
 

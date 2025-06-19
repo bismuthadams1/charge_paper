@@ -2,7 +2,6 @@
 
 """
 
-
 from chargecraft.storage.storage import MoleculePropRecord, MoleculePropStore
 from openff.toolkit.topology import Molecule
 from openff.units import unit
