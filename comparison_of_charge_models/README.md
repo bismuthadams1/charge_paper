@@ -14,3 +14,9 @@ This subdirectory contains scripts to benchmark a range of charge models on a da
 
 - **`plot_dipole_and_esp_results.ipynb`**  
   Jupyter notebook to compare dipole moments and ESPs across the charge models.
+
+- **`add_additional_models.py`**
+  Add the additional ELF10 and AshGC models
+
+- **`plot_additional_models.ipynb`**
+  Jupyter notebook to plot the additional charge models
