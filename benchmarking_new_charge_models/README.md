@@ -9,3 +9,8 @@ The data required to run these calculations will be made available on Zenodo.
 
 - **`explore_parquet.ipynb`**  
   Jupyter notebook for analyzing the Parquet files and reporting errors across each charge model.
+
+
+### Datasets
+
+The datasets for running the notebooks for the water: https://zenodo.org/records/14971551  and gas: https://zenodo.org/records/14961756 models. 
