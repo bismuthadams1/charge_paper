@@ -16,3 +16,7 @@ To generate charge model data, use the `build_charge_models.py` script.
 
 3. **`explore_parquet.ipynb`**  
    Analyzes the generated Parquet files and produces ESP comparison plots across conformers.
+
+### Datasets
+
+The dataset relevant for running the notebooks in this subfolder can be found here: https://zenodo.org/records/15796721

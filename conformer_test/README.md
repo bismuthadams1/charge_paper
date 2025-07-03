@@ -18,3 +18,7 @@ This subdirectory focuses on comparing a range of charge models across multiple 
 
 - **`qc_archive_run/`**  
   Contains scripts for generating a dataset that compares ESPs across different conformers. ESPs are calculated using the same DFT method used during charge model training. This directory also includes tools to compute and compare ESPs produced by the new charge models against QM data.
+
+### Datasets
+
+The dataset relevant to running the notebooks in this subfolder can be found here: https://zenodo.org/records/14925942

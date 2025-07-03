@@ -18,3 +18,7 @@ This subdirectory contains all the necessary scripts and data to replicate the C
 
 - **`qc_archive_run/`**  
   Example scripts demonstrating how to perform DFT calculations using the QCArchive infrastructure.
+
+### Datasets
+
+The `ccsd_data.db` sqlite database here can be used obtain the CCSD data calculated. The `benchmark_data.csv` contains all the DFT calculations. 

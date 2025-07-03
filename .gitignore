@@ -33,3 +33,5 @@
 *.pkl
 !medchem_explorations/fXa/MedChem Results - fXa.csv
 !medchem_explorations/xiap_opt/MedChem Results - Xiap.csv
+!producing_esp_from_mbis/properties_store_density.db
+!benchmark_wf_analysis/benchmark_data.csv

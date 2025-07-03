@@ -20,3 +20,9 @@ This subdirectory contains scripts to benchmark a range of charge models on a da
 
 - **`plot_additional_models.ipynb`**
   Jupyter notebook to plot the additional charge models
+
+### Datasets
+
+The datasets relevent to running the `plot_dipole_and_esp_results.ipynb` and `plot_charge_results.ipynb` can be found here: https://zenodo.org/records/14801401
+
+The datasets releveant to running the `plot_additional_models.ipynb` notebook can be found here: https://zenodo.org/records/15780965
