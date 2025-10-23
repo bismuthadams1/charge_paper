@@ -682,7 +682,7 @@ def process_resp_multiconfs(results_batch):
 
 def main(output: str):
 
-    prop_store = MoleculePropStore("./ESP_rebuilt_conformers.db", cache_size=1000)
+    prop_store = MoleculePropStore("./ESP_rebuilt.db", cache_size=1000)
     
     molecules_list = prop_store.list()
     number_of_molecules = len(molecules_list)
