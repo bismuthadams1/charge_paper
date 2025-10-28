@@ -47,6 +47,7 @@ dependencies:
     - torchmetrics==1.6.0
     - typing-extensions==4.12.2
     - yarl==1.18.0
+    - deepchem==2.8.0
     - git+https://github.com/bismuthadams1/ChargeCraft
     - git+https://github.com/bismuthadams1/nagl 
     - git+https://github.com/bismuthadams1/ChargeAPI

@@ -25,6 +25,8 @@
 *.egg-info
 !benchmark_wf_analysis/ccsd_data.db
 !benchmark_wf_analysis/benchmark_data.csv
+!exploring_the_dataset/maxmin-train/tasks.json
+!exploring_the_dataset/maxmin-test/tasks.json
 *.xlsx
 *.sqlite
 *.sqlite-shm
