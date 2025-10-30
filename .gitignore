@@ -27,6 +27,7 @@
 !benchmark_wf_analysis/benchmark_data.csv
 !exploring_the_dataset/maxmin-train/tasks.json
 !exploring_the_dataset/maxmin-test/tasks.json
+./exploring_the_dataset/nagl-mbis
 *.xlsx
 *.sqlite
 *.sqlite-shm
