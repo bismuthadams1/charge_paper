@@ -27,6 +27,11 @@
 !benchmark_wf_analysis/benchmark_data.csv
 !exploring_the_dataset/maxmin-train/tasks.json
 !exploring_the_dataset/maxmin-test/tasks.json
+!benchmarking_new_charge_models/duplicated_smiles.csv
+!benchmarking_new_charge_models/similar_pairs.csv
+!exploring_the_dataset/validation_smiles.csv
+!exploring_the_dataset/training_smiles.csv
+!exploring_the_dataset/test_smiles.csv
 ./exploring_the_dataset/nagl-mbis
 *.xlsx
 *.sqlite
