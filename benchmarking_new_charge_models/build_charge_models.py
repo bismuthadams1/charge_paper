@@ -25,6 +25,7 @@ import traceback
 import json
 import tempfile
 import numpy as np
+import pandas as pd
 import rdkit
 import pyarrow
 import hashlib
@@ -209,7 +210,7 @@ def make_hash(openff_mol: Molecule) -> str:
     
     return hashlib.sha256(hash_input.encode('utf-8')).hexdigest()
     
-def process_molecule(parquet: dict, models: dict):
+def process_molecule(parquet: dict, models: dict, skip_smiles=set()) -> dict:
     """Process molecules with multiple charge models
     
     Parameters
@@ -290,7 +291,7 @@ def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
     
     return json_file
 
-def process_and_write_batch(batch_models, schema, writer):
+def process_and_write_batch(batch_models, schema, writer, skip_smiles=set()):
     """Write a batch to the parquet.
     
     Parameters
@@ -310,7 +311,7 @@ def process_and_write_batch(batch_models, schema, writer):
     results_batch = []
 
     for model in tqdm(batch_models, total=len(batch_models[0]), desc='Processing molecules'):
-        results_batch.append(process_molecule(model, models=models))
+        results_batch.append(process_molecule(model, models=models, skip_smiles=skip_smiles))
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
     
@@ -350,6 +351,17 @@ def main(output: str, data: str):
     parquet_file = pq.ParquetFile(parquet_location)
     total_rows = parquet_file.metadata.num_rows
 
+    SIMILAIR_PAIRS_FP = './similar_pairs.csv'
+    with open(SIMILAIR_PAIRS_FP, 'r') as file:
+        df = pd.read_csv(file)
+        similar_pairs = df['test_smiles'].values()
+    DUPLICATES_FP = './duplicated_smiles.csv'
+    with open(DUPLICATES_FP, 'r') as file:
+        df = pd.read_csv(file)
+        duplicated_smiles = df['test_smiles'].values()
+
+    SKIP_SMILES = set(similar_pairs).union(set(duplicated_smiles))
+
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batch_models = []
         for item in tqdm(parquet_file.iter_batches(batch_size=batch_size), desc='Processing table'):
@@ -359,7 +371,7 @@ def main(output: str, data: str):
             logger.info(f"{len(converted)}")
             if len(converted) >= batch_size:
                 logger.info('processing batch')
-                process_and_write_batch(converted, schema, writer)
+                process_and_write_batch(converted, schema, writer, skip_smiles=SKIP_SMILES)
                 del batch_models
                 del converted
                 gc.collect()
