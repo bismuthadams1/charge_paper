@@ -231,6 +231,14 @@ def process_molecule(parquet: dict, models: dict, skip_smiles=set()) -> dict:
     batch_dict = {}
     coordinates = (parquet['conformation'] * unit.bohr).reshape((-1, 3))
     mapped_smiles = parquet['smiles']
+    # canonicalize the smiles to check if in skip list
+    mol = Chem.MolFromSmiles(mapped_smiles)
+    if mol is not None:
+        can_smi = Chem.MolToSmiles(mol, canonical=True)
+        if can_smi in skip_smiles:
+            logger.info(f"Skipping molecule {can_smi} as it is in the skip list.")
+            return None
+
     openff_mol: Molecule = make_openff_molecule(
         mapped_smiles=mapped_smiles,
         coordinates=coordinates
@@ -311,7 +319,10 @@ def process_and_write_batch(batch_models, schema, writer, skip_smiles=set()):
     results_batch = []
 
     for model in tqdm(batch_models, total=len(batch_models[0]), desc='Processing molecules'):
-        results_batch.append(process_molecule(model, models=models, skip_smiles=skip_smiles))
+        # skip molecules in the skip smiles set
+        if processed:= process_molecule(model, models=models, skip_smiles=skip_smiles):
+            results_batch.append(processed)
+        
     rec_batch = pyarrow.RecordBatch.from_pylist(results_batch, schema=schema)
     writer.write_batch(rec_batch)
     
@@ -361,6 +372,16 @@ def main(output: str, data: str):
         duplicated_smiles = df['test_smiles'].values()
 
     SKIP_SMILES = set(similar_pairs).union(set(duplicated_smiles))
+
+    #canonicalize the skip smiles
+    canonical_skip_smiles = set()
+    for smi in SKIP_SMILES:
+        mol = Chem.MolFromSmiles(smi)
+        if mol is not None:
+            can_smi = Chem.MolToSmiles(mol, canonical=True)
+            canonical_skip_smiles.add(can_smi)
+    SKIP_SMILES = canonical_skip_smiles
+    logging.info(f"Number of SMILES to skip: {len(SKIP_SMILES)}")
 
     with pyarrow.parquet.ParquetWriter(where=output, schema=schema, compression='snappy') as writer:
         batch_models = []
