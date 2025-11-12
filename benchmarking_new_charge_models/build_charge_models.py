@@ -365,11 +365,11 @@ def main(output: str, data: str):
     SIMILAIR_PAIRS_FP = './similar_pairs.csv'
     with open(SIMILAIR_PAIRS_FP, 'r') as file:
         df = pd.read_csv(file)
-        similar_pairs = df['test_smiles'].values()
+        similar_pairs = df['test_smiles'].tolist()
     DUPLICATES_FP = './duplicated_smiles.csv'
     with open(DUPLICATES_FP, 'r') as file:
         df = pd.read_csv(file)
-        duplicated_smiles = df['test_smiles'].values()
+        duplicated_smiles = df['test_smiles'].tolist()
 
     SKIP_SMILES = set(similar_pairs).union(set(duplicated_smiles))
 
@@ -404,5 +404,7 @@ def main(output: str, data: str):
 
         
 if __name__ == "__main__":
-    data_path = './testing_water_esp.parquet'
+    #data_path = './testing_water_esp.parquet'
+    # data_path = '/scratch/users/k2584788/mbis_splits/test/testing_gas_esp.parquet'
+    data_path = '/scratch/users/k2584788/mbis_splits/testing_water_esp.parquet'
     main(output='./test_water_esp_model.parquet', data=data_path)
