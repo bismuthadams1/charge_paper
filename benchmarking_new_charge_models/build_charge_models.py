@@ -113,7 +113,8 @@ def smiles_to_fps(smiles: str, radius=FP_RADIUS, nbits=FP_NBITS):
     return fps, valid_idx
 
 train_smiles = list(set(read_smiles_from_json(TRAIN_SMILES_JSON)))
-fps_train, kept_train = smiles_to_fps(train_smiles)
+fps_train = [smiles_to_fps(smile)[0] for smile in train_smiles]
+
 
 def calculate_max_tanimoto_similarity(
     smiles: str,
