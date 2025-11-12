@@ -16,7 +16,7 @@ from rdkit.Chem import rdmolfiles
 from rdkit import Chem
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
 from tqdm import tqdm
-from typing import Sequence
+from typing import Sequence, Optional
 from naglmbis.models import load_charge_model
 from rdkit.Chem import AllChem
 from rdkit.DataStructs.cDataStructs import BulkTanimotoSimilarity
@@ -91,18 +91,18 @@ water_charge_dipole_esp_model = load_charge_model(charge_model = charge_model_wa
 
 #depending on which charge model you want to use, uncomment this part. 
 models = {
-    # "charge_model": gas_charge_model,
-    # "dipole_model": gas_charge_dipole_model,
-    # "esp_model": gas_charge_dipole_esp_model,
-    "charge_model": water_charge_model,
-    "dipole_model": water_charge_dipole_model,
-    "esp_model": water_charge_dipole_esp_model,
+    "charge_model": gas_charge_model,
+    "dipole_model": gas_charge_dipole_model,
+    "esp_model": gas_charge_dipole_esp_model,
+    # "charge_model": water_charge_model,
+    # "dipole_model": water_charge_dipole_model,
+    # "esp_model": water_charge_dipole_esp_model,
 }
 
 FP_RADIUS = 2
 FP_NBITS = 2048
 
-def smiles_to_fps(smiles: Sequence[str], radius=FP_RADIUS, nbits=FP_NBITS):
+def smiles_to_fps(smiles: str, radius=FP_RADIUS, nbits=FP_NBITS):
     fps, valid_idx = [], []
     for i, s in enumerate(smiles):
         m = Chem.MolFromSmiles(s)
@@ -116,26 +116,25 @@ train_smiles = list(set(read_smiles_from_json(TRAIN_SMILES_JSON)))
 fps_train, kept_train = smiles_to_fps(train_smiles)
 
 def calculate_max_tanimoto_similarity(
-    train_smiles: Sequence[str],
-    test_smiles: Sequence[str],
+    smiles: str,
+    # test_smiles: Sequence[str],
     radius: int = FP_RADIUS,
     nbits: int = FP_NBITS,
-):
+) -> Optional[float]:
     """
     For each test molecule:
       - Find its most similar training molecule
       - Record any with similarity > threshold in a CSV
     """
-    fps_test, kept_test   = smiles_to_fps(test_smiles,  radius, nbits)
+    fps_test, kept_test   = smiles_to_fps(smiles,  radius, nbits)
+    m = Chem.MolFromSmiles(s)
+    if m is None:
+        return None
+    fingerprint = AllChem.GetMorganFingerprintAsBitVect(m, radius, nBits=nbits)
 
-    max_sims = np.zeros(len(fps_test), dtype=np.float32)
-    best_train_idx = np.zeros(len(fps_test), dtype=int)
-    high_pairs = []
-
-    for i, fp_test in enumerate(fps_test):
-        sims = np.asarray(BulkTanimotoSimilarity(fp_test, fps_train), dtype=np.float32)
-        j_max = int(np.argmax(sims))
-        sim_max = float(sims[j_max])
+    sims = np.asarray(BulkTanimotoSimilarity(fp_test, fps_train), dtype=np.float32)
+    j_max = int(np.argmax(sims))
+    sim_max = float(sims[j_max])
     
     return sim_max
 
@@ -334,7 +333,6 @@ def process_molecule(parquet: dict, models: dict, skip_smiles=set()) -> dict:
     # ------ Tanimoto similarity to training set -------#
     batch_dict['tanimoto_similarity_to_train'] = calculate_max_tanimoto_similarity(
         smiles=[batch_dict['molecule']],
-        fps_train=fps_train
     )
 
     return batch_dict
@@ -464,5 +462,5 @@ def main(output: str, data: str):
 if __name__ == "__main__":
     #data_path = './testing_water_esp.parquet'
     # data_path = '/scratch/users/k2584788/mbis_splits/test/testing_gas_esp.parquet'
-    data_path = '/scratch/users/k2584788/mbis_splits/testing_water_esp.parquet'
-    main(output='./test_water_esp_model.parquet', data=data_path)
+    data_path = '/scratch/users/k2584788/mbis_splits/test/testing_gas_esp.parquet'
+    main(output='./test_gas_esp_model.parquet', data=data_path)
