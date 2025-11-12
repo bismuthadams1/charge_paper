@@ -126,13 +126,12 @@ def calculate_max_tanimoto_similarity(
       - Find its most similar training molecule
       - Record any with similarity > threshold in a CSV
     """
-    fps_test, kept_test   = smiles_to_fps(smiles,  radius, nbits)
-    m = Chem.MolFromSmiles(s)
+    m = Chem.MolFromSmiles(smiles)
     if m is None:
         return None
     fingerprint = AllChem.GetMorganFingerprintAsBitVect(m, radius, nBits=nbits)
 
-    sims = np.asarray(BulkTanimotoSimilarity(fp_test, fps_train), dtype=np.float32)
+    sims = np.asarray(BulkTanimotoSimilarity(fingerprint, fps_train), dtype=np.float32)
     j_max = int(np.argmax(sims))
     sim_max = float(sims[j_max])
     
