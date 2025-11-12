@@ -16,8 +16,10 @@ from rdkit.Chem import rdmolfiles
 from rdkit import Chem
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
 from tqdm import tqdm
-from typing import Iterator
+from typing import Sequence
 from naglmbis.models import load_charge_model
+from rdkit.Chem import AllChem
+from rdkit.DataStructs.cDataStructs import BulkTanimotoSimilarity
 import logging
 import gc
 
@@ -52,6 +54,14 @@ def log_memory_usage(msg=""):
     rss_mb = mem_info.rss / (1024 * 1024)  # Resident Set Size in MB
     logging.info(f"{msg} - RSS memory usage: {rss_mb:.2f} MB")
 
+def read_smiles_from_json(file_path):
+    import json
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    data = data.keys()
+    print(data)
+    smiles = [entry for entry in data]
+    return smiles
 
 def print(*args):
     builtins.print(*args, sep=' ', end='\n', file=None, flush=True)
@@ -61,6 +71,7 @@ logging.basicConfig(filename='build_charge_models.log', level=logging.INFO)
 
 AU_ESP = unit.atomic_unit_of_energy / unit.elementary_charge
 HA_TO_KCAL_P_MOL =  627.509391  # Hartrees to kilocalories per mole
+TRAIN_SMILES_JSON = 'maxmin-train2.json'
 
 charge_model_esp= 'nagl-gas-charge-dipole-esp-wb-default'
 charge_model_charge = "nagl-gas-charge-wb"
@@ -87,6 +98,46 @@ models = {
     "dipole_model": water_charge_dipole_model,
     "esp_model": water_charge_dipole_esp_model,
 }
+
+FP_RADIUS = 2
+FP_NBITS = 2048
+
+def smiles_to_fps(smiles: Sequence[str], radius=FP_RADIUS, nbits=FP_NBITS):
+    fps, valid_idx = [], []
+    for i, s in enumerate(smiles):
+        m = Chem.MolFromSmiles(s)
+        if m is None:
+            continue
+        fps.append(AllChem.GetMorganFingerprintAsBitVect(m, radius, nBits=nbits))
+        valid_idx.append(i)
+    return fps, valid_idx
+
+train_smiles = list(set(read_smiles_from_json(TRAIN_SMILES_JSON)))
+fps_train, kept_train = smiles_to_fps(train_smiles)
+
+def calculate_max_tanimoto_similarity(
+    train_smiles: Sequence[str],
+    test_smiles: Sequence[str],
+    radius: int = FP_RADIUS,
+    nbits: int = FP_NBITS,
+):
+    """
+    For each test molecule:
+      - Find its most similar training molecule
+      - Record any with similarity > threshold in a CSV
+    """
+    fps_test, kept_test   = smiles_to_fps(test_smiles,  radius, nbits)
+
+    max_sims = np.zeros(len(fps_test), dtype=np.float32)
+    best_train_idx = np.zeros(len(fps_test), dtype=int)
+    high_pairs = []
+
+    for i, fp_test in enumerate(fps_test):
+        sims = np.asarray(BulkTanimotoSimilarity(fp_test, fps_train), dtype=np.float32)
+        j_max = int(np.argmax(sims))
+        sim_max = float(sims[j_max])
+    
+    return sim_max
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
     """Make an openff_molecule from smiles and coordinates
@@ -280,6 +331,12 @@ def process_molecule(parquet: dict, models: dict, skip_smiles=set()) -> dict:
     batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet['mbis-dipoles']).tolist()
     batch_dict.update(charge_models_data)
 
+    # ------ Tanimoto similarity to training set -------#
+    batch_dict['tanimoto_similarity_to_train'] = calculate_max_tanimoto_similarity(
+        smiles=[batch_dict['molecule']],
+        fps_train=fps_train
+    )
+
     return batch_dict
 
 def create_mol_block_tmp_file(pylist: list[dict], temp_dir: str) -> None:
@@ -354,6 +411,7 @@ def main(output: str, data: str):
         ('esp_model_dipoles', pyarrow.float64()),
         ('esp_model_esp', pyarrow.list_(pyarrow.float64())),
         ('esp_model_esp_rmse', pyarrow.float64()),
+        ('tanimoto_similarity_to_train', pyarrow.float64()),
     ])
 
     batch_size = 500

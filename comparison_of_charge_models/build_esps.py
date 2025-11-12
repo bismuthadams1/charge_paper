@@ -125,10 +125,6 @@ def process_item_function(
     openff_molecule = Molecule.from_qcschema(qc_mol, allow_undefined_stereo=True)
     openff_conformer = openff_molecule.conformers[0]
 
-    retrieved = 
-
-    if len(retrieved)
-
     if item.properties is None:
         print(f'No calculation data for molecule: {openff_molecule.to_smiles()} due to {item.status}')
         return None
