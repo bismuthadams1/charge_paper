@@ -63,6 +63,18 @@ def read_smiles_from_json(file_path):
     smiles = [entry for entry in data]
     return smiles
 
+def read_smiles_from_csv(file_path, smiles_column='smiles'):
+    import pandas as pd
+    df = pd.read_csv(file_path)
+    smiles = df[smiles_column].tolist()
+    # canonicalize smiles
+    canonical_smiles = []
+    for smi in smiles:
+        mol = Chem.MolFromSmiles(smi)
+        can_smi = Chem.MolToSmiles(mol, canonical=True, allHsExplicit=True)
+        canonical_smiles.append(can_smi)
+    return canonical_smiles
+
 def print(*args):
     builtins.print(*args, sep=' ', end='\n', file=None, flush=True)
 
@@ -99,45 +111,57 @@ models = {
     # "esp_model": water_charge_dipole_esp_model,
 }
 
+
 FP_RADIUS = 2
 FP_NBITS = 2048
 
-def smiles_to_fps(smiles: str, radius=FP_RADIUS, nbits=FP_NBITS):
+def smiles_to_fps(smiles: list[str], radius=FP_RADIUS, nbits=FP_NBITS):
     fps, valid_idx = [], []
     for i, s in enumerate(smiles):
         m = Chem.MolFromSmiles(s)
         if m is None:
             continue
         fps.append(AllChem.GetMorganFingerprintAsBitVect(m, radius, nBits=nbits))
-        valid_idx.append(i)
-    return fps, valid_idx
+    return fps
 
-train_smiles = list(set(read_smiles_from_json(TRAIN_SMILES_JSON)))
-fps_train = [smiles_to_fps(smile)[0] for smile in train_smiles]
+read_smiles_from_csv()
+
+# def smiles_to_fps(smiles: str, radius=FP_RADIUS, nbits=FP_NBITS):
+#     fps, valid_idx = [], []
+#     for i, s in enumerate(smiles):
+#         m = Chem.MolFromSmiles(s)
+#         if m is None:
+#             continue
+#         fps.append(AllChem.GetMorganFingerprintAsBitVect(m, radius, nBits=nbits))
+#         valid_idx.append(i)
+#     return fps, valid_idx
+
+# train_smiles = list(set(read_smiles_from_json(TRAIN_SMILES_JSON)))
+# fps_train = [smiles_to_fps(smile)[0] for smile in train_smiles]
 
 
-def calculate_max_tanimoto_similarity(
-    smiles: str,
-    # test_smiles: Sequence[str],
-    radius: int = FP_RADIUS,
-    nbits: int = FP_NBITS,
-) -> Optional[float]:
-    """
-    For each test molecule:
-      - Find its most similar training molecule
-      - Record any with similarity > threshold in a CSV
-    """
-    fps_test, kept_test   = smiles_to_fps(smiles,  radius, nbits)
-    m = Chem.MolFromSmiles(s)
-    if m is None:
-        return None
-    fingerprint = AllChem.GetMorganFingerprintAsBitVect(m, radius, nBits=nbits)
+# def calculate_max_tanimoto_similarity(
+#     smiles: str,
+#     # test_smiles: Sequence[str],
+#     radius: int = FP_RADIUS,
+#     nbits: int = FP_NBITS,
+# ) -> Optional[float]:
+#     """
+#     For each test molecule:
+#       - Find its most similar training molecule
+#       - Record any with similarity > threshold in a CSV
+#     """
+#     fps_test, kept_test   = smiles_to_fps(smiles,  radius, nbits)
+#     m = Chem.MolFromSmiles(s)
+#     if m is None:
+#         return None
+#     fingerprint = AllChem.GetMorganFingerprintAsBitVect(m, radius, nBits=nbits)
 
-    sims = np.asarray(BulkTanimotoSimilarity(fp_test, fps_train), dtype=np.float32)
-    j_max = int(np.argmax(sims))
-    sim_max = float(sims[j_max])
+#     sims = np.asarray(BulkTanimotoSimilarity(fp_test, fps_train), dtype=np.float32)
+#     j_max = int(np.argmax(sims))
+#     sim_max = float(sims[j_max])
     
-    return sim_max
+#     return sim_max
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
     """Make an openff_molecule from smiles and coordinates
@@ -331,10 +355,10 @@ def process_molecule(parquet: dict, models: dict, skip_smiles=set()) -> dict:
     batch_dict['mbis_dipoles_magnitude'] = np.linalg.norm(parquet['mbis-dipoles']).tolist()
     batch_dict.update(charge_models_data)
 
-    # ------ Tanimoto similarity to training set -------#
-    batch_dict['tanimoto_similarity_to_train'] = calculate_max_tanimoto_similarity(
-        smiles=[batch_dict['molecule']],
-    )
+    # # ------ Tanimoto similarity to training set -------#
+    # batch_dict['tanimoto_similarity_to_train'] = calculate_max_tanimoto_similarity(
+    #     smiles=[batch_dict['molecule']],
+    # )
 
     return batch_dict
 
@@ -410,7 +434,7 @@ def main(output: str, data: str):
         ('esp_model_dipoles', pyarrow.float64()),
         ('esp_model_esp', pyarrow.list_(pyarrow.float64())),
         ('esp_model_esp_rmse', pyarrow.float64()),
-        ('tanimoto_similarity_to_train', pyarrow.float64()),
+        # ('tanimoto_similarity_to_train', pyarrow.float64()),
     ])
 
     batch_size = 500
