@@ -154,7 +154,7 @@ def calculate_max_tanimoto_similarity(
     j_max = int(np.argmax(sims))
     sim_max = float(sims[j_max])
     
-#     return sim_max
+    return sim_max
 
 def make_openff_molecule(mapped_smiles: str, coordinates: unit.Quantity) -> Molecule:
     """Make an openff_molecule from smiles and coordinates
@@ -350,7 +350,7 @@ def process_molecule(parquet: dict, models: dict, skip_smiles=set()) -> dict:
 
     # # ------ Tanimoto similarity to training set -------#
     batch_dict['tanimoto_similarity_to_train'] = calculate_max_tanimoto_similarity(
-        smiles=[batch_dict['molecule']],
+        smiles=batch_dict['molecule'],
     )
 
     return batch_dict
